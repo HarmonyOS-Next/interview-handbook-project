@@ -1,0 +1,28 @@
+{
+  "color": [
+    {
+      "name": "start_window_background",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "tab_default_color",
+      "value": "#979797"
+    },
+    {
+      "name": "tab_selected_color",
+      "value": "#3C3E42"
+    },
+    {
+      "name": "ih_bg_color",
+      "value": "#F5F5F5"
+    },
+    {
+      "name": "ih_gray_color",
+      "value": "#979797"
+    },
+    {
+      "name": "ih_text_color",
+      "value": "#333C4F"
+    }
+  ]
+}

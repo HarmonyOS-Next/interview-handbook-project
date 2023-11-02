@@ -1,0 +1,54 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.cer",
+          "storePassword": "0000001A62E9E7435569AFE306C782FCA005D74911B67C078175795788073C8C84F8BABA2A12248C96FC",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001A3DE169EE56DEE3B2CAB53B72BFAA1717E3AD6F7FCA6A3997D971EF9CD2D66281D9118EBB67CA",
+          "profile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p12"
+        }
+      },
+      {
+        "name": "local",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.cer",
+          "storePassword": "0000001AA82F277151D58CC427D4F89792E000EABB37B25E24E44589F010573401FA58D42B537892B7B7",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001A0337FFABDD71B525314DE033B281336D8BFB4FCF3BA61F50E1878279F6C12A2E03BE1DAEB928",
+          "profile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p12"
+        }
+      }
+    ],
+    "compileSdkVersion": 9,
+    "compatibleSdkVersion": 9,
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}

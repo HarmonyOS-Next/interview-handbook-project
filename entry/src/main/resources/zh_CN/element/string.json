@@ -1,0 +1,24 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "黑马面试宝典程序"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "首页、项目、面经、我的、常用单词"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "面试宝典"
+    },
+    {
+      "name": "DetailAbility_desc",
+      "value": "面试题详情、面经详情"
+    },
+    {
+      "name": "DetailAbility_label",
+      "value": "详情页面"
+    }
+  ]
+}
