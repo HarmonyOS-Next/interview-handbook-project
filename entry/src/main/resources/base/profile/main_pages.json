@@ -1,6 +1,7 @@
 {
   "src": [
     "pages/Index",
-    "pages/QuestionDetailPage"
+    "pages/QuestionDetailPage",
+    "pages/LoginPage"
   ]
 }

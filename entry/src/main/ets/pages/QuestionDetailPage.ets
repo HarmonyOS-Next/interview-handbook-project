@@ -68,10 +68,9 @@ struct QuestionDetailPage {
           }.padding(15)
         }
 
-        Column()
-          .width('100%')
-          .height(8)
-          .backgroundColor($r('app.color.ih_bg_color'))
+        Divider()
+          .strokeWidth(8)
+          .color($r('app.color.ih_bg_color'))
 
         Column() {
           this.titleBuilder('答案:')
@@ -83,6 +82,7 @@ struct QuestionDetailPage {
     }
     .title('题目详情')
     .titleMode(NavigationTitleMode.Mini)
+    .mode(NavigationMode.Stack)
     .toolBar(this.toggleBuilder())
   }
 }

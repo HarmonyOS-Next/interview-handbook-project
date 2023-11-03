@@ -1,34 +1,36 @@
-import { QuestionItem } from '../models/Index'
+import { QuestionItem, ResponseData } from '../models'
 import { DIFFICULTY_MAP, PAGE_MAP } from '../constants'
 import router from '@ohos.router'
+import { requestGet } from '../utils/request'
+import logger from '../utils/logger'
 
 @Styles function pd15() {
   .padding({ left: 15, right: 15 })
 }
 
-const mockList = [
-  {
-    id: '1',
-    stem: 'Vue2响应式原理？',
-    likeCount: 120,
-    views: 236,
-    difficulty: 2,
-  },
-  {
-    id: '2',
-    stem: '你都使用过哪些Vue3的组合式API？',
-    likeCount: 87,
-    views: 540,
-    difficulty: 1,
-  },
-  {
-    id: '3',
-    stem: '描述下Css选择器优先级',
-    likeCount: 10,
-    views: 29,
-    difficulty: 0,
-  }
-]
+// const mockList = [
+//   {
+//     id: '1',
+//     stem: 'Vue2响应式原理？',
+//     likeCount: 120,
+//     views: 236,
+//     difficulty: 2,
+//   },
+//   {
+//     id: '2',
+//     stem: '你都使用过哪些Vue3的组合式API？',
+//     likeCount: 87,
+//     views: 540,
+//     difficulty: 1,
+//   },
+//   {
+//     id: '3',
+//     stem: '描述下Css选择器优先级',
+//     likeCount: 10,
+//     views: 29,
+//     difficulty: 0,
+//   }
+// ]
 
 @Component
 export struct QuestionList {
@@ -44,7 +46,23 @@ export struct QuestionList {
   @State
   questionList: Array<QuestionItem> = []
   @State
-  params: { page: number } = { page: 1 }
+  total: number = 0
+  @State
+  pageTotal: number = 0
+  @State
+  params: {
+    type: number,
+    page: number,
+    sort?: number,
+    keyword?: string
+    questionBankType: number
+  } = {
+    questionBankType: 10,
+    type: 0,
+    page: 1,
+    sort: 0,
+    keyword: undefined,
+  }
 
   aboutToAppear() {
     this.initQuestionList()
@@ -52,6 +70,7 @@ export struct QuestionList {
 
   initQuestionList() {
     if (this.activeQuestionTypeId === this.questionTypeId && this.questionList.length === 0) {
+      this.params.type = this.questionTypeId
       this.loadQuestionList()
     }
   }
@@ -59,20 +78,27 @@ export struct QuestionList {
   loadQuestionList() {
     if (this.loading || this.finished) return;
     this.loading = true
-    setTimeout(() => {
-      const list = []
-      for (let index = 0; index < 10; index++) {
-        const element = mockList[index % 3];
-        list.push(element)
-      }
-      this.questionList.push(...list)
-      if (this.params.page === 5) {
-        this.finished = true
-      } else {
-        this.params.page++
-      }
-      this.loading = false
-    }, 1500)
+
+    requestGet('question/list', this.params)
+      .then((res: ResponseData<{
+        total: number,
+        pageTotal: number
+        rows: Array<QuestionItem>
+      }>) => {
+        this.questionList.push(...res.data.rows)
+        this.total = res.data.total
+        this.pageTotal = res.data.pageTotal
+        if (this.params.page >= this.pageTotal) {
+          this.finished = true
+        } else {
+          this.params.page++
+        }
+        this.loading = false
+        logger.info('HomeList:requestGet', JSON.stringify(res.data.rows))
+      })
+      .catch(err=>{
+        logger.error('HomeList:requestGet', JSON.stringify(err))
+      })
   }
 
   @Builder
@@ -97,8 +123,8 @@ export struct QuestionList {
         ListItem() {
           Column() {
             Row() {
-              Text(DIFFICULTY_MAP[item.difficulty].text)
-                .fontColor(DIFFICULTY_MAP[item.difficulty].color)
+              Text(DIFFICULTY_MAP[item.difficulty]?.text)
+                .fontColor(DIFFICULTY_MAP[item.difficulty]?.color)
                 .fontSize(10)
                 .width(34)
                 .height(18)
@@ -106,7 +132,7 @@ export struct QuestionList {
                 .borderRadius(2)
                 .textAlign(TextAlign.Center)
                 .margin({ right: 7 })
-              Text(item.stem + this.questionTypeId)
+              Text(item.stem)
                 .fontSize(16)
                 .onClick(() => {
                   router.pushUrl({
@@ -117,6 +143,9 @@ export struct QuestionList {
                     }
                   })
                 })
+                .layoutWeight(1)
+                .textOverflow({ overflow: TextOverflow.Ellipsis})
+                .maxLines(1)
             }.width('100%')
 
             Row() {

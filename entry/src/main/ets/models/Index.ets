@@ -1,3 +1,9 @@
+export class ResponseData<T = unknown>{
+  public code: number
+  public msg: string
+  public data: T
+}
+
 export class QuestionType {
   public id: number
   public name: string
