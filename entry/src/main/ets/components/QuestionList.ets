@@ -1,12 +1,10 @@
 import { QuestionItem, ResponseData } from '../models'
+import { BasicDataSource } from '../models/BasicDatasource'
 import { DIFFICULTY_MAP, PAGE_MAP } from '../constants'
-import router from '@ohos.router'
+import router from '../utils/router'
 import { requestGet } from '../utils/request'
 import logger from '../utils/logger'
-
-@Styles function pd15() {
-  .padding({ left: 15, right: 15 })
-}
+import { emitter } from '../utils/mitt'
 
 // const mockList = [
 //   {
@@ -32,6 +30,39 @@ import logger from '../utils/logger'
 //   }
 // ]
 
+class QuestionDataSource extends BasicDataSource {
+  private questionList: Array<QuestionItem> = []
+
+  public totalCount(): number {
+    return this.questionList.length;
+  }
+
+  public getData(index: number): QuestionItem {
+    return this.questionList[index];
+  }
+
+  public reloadData() {
+    this.questionList.splice(0, this.questionList.length)
+    this.notifyDataReload()
+  }
+
+  public addData(index: number, data: QuestionItem): void {
+    this.questionList.splice(index, 0, data);
+    this.notifyDataAdd(index);
+  }
+
+  public updateData(data: Partial<QuestionItem>): void {
+    const index = this.questionList.findIndex(item => item.id === data.id)
+    this.questionList.splice(index, 1, { ...this.questionList[index], ...data });
+    this.notifyDataChange(index);
+  }
+
+  public pushData(data: Array<QuestionItem>): void {
+    this.questionList.push(...data);
+    this.notifyDataAdd(this.questionList.length - 1);
+  }
+}
+
 @Component
 export struct QuestionList {
   @Prop
@@ -43,8 +74,8 @@ export struct QuestionList {
   loading: boolean = false
   @State
   finished: boolean = false
-  @State
-  questionList: Array<QuestionItem> = []
+  @LocalStorageLink('sharedQuestionList')
+  sharedQuestionList: Array<QuestionItem> = []
   @State
   total: number = 0
   @State
@@ -63,13 +94,20 @@ export struct QuestionList {
     sort: 0,
     keyword: undefined,
   }
+  questionDataSource = new QuestionDataSource()
 
   aboutToAppear() {
     this.initQuestionList()
+
+    emitter.on('updateQuestionItem', (item) => {
+      this.questionDataSource.updateData(item)
+    })
   }
 
   initQuestionList() {
-    if (this.activeQuestionTypeId === this.questionTypeId && this.questionList.length === 0) {
+    if (this.activeQuestionTypeId === this.questionTypeId && this.questionDataSource.totalCount() === 0) {
+      this.sharedQuestionList = []
+
       this.params.type = this.questionTypeId
       this.loadQuestionList()
     }
@@ -85,7 +123,10 @@ export struct QuestionList {
         pageTotal: number
         rows: Array<QuestionItem>
       }>) => {
-        this.questionList.push(...res.data.rows)
+        // this.questionList.push(...res.data.rows)
+        this.questionDataSource.pushData(res.data.rows)
+        // 存储 LocalStorage
+        this.sharedQuestionList.push(...res.data.rows)
         this.total = res.data.total
         this.pageTotal = res.data.pageTotal
         if (this.params.page >= this.pageTotal) {
@@ -96,9 +137,13 @@ export struct QuestionList {
         this.loading = false
         logger.info('HomeList:requestGet', JSON.stringify(res.data.rows))
       })
-      .catch(err=>{
+      .catch(err => {
         logger.error('HomeList:requestGet', JSON.stringify(err))
       })
+  }
+
+  @Styles pd15() {
+    .padding({ left: 15, right: 15 })
   }
 
   @Builder
@@ -119,7 +164,7 @@ export struct QuestionList {
 
   build() {
     List() {
-      ForEach(this.questionList, (item: QuestionItem) => {
+      LazyForEach(this.questionDataSource, (item: QuestionItem) => {
         ListItem() {
           Column() {
             Row() {
@@ -135,7 +180,7 @@ export struct QuestionList {
               Text(item.stem)
                 .fontSize(16)
                 .onClick(() => {
-                  router.pushUrl({
+                  router.push({
                     url: PAGE_MAP.question_detail,
                     params: {
                       id: item.id,
@@ -144,7 +189,7 @@ export struct QuestionList {
                   })
                 })
                 .layoutWeight(1)
-                .textOverflow({ overflow: TextOverflow.Ellipsis})
+                .textOverflow({ overflow: TextOverflow.Ellipsis })
                 .maxLines(1)
             }.width('100%')
 
@@ -152,6 +197,10 @@ export struct QuestionList {
               Text(`点赞 ${item.likeCount}`).fontColor('#C3C3C5').fontSize(13)
               Text('|').width(30).textAlign(TextAlign.Center).fontColor('#C3C3C5').fontSize(13)
               Text(`浏览 ${item.views}`).fontColor('#C3C3C5').fontSize(13)
+              if (item.readFlag === 1) {
+                Text('|').width(30).textAlign(TextAlign.Center).fontColor('#C3C3C5').fontSize(13)
+                Text(`已看过`).fontColor('#C3C3C5').fontSize(13)
+              }
             }
             .width('100%')
             .margin({ top: 10 })
@@ -159,7 +208,7 @@ export struct QuestionList {
         }
         .height(80)
         .width('100%')
-      })
+      }, item => JSON.stringify(item))
       this.ListFooterBuilder()
     }
     .divider({

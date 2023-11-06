@@ -1,4 +1,4 @@
-export class ResponseData<T = unknown>{
+export class ResponseData<T = unknown> {
   public code: number
   public msg: string
   public data: T
@@ -10,7 +10,11 @@ export class QuestionType {
   public icon?: string
   public describeInfo?: string
   public displayNewestFlag?: 0 | 1
-  public tags?: Array<{ tagName: string, nameColor: string, borderColor: string }>
+  public tags?: Array<{
+    tagName: string,
+    nameColor: string,
+    borderColor: string
+  }>
 }
 
 export enum QuestionTypeEnum {
@@ -28,4 +32,20 @@ export class QuestionItem {
   public difficulty: number
   public likeCount: number
   public views: number
+  public readFlag?: 0 | 1
+}
+
+export class QuestionDetail extends QuestionItem {
+  public answer: string
+  public collectFlag: boolean
+  public stage: Array<string>
+}
+
+export class UserInfo {
+  public token: string
+  public refreshToken: string
+  public id: string
+  public username: string
+  public avatar: string
+  public shareInfo: string
 }

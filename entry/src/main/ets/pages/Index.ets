@@ -1,7 +1,9 @@
 import mediaQuery from '@ohos.mediaquery';
 import { HomePage } from './HomePage'
 
-@Entry
+const storage = LocalStorage.GetShared()
+
+@Entry(storage)
 @Component
 struct Index {
   @State
@@ -11,6 +13,9 @@ struct Index {
   listenerScreen = mediaQuery.matchMediaSync('(orientation: landscape) and (device-type: tablet)');
 
   aboutToAppear() {
+    // 关联持久化文件
+    PersistentStorage.PersistProp('user', '{}')
+
     this.listenerScreen.on('change', (mediaQueryResult) => {
       this.isLandscape = mediaQueryResult.matches
     })

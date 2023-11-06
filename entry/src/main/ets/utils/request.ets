@@ -4,6 +4,7 @@ import { stringify } from './base'
 import router from '@ohos.router';
 import { PAGE_MAP } from '../constants';
 import { ResponseData } from '../models'
+import { UserInfo } from '../models';
 
 const httpRequest = http.createHttp()
 
@@ -25,11 +26,17 @@ const request = (url: string = '', method: http.RequestMethod = http.RequestMeth
 
   const config: http.HttpRequestOptions = {
     header: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     method,
-    readTimeout: 5000
+    readTimeout: 10000
   }
+  const user = JSON.parse(AppStorage.Get('user') || '{}') as UserInfo
+
+  if (user?.token) {
+    config.header['Authorization'] = `Bearer ${user.token}`
+  }
+
   if (method !== http.RequestMethod.GET) {
     config.extraData = data
   }

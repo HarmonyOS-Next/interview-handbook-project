@@ -1,13 +1,9 @@
 import { QuestionType, ResponseData } from '../models'
 import { QuestionList } from '../components/QuestionList'
 import { requestGet } from '../utils/request'
-import router from '@ohos.router'
+import router from '../utils/router'
 import { PAGE_MAP } from '../constants'
-import logger from  '../utils/logger'
-
-@Styles function pd15() {
-  .padding({ left: 15, right: 15 })
-}
+import logger from '../utils/logger'
 
 @Preview
 @Component
@@ -33,6 +29,24 @@ export struct HomePage {
   activeIndex: number = 0
   @State
   activeQuestionTypeId: number = -1
+
+  aboutToAppear() {
+    requestGet('question/type').then((res: ResponseData<Array<QuestionType>>) => {
+      this.questionTypes = res.data
+      this.activeQuestionTypeId = this.questionTypes[this.activeIndex].id
+    }).catch(err => {
+      logger.error('HomePage:aboutToAppear', JSON.stringify(err))
+      AlertDialog.show({
+        title: '温馨提示',
+        message: '网络请求失败'
+      })
+    })
+  }
+
+  @Styles
+  pd15() {
+    .padding({ left: 15, right: 15 })
+  }
 
   @Builder
   TabHeadBuilder(item: QuestionType, index: number) {
@@ -63,17 +77,66 @@ export struct HomePage {
     })
   }
 
-  aboutToAppear() {
-    requestGet('question/type').then((res: ResponseData<Array<QuestionType>>) => {
-      this.questionTypes = res.data
-      this.activeQuestionTypeId = this.questionTypes[this.activeIndex].id
-    }).catch(err=>{
-      logger.error('HomePage:aboutToAppear', JSON.stringify(err))
-      AlertDialog.show({
-        title: '温馨提示',
-        message: '网络请求失败'
+  @Builder
+  skeletonBuilder() {
+    Column() {
+      Row() {
+        ForEach([1, 2, 3, 4], (item) => {
+          Text()
+            .width(50 + item % 3 * 10)
+            .height(20)
+            .backgroundColor($r('app.color.ih_bg_color'))
+            .margin({ right: 20 })
+            .borderRadius(4)
+        })
+      }
+      .height(52)
+      .margin({ top: 4 })
+      .width('100%')
+      .border({ width: { bottom: 1 }, color: $r('app.color.ih_bg_color') })
+      .justifyContent(FlexAlign.Start)
+
+      List() {
+        ForEach([1, 2, 3, 4, 5, 6], (item) => {
+          ListItem() {
+            Column() {
+              Row() {
+                Text()
+                  .width('10%')
+                  .height(20)
+                  .backgroundColor($r('app.color.ih_bg_color'))
+                  .margin({ right: 10, bottom: 10 })
+                  .borderRadius(4)
+                Text()
+                  .width('80%')
+                  .height(20)
+                  .backgroundColor($r('app.color.ih_bg_color'))
+                  .margin({ right: 10, bottom: 10 })
+                  .borderRadius(4)
+              }
+              .width('100%')
+
+              Text()
+                .width(100)
+                .height(20)
+                .backgroundColor($r('app.color.ih_bg_color'))
+                .margin({ right: 20 })
+                .borderRadius(4)
+            }.alignItems(HorizontalAlign.Start)
+          }
+          .height(80)
+          .width('100%')
+        })
+      }
+      .width('100%')
+      .divider({
+        strokeWidth: 1,
+        color: $r('app.color.ih_bg_color')
       })
-    })
+    }
+    .pd15()
+    .layoutWeight(1)
+    .justifyContent(FlexAlign.Start)
   }
 
   build() {
@@ -102,7 +165,7 @@ export struct HomePage {
             .fontSize(18)
             .fontColor($r('app.color.ih_text_color'))
         }.onClick(() => {
-          router.pushUrl({
+          router.push({
             url: PAGE_MAP.login
           })
         })
@@ -110,13 +173,15 @@ export struct HomePage {
 
       Row() {
         Swiper() {
-          Flex(){
+          Flex() {
             Image($rawfile('banner_qa.png')).objectFit(ImageFit.Fill)
           }.pd15()
-          Flex(){
+
+          Flex() {
             Image($rawfile('banner_pj.png')).objectFit(ImageFit.Fill)
           }.pd15()
-          Flex(){
+
+          Flex() {
             Image($rawfile('banner_ai.png')).objectFit(ImageFit.Fill)
           }.pd15()
         }
@@ -124,25 +189,30 @@ export struct HomePage {
         .indicator(false)
       }.height(132)
 
-      Row() {
-        Tabs({
-          index: this.activeIndex
-        }) {
-          ForEach(this.questionTypes, (item, index) => {
-            TabContent() {
-              QuestionList({
-                questionTypeId: item.id,
-                activeQuestionTypeId: this.activeQuestionTypeId
-              })
-            }.tabBar(this.TabHeadBuilder(item, index)).height('100%')
+      if (this.questionTypes.length) {
+        Row() {
+          Tabs({
+            index: this.activeIndex
+          }) {
+            ForEach(this.questionTypes, (item, index) => {
+              TabContent() {
+                QuestionList({
+                  questionTypeId: item.id,
+                  activeQuestionTypeId: this.activeQuestionTypeId
+                })
+              }.tabBar(this.TabHeadBuilder(item, index)).height('100%')
+            })
+          }
+          .barMode(BarMode.Scrollable)
+          .margin({ top: 4 })
+          .onChange((index) => {
+            this.activeIndex = index
+            this.activeQuestionTypeId = this.questionTypes[this.activeIndex].id
           })
-        }
-        .barMode(BarMode.Scrollable).margin({ top: 4 })
-        .onChange((index) => {
-          this.activeIndex = index
-          this.activeQuestionTypeId = this.questionTypes[this.activeIndex].id
-        })
-      }.layoutWeight(1)
+        }.layoutWeight(1)
+      } else {
+        this.skeletonBuilder()
+      }
     }
     .height('100%')
     .justifyContent(FlexAlign.Start)

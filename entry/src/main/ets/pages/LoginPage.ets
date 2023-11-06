@@ -1,10 +1,55 @@
+import promptAction from '@ohos.promptAction';
+import router from '@ohos.router';
+import { ResponseData, UserInfo } from '../models/index';
+import { requestPost } from '../utils/request';
+
 @Entry
 @Component
 struct LoginPage {
   @State
-  mobile: string = ''
+  mobile: string = 'hmheima'
   @State
-  code: string = ''
+  code: string = 'Hmheima%123'
+  @State
+  isAgree: boolean = false
+
+  @Builder
+  toastBuilder() {
+
+  }
+
+  login() {
+    if (!this.mobile) {
+      return promptAction.showToast({ message: '请输入用户名' })
+    }
+    if (!this.code) {
+      return promptAction.showToast({ message: '请输入密码' })
+    }
+    if (!this.isAgree) {
+      return promptAction.showToast({ message: '请勾选已阅读并同意' })
+    }
+    requestPost('login', {
+      username: this.mobile,
+      password: this.code
+    }).then((res: ResponseData<UserInfo>) => {
+      AppStorage.Set('user', JSON.stringify(res.data))
+      promptAction.showToast({ message: '登录成功', duration: 2000 })
+
+      const params = router.getParams() as Record<string, any> || {}
+
+      if (params.to) {
+        const backUrl = params.to
+        delete params.to
+        router.replaceUrl({
+          url: backUrl,
+          params
+        })
+      } else {
+        router.back()
+      }
+    })
+
+  }
 
   @Styles
   inputStyle() {
@@ -27,18 +72,26 @@ struct LoginPage {
           }.padding(20)
 
           Column() {
-            TextInput({ placeholder: '请输入手机号', text: this.mobile })
+            TextInput({ placeholder: '请输入用户名', text: this.mobile })
               .inputStyle()
               .placeholderColor('#C3C3C5')
               .caretColor('#fa711d')
               .onChange(val => this.mobile = val)
-            TextInput({ placeholder: '请输入验证码', text: this.code })
+            TextInput({ placeholder: '请输入密码', text: this.code, })
+              .type(InputType.Password)
+              .showPasswordIcon(false)
               .inputStyle()
               .placeholderColor('#C3C3C5')
               .caretColor('#fa711d')
               .onChange(val => this.code = val)
             Row() {
-              Checkbox().selectedColor('#fa711d').size({ width: 14, height: 14 })
+              Checkbox()
+                .selectedColor('#fa711d')
+                .size({ width: 14, height: 14 })
+                .select(this.isAgree)
+                .onChange((val) => {
+                  this.isAgree = val
+                })
               Text('已阅读并同意')
                 .fontSize(14)
                 .fontColor($r('app.color.ih_gray_color'))
@@ -56,7 +109,6 @@ struct LoginPage {
 
             Button('立即登录', { type: ButtonType.Normal })
               .width('100%')
-              .margin({ bottom: 15 })
               .backgroundColor('none')
               .borderRadius(4)
               .height(44)
@@ -65,6 +117,9 @@ struct LoginPage {
                 colors: [['#fc9c1c', 0], ['#fa711d', 1]]
               })
               .stateEffect(false)
+              .onClick(() => {
+                this.login()
+              })
           }.padding(30)
 
           Column() {

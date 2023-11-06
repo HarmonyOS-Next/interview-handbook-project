@@ -7,6 +7,7 @@ export const DIFFICULTY_MAP = {
 }
 
 export const PAGE_MAP = {
+  index: 'pages/Index',
   question_detail: 'pages/QuestionDetailPage',
   login: 'pages/LoginPage'
 }

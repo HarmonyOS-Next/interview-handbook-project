@@ -1,26 +1,46 @@
 import router from '@ohos.router'
+import promptAction from '@ohos.promptAction'
+import { DIFFICULTY_MAP } from '../constants'
+import { QuestionDetail, QuestionItem, ResponseData } from '../models'
+import { requestGet } from '../utils/request'
+import { emitter } from '../utils/mitt'
 
-@Entry
+
+const storage = LocalStorage.GetShared()
+
+@Entry(storage)
 @Component
 struct QuestionDetailPage {
-  questionId: number
-  stem: string
-  html: string = `
-          <div style="font-size: 14px">
-            <ul style="margin: 0; padding: 0">
-              <li>一、vue作为一款轻量级框架，门槛低，上手快，简单易学。</li>
-              <li>二、vue可以进行组件化开发，数据与结构相分离，使代码量减少，从而提升开发效率，易于理解</li>
-              <li style="color:green;">三、vue最突出的优势在于对数据进行双向绑定，使用虚拟DOM</li>
-              <li>四、相较于传统页面通过超链接实现页面跳转，vue会使用路由跳转不会刷新页面</li>
-              <li>五、vue是单页面应用，页面局部刷新，不用每次跳转都请求数据，加快了访问速度，提升了用户体验</li>
-            </ul>
-          </div>
-          `
+  @State
+  questionId: string = undefined
+  @State
+  stem: string = undefined
+  @State
+  question: QuestionDetail | undefined = undefined
+  @LocalStorageLink('sharedQuestionList')
+  sharedQuestionList: Array<QuestionItem> = []
 
   aboutToAppear() {
     const params = router.getParams()
     this.questionId = params['id']
     this.stem = params['stem']
+    this.getData()
+  }
+
+  getData() {
+    promptAction.showToast({ message: '试题加载中...' })
+    requestGet(`question/${this.questionId}`)
+      .then((res: ResponseData<QuestionDetail>) => {
+        this.question = res.data
+        // 已看过
+        if (this.question.readFlag !== 1) {
+          emitter.emit('updateQuestionItem', { id: res.data.id, readFlag: 1 })
+        }
+        promptAction.showToast({ message: '试题加载成功' })
+      })
+      .catch(() => {
+        promptAction.showToast({ message: '试题加载失败' })
+      })
   }
 
   @Builder
@@ -31,6 +51,7 @@ struct QuestionDetailPage {
     }
     .width('100%')
     .padding({ top: 10 })
+    .height(32)
   }
 
   @Builder
@@ -46,9 +67,29 @@ struct QuestionDetailPage {
 
   @Builder
   toggleBuilder() {
-    Row(){
-      Image($r("app.media.prev_black")).width(80)
-      Image($r("app.media.next_black")).width(80)
+    Row() {
+      Image($r("app.media.prev_black")).width(80).onClick(() => {
+        const index = this.sharedQuestionList.findIndex(item => item.id === this.questionId)
+        if (index > 0) {
+          const prev = this.sharedQuestionList[index - 1]
+          this.questionId = prev.id
+          this.stem = prev.stem
+          this.getData()
+        } else {
+          promptAction.showToast({ message: '没有更多题~' })
+        }
+      })
+      Image($r("app.media.next_black")).width(80).onClick(() => {
+        const index = this.sharedQuestionList.findIndex(item => item.id === this.questionId)
+        if (index < this.sharedQuestionList.length - 1) {
+          const next = this.sharedQuestionList[index + 1]
+          this.questionId = next.id
+          this.stem = next.stem
+          this.getData()
+        } else {
+          promptAction.showToast({ message: '没有更多题~' })
+        }
+      })
     }.width('100%').justifyContent(FlexAlign.SpaceAround)
   }
 
@@ -58,13 +99,24 @@ struct QuestionDetailPage {
         Column() {
           this.titleBuilder('题目:')
           Column() {
-            Text(this.stem).width('100%')
             Row() {
-              this.tagBuilder('简单')
-              this.tagBuilder('移动端布局')
+              Text(this.stem.trim()).width('100%')
             }
+
+            Row() {
+              if (this.question) {
+                this.tagBuilder(
+                  DIFFICULTY_MAP[this.question.difficulty].text,
+                  DIFFICULTY_MAP[this.question.difficulty].color
+                )
+                ForEach(this.question.stage, stage => {
+                  this.tagBuilder(stage)
+                })
+              }
+            }
+            .height(40)
             .width('100%')
-            .padding({ top: 15})
+            .padding({ top: 15 })
           }.padding(15)
         }
 
@@ -74,9 +126,26 @@ struct QuestionDetailPage {
 
         Column() {
           this.titleBuilder('答案:')
-          Flex(){
-            RichText(this.html)
-          }.padding(15)
+          Scroll() {
+            if (this.question) {
+              RichText(`
+                <!doctype html>
+                <html>
+                  <head>
+                    <meta charset="UTF-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                  </head>
+                  <body>
+                    ${this.question.answer}
+                  </body>
+                </html>
+              `)
+                .width("100%")
+                .height("100%")
+            }
+          }
+          .padding(15)
+          .layoutWeight(1)
         }.layoutWeight(1)
       }
     }
