@@ -53,8 +53,10 @@ class QuestionDataSource extends BasicDataSource {
 
   public updateData(data: Partial<QuestionItem>): void {
     const index = this.questionList.findIndex(item => item.id === data.id)
-    this.questionList.splice(index, 1, { ...this.questionList[index], ...data });
-    this.notifyDataChange(index);
+    if (index > -1) {
+      this.questionList.splice(index, 1, { ...this.questionList[index], ...data });
+      this.notifyDataChange(index);
+    }
   }
 
   public pushData(data: Array<QuestionItem>): void {

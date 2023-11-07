@@ -41,15 +41,20 @@ const request = (url: string = '', method: http.RequestMethod = http.RequestMeth
     config.extraData = data
   }
   return httpRequest.request(urlStr, config).then(res => {
-    logger.info('request→', JSON.stringify(res.result))
-    if (res.result && (res.result as ResponseData).code === 401) {
-      logger.error('request→', 'UNAUTHORIZED')
-      router.pushUrl({
-        url: PAGE_MAP.login
-      })
-      return Promise.reject(res.result)
+    logger.info('request→', res.result.toString())
+    if (res.result) {
+      const result = JSON.parse(res.result as string) as ResponseData
+      if (result.code === 10000) {
+        return result
+      }
+      if (result.code === 401) {
+        logger.error('request→', 'UNAUTHORIZED')
+        router.pushUrl({
+          url: PAGE_MAP.login
+        })
+      }
     }
-    return JSON.parse(res.result as string)
+    return Promise.reject(res.result)
   }).catch(err => {
     logger.error('request→', JSON.stringify(err))
     httpRequest.destroy();

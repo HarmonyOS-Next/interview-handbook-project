@@ -2,8 +2,9 @@ import router from '@ohos.router'
 import promptAction from '@ohos.promptAction'
 import { DIFFICULTY_MAP } from '../constants'
 import { QuestionDetail, QuestionItem, ResponseData } from '../models'
-import { requestGet } from '../utils/request'
+import { requestGet, requestPost } from '../utils/request'
 import { emitter } from '../utils/mitt'
+import logger from '../utils/logger'
 
 
 const storage = LocalStorage.GetShared()
@@ -41,6 +42,25 @@ struct QuestionDetailPage {
       .catch(() => {
         promptAction.showToast({ message: '试题加载失败' })
       })
+  }
+
+  /**
+   * 操作
+   * @param type = 1 | 2 | 3
+   */
+  async opt(type: 1 | 2 | 3) {
+    try {
+      const id = await requestPost('question/unOpt', {
+        id: this.question.id,
+        type: 0,
+        optType: type
+      })
+      logger.info('----', this.question.id)
+      promptAction.showToast({ message: '操作成功' })
+    } catch (err) {
+      promptAction.showToast({ message: '操作失败' })
+      return Promise.reject(err)
+    }
   }
 
   @Builder
@@ -112,6 +132,38 @@ struct QuestionDetailPage {
                 ForEach(this.question.stage, stage => {
                   this.tagBuilder(stage)
                 })
+                Flex({ direction: FlexDirection.Row, justifyContent: FlexAlign.End }) {
+                  Image($r('app.media.icon_point')).width(24).bindMenu([
+                    {
+                      value: this.question.collectFlag === 1 ? '取消收藏' : '收藏',
+                      action: () => {
+                        this.opt(2).then(() => {
+                          this.question.collectFlag = this.question.collectFlag === 1 ? 0 : 1
+                        })
+                      }
+                    },
+                    {
+                      value: this.question.likeFlag === 1 ? '取消点赞' : '点赞',
+                      action: () => {
+                        this.opt(1).then(() => {
+                          this.question.likeFlag = this.question.likeFlag === 1 ? 0 : 1
+                          const likeCount =
+                              this.question.likeFlag === 1
+                              ? Number(this.question.likeCount) + 1
+                              : Number(this.question.likeCount) - 1
+                          emitter.emit('updateQuestionItem', { id: this.question.id, likeCount, })
+                        })
+                      }
+                    },
+                    {
+                      value: '分享试题',
+                      action: () => {
+                        // TODO
+                      }
+                    },
+                  ])
+                }
+                .layoutWeight(1)
               }
             }
             .height(40)

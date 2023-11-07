@@ -37,7 +37,8 @@ export class QuestionItem {
 
 export class QuestionDetail extends QuestionItem {
   public answer: string
-  public collectFlag: boolean
+  public collectFlag: 0 | 1
+  public likeFlag: 0 | 1
   public stage: Array<string>
 }
 
