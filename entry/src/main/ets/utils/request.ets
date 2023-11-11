@@ -5,6 +5,7 @@ import router from '@ohos.router';
 import { PAGE_MAP } from '../constants';
 import { ResponseData } from '../models'
 import { UserInfo } from '../models';
+import promptAction from '@ohos.promptAction';
 
 const httpRequest = http.createHttp()
 
@@ -57,6 +58,7 @@ const request = <T = unknown>(url: string = '', method: http.RequestMethod = htt
     return Promise.reject(res.result)
   }).catch(err => {
     logger.error(`response→${url}→${method}`, JSON.stringify(err).substring(0, 300))
+    promptAction.showToast({ message: '网络错误' })
     httpRequest.destroy();
     return Promise.reject(err)
   })

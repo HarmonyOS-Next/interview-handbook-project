@@ -39,7 +39,6 @@ class InterviewDataSource extends BasicDataSource {
     this.interviewList.push(...data);
     this.notifyDataAdd(this.interviewList.length - 1);
   }
-
 }
 
 @Preview
@@ -82,7 +81,7 @@ export struct InterviewPage {
       sort: this.sort
     })
       .then(res => {
-        if ( this.page === 1 ) {
+        if (this.page === 1) {
           this.interviewDataSource.reloadData(res.data.rows)
           this.scroller.scrollTo({ yOffset: 0, xOffset: 0 })
         } else {
@@ -92,7 +91,7 @@ export struct InterviewPage {
         if (this.page >= res.data.pageTotal) {
           this.finished = true
         } else {
-          this.page ++
+          this.page++
         }
       })
   }
@@ -142,7 +141,7 @@ export struct InterviewPage {
       }
       .border({ width: { bottom: 0.5 }, color: '#e4e4e4' })
 
-      Column(){
+      Column() {
         List({ scroller: this.scroller }) {
           LazyForEach(this.interviewDataSource, (item: InterviewItem) => {
             ListItem() {
@@ -152,10 +151,12 @@ export struct InterviewPage {
                     .width(30)
                     .height(30)
                     .borderRadius(15)
+                    // .sharedTransition('image' + item.id, { duration: 300, curve: Curve.Linear })
                   Column() {
                     Text(item.stem)
                       .fontWeight(FontWeight.Bold)
                       .margin({ bottom: 3 })
+                      // .sharedTransition('title' + item.id, { duration: 300, curve: Curve.Linear })
                     Text(`${item.creatorName} | ${item.createdAt}`)
                       .fontSize(9)
                       .fontColor('#c3c4c5')
@@ -184,9 +185,10 @@ export struct InterviewPage {
 
               }
               .padding(15)
-              .onClick(()=>{
+              .onClick(() => {
                 router.push({
-                  url: PAGE_MAP.interview_detail
+                  url: PAGE_MAP.interview_detail,
+                  params: item
                 })
               })
             }
@@ -194,7 +196,7 @@ export struct InterviewPage {
             const { id, likeCount, views } = item
             return JSON.stringify({ id, likeCount, views })
           })
-          ListItem(){
+          ListItem() {
             LoadingWrapper({
               finished: this.finished,
               loading: this.loading

@@ -1,0 +1,11 @@
+{
+  "app": {
+    "bundleName": "com.itcast.interviewhandbook",
+    "patchVersionCode": 2000030,
+    "versionCode": 1000000
+  },
+  "module": {
+    "name": "entry",
+    "type": "hotreload"
+  }
+}

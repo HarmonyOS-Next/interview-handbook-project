@@ -4,6 +4,7 @@ import { DIFFICULTY_MAP, EVENT_MAP } from '../constants'
 import { QuestionDetail, QuestionItem, ResponseData } from '../models'
 import { requestGet, requestPost } from '../utils/request'
 import emitter from '@ohos.events.emitter'
+import { DetailRichText } from '../components/DetailRichText'
 
 const storage = LocalStorage.GetShared()
 
@@ -18,6 +19,8 @@ struct QuestionDetailPage {
   question: QuestionDetail | undefined = undefined
   @LocalStorageLink('sharedQuestionList')
   sharedQuestionList: Array<QuestionItem> = []
+  @State
+  loading: boolean = false
 
   aboutToAppear() {
     const params = router.getParams()
@@ -27,7 +30,7 @@ struct QuestionDetailPage {
   }
 
   getData() {
-    promptAction.showToast({ message: '试题加载中...' })
+    this.loading = true
     requestGet(`question/${this.questionId}`)
       .then((res: ResponseData<QuestionDetail>) => {
         this.question = res.data
@@ -35,10 +38,7 @@ struct QuestionDetailPage {
         if (this.question.readFlag !== 1) {
           emitter.emit({ eventId: EVENT_MAP.update_question_list }, { data: { id: res.data.id, readFlag: 1 } })
         }
-        promptAction.showToast({ message: '试题加载成功' })
-      })
-      .catch(() => {
-        promptAction.showToast({ message: '试题加载失败' })
+        this.loading = false
       })
   }
 
@@ -178,21 +178,8 @@ struct QuestionDetailPage {
         Column() {
           this.titleBuilder('答案:')
           Scroll() {
-            if (this.question) {
-              RichText(`
-                <!doctype html>
-                <html>
-                  <head>
-                    <meta charset="UTF-8" />
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                  </head>
-                  <body>
-                    ${this.question.answer}
-                  </body>
-                </html>
-              `)
-                .width("100%")
-                .height("100%")
+            if (!this.loading) {
+              DetailRichText({ content: this.question.answer })
             }
           }
           .padding(15)

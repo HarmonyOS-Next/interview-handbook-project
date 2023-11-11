@@ -108,7 +108,7 @@ export struct HomePage {
       .width('100%')
       .height('100%')
       .divider({
-        strokeWidth: 1,
+        strokeWidth: 0.5,
         color: $r('app.color.ih_bg_color')
       })
     }

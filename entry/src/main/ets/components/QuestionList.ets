@@ -3,7 +3,6 @@ import { BasicDataSource } from '../models/BasicDatasource'
 import { DIFFICULTY_MAP, EVENT_MAP, PAGE_MAP } from '../constants'
 import router from '../utils/router'
 import { requestGet } from '../utils/request'
-import logger from '../utils/logger'
 import emitter from '@ohos.events.emitter'
 import { LoadingWrapper } from './LoadingWrapper'
 
@@ -92,7 +91,7 @@ export struct QuestionList {
     questionBankType: number
   } = {
     questionBankType: 10,
-    type: 0,
+    type: this.questionTypeId,
     page: 1,
     sort: 0,
     keyword: undefined,
@@ -111,7 +110,6 @@ export struct QuestionList {
     if (this.activeQuestionTypeId === this.questionTypeId && this.questionDataSource.totalCount() === 0) {
       this.sharedQuestionList = []
 
-      this.params.type = this.questionTypeId
       this.loadQuestionList()
     }
   }
@@ -138,10 +136,6 @@ export struct QuestionList {
           this.params.page++
         }
         this.loading = false
-        logger.info('HomeList:requestGet', JSON.stringify(res.data.rows))
-      })
-      .catch(err => {
-        logger.error('HomeList:requestGet', JSON.stringify(err))
       })
   }
 
@@ -215,7 +209,7 @@ export struct QuestionList {
       }
     }
     .divider({
-      strokeWidth: 1,
+      strokeWidth: 0.5,
       color: $r('app.color.ih_bg_color')
     })
     .padding({ left: 15, right: 15 })
