@@ -12,13 +12,12 @@ struct LoginPage {
   code: string = 'Hmheima%123'
   @State
   isAgree: boolean = false
-
-  @Builder
-  toastBuilder() {
-
-  }
+  @State
+  loading: boolean = false
 
   login() {
+    if(this.loading) return;
+
     if (!this.mobile) {
       return promptAction.showToast({ message: '请输入用户名' })
     }
@@ -28,6 +27,8 @@ struct LoginPage {
     if (!this.isAgree) {
       return promptAction.showToast({ message: '请勾选已阅读并同意' })
     }
+
+    this.loading = true
     requestPost('login', {
       username: this.mobile,
       password: this.code
@@ -47,6 +48,8 @@ struct LoginPage {
       } else {
         router.back()
       }
+
+      this.loading = false
     })
 
   }
@@ -107,19 +110,30 @@ struct LoginPage {
                 .fontSize(14)
             }.width('100%').margin({ bottom: 15 })
 
-            Button('立即登录', { type: ButtonType.Normal })
-              .width('100%')
-              .backgroundColor('none')
-              .borderRadius(4)
-              .height(44)
-              .linearGradient({
-                direction: GradientDirection.Right,
-                colors: [['#fc9c1c', 0], ['#fa711d', 1]]
-              })
-              .stateEffect(false)
-              .onClick(() => {
-                this.login()
-              })
+            Button({ type: ButtonType.Normal }) {
+              Row(){
+                if (this.loading) {
+                  LoadingProgress()
+                    .color('#ffffff')
+                    .width(24)
+                    .height(24)
+                    .margin({ right: 10 })
+                }
+                Text('立即登录').fontColor('#ffffff')
+              }
+            }
+            .width('100%')
+            .backgroundColor('none')
+            .borderRadius(4)
+            .height(44)
+            .linearGradient({
+              direction: GradientDirection.Right,
+              colors: [['#fc9c1c', 0], ['#fa711d', 1]]
+            })
+            .stateEffect(false)
+            .onClick(() => {
+              this.login()
+            })
           }.padding(30)
 
           Column() {

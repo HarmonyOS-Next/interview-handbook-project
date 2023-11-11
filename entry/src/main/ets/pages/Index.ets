@@ -1,5 +1,11 @@
 import mediaQuery from '@ohos.mediaquery';
 import { HomePage } from './HomePage'
+import { ProjectPage } from './ProjectPage'
+import { MinePage } from './MinePage'
+import { InterviewPage } from './InterviewPage'
+import emitter from '@ohos.events.emitter';
+import { EVENT_MAP } from '../constants';
+import logger from '../utils/logger'
 
 const storage = LocalStorage.GetShared()
 
@@ -19,6 +25,10 @@ struct Index {
     this.listenerScreen.on('change', (mediaQueryResult) => {
       this.isLandscape = mediaQueryResult.matches
     })
+  }
+
+  onPageShow() {
+    emitter.emit({ eventId: EVENT_MAP.clock })
   }
 
   @Builder
@@ -51,15 +61,15 @@ struct Index {
       }.tabBar(this.TabBarBuilder('首页', 0, $r('app.media.home'), $r('app.media.home_select')))
 
       TabContent() {
-        Text('项目').fontSize(30)
+        ProjectPage()
       }.tabBar(this.TabBarBuilder('项目', 1, $r('app.media.project'), $r('app.media.project_select')))
 
       TabContent() {
-        Text('面经').fontSize(30)
+        InterviewPage()
       }.tabBar(this.TabBarBuilder('面经', 2, $r('app.media.interview'), $r('app.media.interview_select')))
 
       TabContent() {
-        Text('我的').fontSize(30)
+        MinePage()
       }.tabBar(this.TabBarBuilder('我的', 3, $r('app.media.mine'), $r('app.media.mine_select')))
     }
     .vertical(this.isLandscape)

@@ -36,15 +36,6 @@
             ]
           }
         ]
-      },
-      {
-        "name": "DetailAbility",
-        "srcEntry": "./ets/detailability/DetailAbility.ts",
-        "description": "$string:DetailAbility_desc",
-        "icon": "$media:icon",
-        "label": "$string:DetailAbility_label",
-        "startWindowIcon": "$media:icon",
-        "startWindowBackground": "$color:start_window_background"
       }
     ]
   }

@@ -9,5 +9,13 @@ export const DIFFICULTY_MAP = {
 export const PAGE_MAP = {
   index: 'pages/Index',
   question_detail: 'pages/QuestionDetailPage',
-  login: 'pages/LoginPage'
+  login: 'pages/LoginPage',
+  clock: 'pages/ClockPage',
+  project_list: 'pages/ProjectListPage',
+  interview_detail: 'pages/InterviewDetailPage'
+}
+
+export const EVENT_MAP = {
+  clock: 10000,
+  update_question_list: 10000
 }

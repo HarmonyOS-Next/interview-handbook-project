@@ -1,10 +1,11 @@
 import { QuestionItem, ResponseData } from '../models'
 import { BasicDataSource } from '../models/BasicDatasource'
-import { DIFFICULTY_MAP, PAGE_MAP } from '../constants'
+import { DIFFICULTY_MAP, EVENT_MAP, PAGE_MAP } from '../constants'
 import router from '../utils/router'
 import { requestGet } from '../utils/request'
 import logger from '../utils/logger'
-import { emitter } from '../utils/mitt'
+import emitter from '@ohos.events.emitter'
+import { LoadingWrapper } from './LoadingWrapper'
 
 // const mockList = [
 //   {
@@ -101,8 +102,8 @@ export struct QuestionList {
   aboutToAppear() {
     this.initQuestionList()
 
-    emitter.on('updateQuestionItem', (item) => {
-      this.questionDataSource.updateData(item)
+    emitter.on({ eventId: EVENT_MAP.update_question_list }, (e) => {
+      this.questionDataSource.updateData(e.data)
     })
   }
 
@@ -144,10 +145,6 @@ export struct QuestionList {
       })
   }
 
-  @Styles pd15() {
-    .padding({ left: 15, right: 15 })
-  }
-
   @Builder
   ListFooterBuilder() {
     if (this.finished) {
@@ -181,15 +178,6 @@ export struct QuestionList {
                 .margin({ right: 7 })
               Text(item.stem)
                 .fontSize(16)
-                .onClick(() => {
-                  router.push({
-                    url: PAGE_MAP.question_detail,
-                    params: {
-                      id: item.id,
-                      stem: item.stem
-                    }
-                  })
-                })
                 .layoutWeight(1)
                 .textOverflow({ overflow: TextOverflow.Ellipsis })
                 .maxLines(1)
@@ -206,21 +194,33 @@ export struct QuestionList {
             }
             .width('100%')
             .margin({ top: 10 })
-          }
+          }.onClick(() => {
+            router.push({
+              url: PAGE_MAP.question_detail,
+              params: {
+                id: item.id,
+                stem: item.stem
+              }
+            })
+          })
         }
         .height(80)
         .width('100%')
-      }, item => JSON.stringify(item))
-      this.ListFooterBuilder()
+      }, ({id,likeCount,readFlag}) => JSON.stringify({ id, likeCount, readFlag }))
+      ListItem() {
+        LoadingWrapper({
+          loading: this.loading,
+          finished: this.finished
+        })
+      }
     }
     .divider({
       strokeWidth: 1,
       color: $r('app.color.ih_bg_color')
     })
-    .pd15()
+    .padding({ left: 15, right: 15 })
     .height('100%')
     .width('100%')
-    .edgeEffect(EdgeEffect.None)
     .onReachEnd(() => {
       this.loadQuestionList()
     })

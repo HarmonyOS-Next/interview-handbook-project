@@ -1,12 +1,14 @@
 {
-  "license": "",
+  "license": "MIT",
   "devDependencies": {
     "@ohos/hypium": "1.0.6"
   },
-  "author": "",
+  "author": "zhousg",
   "name": "interviewhandbook",
   "description": "Please describe the basic information.",
   "main": "",
   "version": "1.0.0",
-  "dependencies": {}
+  "dependencies": {
+    dayjs: 'latest'
+  }
 }

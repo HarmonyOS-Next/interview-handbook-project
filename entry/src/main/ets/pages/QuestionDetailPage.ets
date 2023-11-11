@@ -1,11 +1,9 @@
 import router from '@ohos.router'
 import promptAction from '@ohos.promptAction'
-import { DIFFICULTY_MAP } from '../constants'
+import { DIFFICULTY_MAP, EVENT_MAP } from '../constants'
 import { QuestionDetail, QuestionItem, ResponseData } from '../models'
 import { requestGet, requestPost } from '../utils/request'
-import { emitter } from '../utils/mitt'
-import logger from '../utils/logger'
-
+import emitter from '@ohos.events.emitter'
 
 const storage = LocalStorage.GetShared()
 
@@ -35,7 +33,7 @@ struct QuestionDetailPage {
         this.question = res.data
         // 已看过
         if (this.question.readFlag !== 1) {
-          emitter.emit('updateQuestionItem', { id: res.data.id, readFlag: 1 })
+          emitter.emit({ eventId: EVENT_MAP.update_question_list }, { data: { id: res.data.id, readFlag: 1 } })
         }
         promptAction.showToast({ message: '试题加载成功' })
       })
@@ -46,16 +44,15 @@ struct QuestionDetailPage {
 
   /**
    * 操作
-   * @param type = 1 | 2 | 3
+   * @param type = 1 | 2
    */
-  async opt(type: 1 | 2 | 3) {
+  async opt(type: 1 | 2, flag: 0 | 1) {
     try {
-      const id = await requestPost('question/unOpt', {
+      await requestPost(flag === 1 ? 'question/unOpt' : 'question/opt', {
         id: this.question.id,
         type: 0,
         optType: type
       })
-      logger.info('----', this.question.id)
       promptAction.showToast({ message: '操作成功' })
     } catch (err) {
       promptAction.showToast({ message: '操作失败' })
@@ -137,7 +134,7 @@ struct QuestionDetailPage {
                     {
                       value: this.question.collectFlag === 1 ? '取消收藏' : '收藏',
                       action: () => {
-                        this.opt(2).then(() => {
+                        this.opt(2, this.question.collectFlag).then(() => {
                           this.question.collectFlag = this.question.collectFlag === 1 ? 0 : 1
                         })
                       }
@@ -145,13 +142,15 @@ struct QuestionDetailPage {
                     {
                       value: this.question.likeFlag === 1 ? '取消点赞' : '点赞',
                       action: () => {
-                        this.opt(1).then(() => {
+                        this.opt(1, this.question.likeFlag).then(() => {
                           this.question.likeFlag = this.question.likeFlag === 1 ? 0 : 1
                           const likeCount =
                               this.question.likeFlag === 1
                               ? Number(this.question.likeCount) + 1
                               : Number(this.question.likeCount) - 1
-                          emitter.emit('updateQuestionItem', { id: this.question.id, likeCount, })
+                          emitter.emit({ eventId: EVENT_MAP.update_question_list }, {
+                            data: { id: this.question.id, likeCount, }
+                          })
                         })
                       }
                     },

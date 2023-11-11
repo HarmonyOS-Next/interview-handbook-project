@@ -1,6 +1,6 @@
 import hilog from '@ohos.hilog';
 
-const LOGGER_PREFIX: string = 'InterviewHandbook';
+const LOGGER_PREFIX: string = 'IH_LOGGER';
 
 class Logger {
   private domain: number;

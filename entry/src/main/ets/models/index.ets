@@ -4,17 +4,19 @@ export class ResponseData<T = unknown> {
   public data: T
 }
 
+export class TagItem {
+  public tagName: string
+  public nameColor?: string
+  public borderColor?: string
+}
+
 export class QuestionType {
   public id: number
   public name: string
   public icon?: string
   public describeInfo?: string
   public displayNewestFlag?: 0 | 1
-  public tags?: Array<{
-    tagName: string,
-    nameColor: string,
-    borderColor: string
-  }>
+  public tags?: TagItem[]
 }
 
 export enum QuestionTypeEnum {
@@ -49,4 +51,26 @@ export class UserInfo {
   public username: string
   public avatar: string
   public shareInfo: string
+}
+
+export class ClockInfo {
+  public flag: boolean
+  public clockinNumbers: number
+  public totalClockinNumber: number
+  public clockins: {
+    id: string,
+    createdAt: string
+  }[]
+}
+
+export class InterviewItem {
+  public id: string
+  public stem: string
+  public content: string
+  public likeCount: number
+  public views: number
+  public creatorName: string
+  public creatorAvatar: string
+  public createdAt: string
+  public likeFlag?: 0 | 1
 }
