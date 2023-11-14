@@ -1,6 +1,7 @@
 import { getTimeText, getPercentText } from '../utils/base'
 import { requestGet } from '../utils/request'
 import { LoadingDialog } from '../components/LoadingDialog'
+import { UserInfo } from '../models'
 
 class ListItem {
   public id: string
@@ -19,7 +20,6 @@ struct StudyTimePage {
   project: ListItem[] = []
   @State
   totalTime: number = 0
-
   dialog: CustomDialogController = new CustomDialogController({
     builder: LoadingDialog({ message: '加载中...' }),
     customStyle: true
@@ -37,6 +37,9 @@ struct StudyTimePage {
       this.knowledge = res.data.studyData[0].list
       this.project = res.data.studyData[1].list
       this.totalTime = res.data.totalTime
+      const user = JSON.parse(AppStorage.Get('user') || '{}') as UserInfo
+      user.totalTime = this.totalTime
+      AppStorage.Set('user', JSON.stringify(user))
       this.dialog.close()
     })
   }

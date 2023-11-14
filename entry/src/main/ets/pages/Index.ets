@@ -6,6 +6,7 @@ import { InterviewPage } from './InterviewPage'
 import emitter from '@ohos.events.emitter';
 import { EVENT_MAP } from '../constants';
 import logger from '../utils/logger'
+import promptAction from '@ohos.promptAction';
 
 const storage = LocalStorage.GetShared()
 
@@ -17,6 +18,8 @@ struct Index {
   @State
   isLandscape: boolean = false
   listenerScreen = mediaQuery.matchMediaSync('(orientation: landscape) and (device-type: tablet)');
+  @State
+  backTime: number = Date.now()
 
   aboutToAppear() {
     // 关联持久化文件
@@ -29,6 +32,15 @@ struct Index {
 
   onPageShow() {
     emitter.emit({ eventId: EVENT_MAP.clock })
+  }
+
+  onBackPress() {
+    if ((Date.now() - this.backTime) < 1000) {
+      return false
+    }
+
+    this.backTime = Date.now()
+    return true
   }
 
   @Builder

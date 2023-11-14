@@ -5,6 +5,7 @@ import { QuestionDetail, QuestionItem, ResponseData } from '../models'
 import { requestGet, requestPost } from '../utils/request'
 import emitter from '@ohos.events.emitter'
 import { DetailRichText } from '../components/DetailRichText'
+import logger from '../utils/logger'
 
 const storage = LocalStorage.GetShared()
 
@@ -21,6 +22,39 @@ struct QuestionDetailPage {
   sharedQuestionList: Array<QuestionItem> = []
   @State
   loading: boolean = false
+
+  @State
+  startTime: number = Date.now()
+  @State
+  timeList: {questionId: string, startTime: number, endTime: number}[] = []
+
+  aboutToDisappear() {
+    this.timeList.push({
+      questionId: this.question.id,
+      startTime: this.startTime,
+      endTime: Date.now()
+    })
+    requestPost('time/tracking', { timeList: this.timeList })
+      .then(res=>{
+        // TODO
+      })
+  }
+
+  onPageHide() {
+    this.timeList.push({
+      questionId: this.question.id,
+      startTime: this.startTime,
+      endTime: Date.now()
+    })
+    requestPost('time/tracking', { timeList: this.timeList })
+      .then(res=>{
+        this.timeList = []
+      })
+  }
+
+  onPageShow(){
+    this.startTime = Date.now()
+  }
 
   aboutToAppear() {
     const params = router.getParams()
@@ -39,6 +73,7 @@ struct QuestionDetailPage {
           emitter.emit({ eventId: EVENT_MAP.update_question_list }, { data: { id: res.data.id, readFlag: 1 } })
         }
         this.loading = false
+        this.startTime = Date.now()
       })
   }
 
@@ -92,6 +127,11 @@ struct QuestionDetailPage {
           this.questionId = prev.id
           this.stem = prev.stem
           this.getData()
+          this.timeList.push({
+            questionId: this.question.id,
+            startTime: this.startTime,
+            endTime: Date.now()
+          })
         } else {
           promptAction.showToast({ message: '没有更多题~' })
         }
@@ -103,6 +143,11 @@ struct QuestionDetailPage {
           this.questionId = next.id
           this.stem = next.stem
           this.getData()
+          this.timeList.push({
+            questionId: this.question.id,
+            startTime: this.startTime,
+            endTime: Date.now()
+          })
         } else {
           promptAction.showToast({ message: '没有更多题~' })
         }

@@ -2,7 +2,7 @@ import router from '@ohos.router'
 import { DetailRichText } from '../components/DetailRichText'
 import { InterviewItem } from '../models'
 import logger from '../utils/logger'
-import { requestGet } from '../utils/request'
+import { requestGet, requestPost } from '../utils/request'
 
 @Entry
 @Component
