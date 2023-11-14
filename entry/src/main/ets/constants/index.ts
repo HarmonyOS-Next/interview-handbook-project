@@ -12,7 +12,9 @@ export const PAGE_MAP = {
   login: 'pages/LoginPage',
   clock: 'pages/ClockPage',
   project_list: 'pages/ProjectListPage',
-  interview_detail: 'pages/InterviewDetailPage'
+  interview_detail: 'pages/InterviewDetailPage',
+  profile_edit: 'pages/ProfileEditPage',
+  study_time: 'pages/StudyTimePage'
 }
 
 export const EVENT_MAP = {

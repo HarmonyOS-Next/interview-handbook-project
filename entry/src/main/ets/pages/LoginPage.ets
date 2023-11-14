@@ -34,6 +34,7 @@ struct LoginPage {
       password: this.code
     }).then((res: ResponseData<UserInfo>) => {
       AppStorage.Set('user', JSON.stringify(res.data))
+
       promptAction.showToast({ message: '登录成功', duration: 2000 })
 
       const params = router.getParams() as Record<string, any> || {}

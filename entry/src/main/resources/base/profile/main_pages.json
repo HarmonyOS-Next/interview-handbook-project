@@ -5,6 +5,8 @@
     "pages/LoginPage",
     "pages/ClockPage",
     "pages/ProjectListPage",
-    "pages/InterviewDetailPage"
+    "pages/InterviewDetailPage",
+    "pages/ProfileEditPage",
+    "pages/StudyTimePage"
   ]
 }

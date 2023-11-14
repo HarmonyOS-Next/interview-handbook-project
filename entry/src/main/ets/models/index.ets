@@ -50,6 +50,8 @@ export class UserInfo {
   public id: string
   public username: string
   public avatar: string
+  public nickName?: string
+  public totalTime?: number
   public shareInfo: string
 }
 

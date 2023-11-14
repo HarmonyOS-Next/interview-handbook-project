@@ -34,7 +34,7 @@ struct InterviewDetailPage {
             .fontSize(20)
             .fontWeight(FontWeight.Bold)
             .margin({ bottom: 10 })
-          // .sharedTransition('title' + this.interview.id, { duration: 300, curve: Curve.Linear })
+            .sharedTransition('title' + this.interview.id, { duration: 300, curve: Curve.Linear })
           Row() {
             Text(this.interview.createdAt).fontSize(12).fontColor('#c3c4c5')
             Text('|').fontSize(12).fontColor('#c3c4c5').padding({ left: 8, right: 8 })
@@ -45,7 +45,7 @@ struct InterviewDetailPage {
 
           Row() {
             Image(this.interview.creatorAvatar).width(25).height(25).margin({ right: 5 })
-              // .sharedTransition('image' + this.interview.id, { duration: 300, curve: Curve.Linear })
+              .sharedTransition('image' + this.interview.id, { duration: 300, curve: Curve.Linear })
             Text(this.interview.creatorName).fontSize(14).fontColor('#121826')
           }.width('100%')
         }

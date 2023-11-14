@@ -1,25 +1,45 @@
+import emitter from '@ohos.events.emitter'
+import promptAction from '@ohos.promptAction'
 import { ClockIn } from '../components/ClockIn'
-import { PAGE_MAP } from '../constants'
+import { EVENT_MAP, PAGE_MAP } from '../constants'
 import { UserInfo } from '../models'
+import { getTimeText } from '../utils/base'
 import router from '../utils/router'
 
 @Preview
 @Component
 export struct MinePage {
-
   @StorageProp('user')
   @Watch('setUser')
   userJson: string = '{}'
-
   @State
   user: UserInfo = undefined
 
-  setUser(){
+  setUser() {
     this.user = JSON.parse(this.userJson)
   }
 
   aboutToAppear() {
     this.setUser()
+  }
+
+  logout() {
+    promptAction.showDialog({
+      title: '温馨提示',
+      message: '您确认要退出面试宝典APP吗？',
+      buttons: [
+        { text: '取消', color: '#c3c4c5' },
+        { text: '确认', color: '#333333', }
+      ]
+    }, (err, {index}) => {
+      if (index === 1) {
+        AppStorage.Set('user', '{}')
+        emitter.emit({ eventId: EVENT_MAP.clock })
+        router.push({
+          url: PAGE_MAP.login
+        })
+      }
+    })
   }
 
   @Styles
@@ -38,9 +58,13 @@ export struct MinePage {
           .width(55)
           .height(55)
           .borderRadius(30)
+          .border({ width: 0.5, color: '#e4e4e4' })
+          .onError(() => {
+            this.user.avatar =  $rawfile('avatar.png') as unknown as string
+          })
         Column() {
           if (this.user.token) {
-            Text(this.user.username)
+            Text(this.user.nickName || this.user.username)
               .fontSize(18)
               .fontWeight(600)
               .width('100%')
@@ -54,14 +78,18 @@ export struct MinePage {
                 .width(10)
                 .height(10)
                 .fillColor($r('app.color.ih_gray_color'))
-            }
+            }.onClick(() => {
+              router.push({
+                url: PAGE_MAP.profile_edit
+              })
+            })
             .width('100%')
           } else {
             Text('登录/注册')
               .fontSize(18)
               .fontWeight(600)
               .width('100%')
-              .onClick(()=>{
+              .onClick(() => {
                 router.push({
                   url: PAGE_MAP.login
                 })
@@ -127,8 +155,8 @@ export struct MinePage {
               .fontColor($r('app.color.ih_gray_color'))
               .fontSize(14)
               .margin({ bottom: 2 })
-            Row(){
-              Text('4小时')
+            Row() {
+              Text(getTimeText(this.user.totalTime))
                 .fontColor('#C3C3C5')
                 .fontSize(12)
               Image($r('app.media.icon_my_arrow'))
@@ -137,7 +165,11 @@ export struct MinePage {
                 .height(12)
             }
           }
-        }
+        }.onClick(()=>{
+          router.push({
+            url: PAGE_MAP.study_time
+          })
+        })
       }
       .boxStyle()
 
@@ -201,6 +233,25 @@ export struct MinePage {
           .padding({ left: 15, right: 15 })
         }
         .height(46)
+
+        if (this.user.token) {
+          ListItem() {
+            Row() {
+              Text('退出登录')
+              Image($r('app.media.icon_my_arrow'))
+                .fillColor('#C3C3C5')
+                .width(18)
+                .height(18)
+            }
+            .width('100%')
+            .justifyContent(FlexAlign.SpaceBetween)
+            .padding({ left: 15, right: 15 })
+            .onClick(() => {
+              this.logout()
+            })
+          }
+          .height(46)
+        }
       }
       .boxStyle()
     }

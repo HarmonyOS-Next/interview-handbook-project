@@ -25,6 +25,8 @@ export struct ClockIn {
       requestGet<ClockInfo>('clockinInfo').then((res) => {
         this.clockInCount = res.data.clockinNumbers
       })
+    } else {
+      this.clockInCount = 0
     }
   }
 
