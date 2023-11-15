@@ -17,12 +17,11 @@ jobs:
       - uses: pnpm/action-setup@v2
         with:
           version: 8
-      - run: cd docs
-      - run: pnpm i
-      - run: pnpm build
+      - run: pnpm i --prefix ./docs
+      - run: pnpm build --prefix ./docs
       - uses: actions/upload-artifact@v3
         with:
-          path: ./docs_build
+          path: ./docs/docs_build
   deploy:
     needs: build
     runs-on: ubuntu-latest
