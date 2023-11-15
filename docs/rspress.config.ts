@@ -3,16 +3,17 @@ import { defineConfig } from 'rspress/config';
 
 export default defineConfig({
   root: path.join(__dirname, 'docs'),
-  title: 'HarmonyOS Interview Handbook',
-  description: 'HarmonyOS Interview Handbook',
-  icon: "/rspress-icon.png",
-  logo: {
-    light: "/rspress-light-logo.png",
-    dark: "/rspress-dark-logo.png",
-  },
+  title: 'HarmonyOS',
+  icon: '/favicon.ico',
+  logo: '/harmonyOS_logo.png',
+  description: 'HarmonyOS Basic & Interview Handbook',
   themeConfig: {
     socialLinks: [
-      { icon: 'github', mode: 'link', content: 'https://github.com/web-infra-dev/rspress' },
+      { icon: 'github', mode: 'link', content: 'https://github.com/HarmonyOS-Next/interview-handbook-project' },
     ],
+    enableContentAnimation: true,
+    footer: {
+      message: 'Copyright © 2023-present Shugang Zhou · ITCAST',
+    }
   },
 });

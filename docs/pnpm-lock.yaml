@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  react:
+    specifier: ^18.2.0
+    version: 18.2.0
   rspress:
     specifier: ^1.0.0
     version: 1.6.2(webpack@5.89.0)

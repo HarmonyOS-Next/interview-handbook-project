@@ -1,16 +1,16 @@
 [
   {
-    "text": "Guide",
+    "text": "指南",
     "link": "/guide/",
     "activeMatch": "/guide/"
   },
   {
-    "text": "Hello World",
-    "link": "/hello/",
-    "activeMatch": "/hello/"
+    "text": "项目",
+    "link": "/project/",
+    "activeMatch": "/project/"
   },
   {
-    "text": "API",
-    "link": "https://rspress.dev/api/index.html"
+    "text": "HarmonyOS文档",
+    "link": "https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/development-intro-0000001478061813-V3"
   }
 ]
