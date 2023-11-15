@@ -1,0 +1,38 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          node-version: 'v18.13.0'
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 'v18.13.0'
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - run: cd docs
+      - run: pnpm i
+      - run: pnpm build
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./docs_build
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref=='refs/heads/main'
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          node-version: 'v18.13.0'
+          path: ./docs/docs_build
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/docs_build/artifact
