@@ -18,7 +18,7 @@ jobs:
         with:
           version: 8
       - run: pnpm i --prefix ./docs
-      - run: pnpm build --prefix ./docs
+      - run: pnpm run build --prefix ./docs
       - uses: actions/upload-artifact@v3
         with:
           path: ./docs/docs_build
