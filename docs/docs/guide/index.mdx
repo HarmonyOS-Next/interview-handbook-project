@@ -14,14 +14,14 @@ title: HM - 鸿蒙-组件基础
 
 历程：
 
-|  时间  |  事件  |
-| -------- | -------------------------------------------------- |
+| 时间     | 事件                                                                                    |
+| -------- | --------------------------------------------------------------------------------------- |
 | 2019     | HarmonyOS 1.0，华为在东莞举行华为开发者大会，正式发布操作系统鸿蒙 OS，主要用于物联网    |
-| 2020     | HarmonyOS 2.0，基于开源项目 OpenHarmony 开发的面向多种全场景智能设备的商用版本       |
-| 2021     | HarmonyOS 3.0，先后优化游戏流畅度、地图三维体验、系统安全，另外系统的稳定性也得到了增强  |
-| 2023.2   | HarmonyOS 3.1，系统纯净能力进一步提升，对后台弹窗、 隐藏应用、后台跳转等情况           |
-| 2023.7   | 华为 Mate 50 系列手机获推 HarmonyOS 4.0                                        |
-| **2024** | **HarmonyOS Next 即将发布，将不在兼容安卓应用**                                  |
+| 2020     | HarmonyOS 2.0，基于开源项目 OpenHarmony 开发的面向多种全场景智能设备的商用版本          |
+| 2021     | HarmonyOS 3.0，先后优化游戏流畅度、地图三维体验、系统安全，另外系统的稳定性也得到了增强 |
+| 2023.2   | HarmonyOS 3.1，系统纯净能力进一步提升，对后台弹窗、 隐藏应用、后台跳转等情况            |
+| 2023.7   | 华为 Mate 50 系列手机获推 HarmonyOS 4.0                                                 |
+| **2024** | **HarmonyOS Next 即将发布，将不在兼容安卓应用**                                         |
 
 和我们有什么关系？
 
@@ -31,41 +31,41 @@ title: HM - 鸿蒙-组件基础
 
 ### 2. 起步-DevEco Studio
 
-<img src="./images/01.png" width="600"  />
+    <img src="./images/01.png" width="600" />
 
 安装 DevEco Studio 编辑器
 
 1. 下载：https://developer.harmonyos.com/cn/develop/deveco-studio#download
-    - Windows(64-bit)
-    - Mac(X86)
-    - Mac(ARM)
-2. 安装：DevEco Studio → 一路 Next 
+   - Windows(64-bit)
+   - Mac(X86)
+   - Mac(ARM)
+2. 安装：DevEco Studio → 一路 Next
 3. 运行：
-    - 基础安装：Node.js >= 16.9.1 + Install ohpm 鸿蒙包管理器
-    <img src="./images/02.png" width="600"  />
-    - SDK安装
-    <img src="./images/03.png" width="600"  />
-    - 安装完毕
-    <img src="./images/04.png" width="600"  />
-
-
+   - 基础安装：Node.js >= 16.9.1 + Install ohpm 鸿蒙包管理器
+     <img src="./images/02.png" width="600" />
+   - SDK 安装
+     <img src="./images/03.png" width="600" />
+   - 安装完毕
+     <img src="./images/04.png" width="600" />
 
 ### 3. 起步-HelloWorld
 
 创建一个空项目:
 
 1. Create Project
-    <img src="./images/05.png" width="600"  />
+
+   <img src="./images/05.png" width="600" />
 
 2. 选择项目模板
-    <img src="./images/06.png" width="600"  /> 
+
+   <img src="./images/06.png" width="600" />
 
 3. 填写项目信息
-    <img src="./images/07.png" width="600"  /> 
+
+   <img src="./images/07.png" width="600" />
 
 4. Finish
-    <img src="./images/08.png" width="600"  /> 
-
+   <img src="./images/08.png" width="600" />
 
 ### 4. 起步-调试预览
 
@@ -84,34 +84,40 @@ title: HM - 鸿蒙-组件基础
 
 :::
 
-
 1）Previewer 预览
 
 > 场景：静态页面（没有组件间数据通信、不涉及到网络请求）  
 > 条件：有 @Entry 与 @Preview 装饰器页面
 
 - 预览和审查元素
-    <img src="./images/09.png" width="600"  /> 
+
+  <img src="./images/09.png" width="600" />
 
 - 多设备预览
-    <img src="./images/10.png" width="600"  /> 
 
+  <img src="./images/10.png" width="600" />
 
 2）Local Emulator 本地模拟器
 
-> 场景：动态页面（几乎全场景，一些无法模拟的硬件功能）  
+> 场景：动态页面（几乎全场景，一些无法模拟的硬件功能）
 
 - 新建模拟器
-    <img src="./images/11.png" width="600"  />
-    一路 Next ... 
-- 启动模拟器
-    <img src="./images/12.png" width="600"  />
-- 运行项目看效果
-    <img src="./images/13.png" width="600"  />
-- 更改后每次需要（打包→卸载→安装→预览），有没有热更新或者刷新这种预览方式？
-    <img src="./images/14.png" width="600"  />
-    调试静态页面可以，一旦有了数据变化也需要重启，体验一般~ （学习需要耐心，期待 Next 做的更好~）
 
+  <img src="./images/11.png" width="600" />
+  一路 Next ...
+
+- 启动模拟器
+
+  <img src="./images/12.png" width="600" />
+
+- 运行项目看效果
+
+  <img src="./images/13.png" width="600" />
+
+- 更改后每次需要（打包 → 卸载 → 安装 → 预览），有没有热更新或者刷新这种预览方式？
+
+  <img src="./images/14.png" width="600" />
+  调试静态页面可以，一旦有了数据变化也需要重启，体验一般~ （学习需要耐心，期待 Next 做的更好~）
 
 ::: tip 其他方式
 
@@ -125,7 +131,7 @@ title: HM - 鸿蒙-组件基础
 
 ## 组件基础
 
-<img src="./images/15.png" width="600"  />
+    <img src="./images/15.png" width="600" />
 
 ### 1. 基础-声明式 UI
 
