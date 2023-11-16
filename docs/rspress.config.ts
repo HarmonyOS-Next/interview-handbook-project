@@ -3,6 +3,7 @@ import { defineConfig } from 'rspress/config';
 
 export default defineConfig({
   root: path.join(__dirname, 'docs'),
+  base: '/interview-handbook-project/',
   title: 'HarmonyOS',
   icon: '/favicon.ico',
   logo: '/harmonyOS_logo.png',
