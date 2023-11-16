@@ -87,7 +87,7 @@ title: HM - 鸿蒙-组件基础
 1）Previewer 预览
 
 > 场景：静态页面（没有组件间数据通信、不涉及到网络请求）  
-> 条件：有 @Entry 与 @Preview 装饰器页面
+> 条件：有 @Entry 或 @Preview 装饰器页面
 
 - 预览和审查元素
 
@@ -129,17 +129,269 @@ title: HM - 鸿蒙-组件基础
 
 :::
 
+### 5. 起步-工程结构
+
+> 我们在哪里写代码？
+
+    State 模型
+
+    <img src="./images/16.png" width="100%" />
+
+了解App结构关系，等后面我们项目阶段来讲一些工程配置文件作用，现在你要知道：
+- entry 是一个 Module 应用包
+- entryability 是一个 UIAbility 包含用户界面的应用组件
+- pages 是页面
+- components 可以是组件
+
+    <img src="./images/17.png" width="600" />
+
+
 ## 组件基础
 
-    <img src="./images/15.png" width="600" />
+### 1. 组件-什么是ArkTS
 
-### 1. 基础-声明式 UI
+ArkTS是HarmonyOS优选的主力应用开发语言。ArkTS围绕应用开发在TypeScript（简称TS）生态基础上做了进一步扩展，继承了TS的所有特性，是TS的超集。
+
+    <img src="./images/18.png" width="400" />
+
+扩展能力如下：
+
+1. 基本语法
+    - 定义声明式UI、自定义组件、动态扩展UI元素；
+    - 提供ArkUI系统组件，提供组件事件、方法、属性；
+    - 共同构成 UI 开发主体
+2. 状态管理
+    - 组件状态、组件数据共享、应用数据共享、设备共享；
+3. 渲染控制
+    - 条件渲染、循环渲染、数据懒加载；
+
+::: tip 声明式UI？
+
+问题？通过一段 `HTML` 标签展示出对应的页面方便，还是使用 `document.createElement('tag')`创建标签构建页面方便？
+- 显然是 HTML , 其实 HTML 本身就是声明式的，通过描述的方式去声明 UI 界面。
+- 一些前端框架也是声明式UI，如 `Vue` 使用的 `tempalte` 模板，如 `React` 使用的 `JSX`。
+- 在例如现在的 `Jetpack Compose` `SwiftUI` `Flutter` 等APP开发技术也是声明式。
+
+:::
 
 ### 2. 基础-组件结构
 
-### 3. 基础-常用组件
+    <img src="./images/15.png" width="600" />
+
+ArkTS通过装饰器 `@Component` 和 `@Entry` 装饰 `struct` 关键字声明的数据结构，构成一个自定义组件。
+自定义组件中提供了一个 `build` 函数，开发者需在该函数内以链式调用的方式进行基本的 UI 描述，UI 描述的方法请参考 UI 描述规范。
+
+
+1）页面组件
+
+```typescript
+@Entry
+@Component
+struct Index {
+  // 工程默认显示 `Index` 页面组件
+  // build 是声明UI的位置
+  build() {
+    Text('页面组件')
+  }
+}
+```
+
+
+2）自定义组件
+
+```typescript
+
+// 定义 `Footer` 组件
+@Component
+struct Footer {
+  build() {
+    Text('自定义组件')
+  }
+}
+
+@Entry
+@Component
+struct Index {
+  build() {
+    // 使用 `Footer` 组件
+    Footer()
+  }
+}
+```
+
+为了更好维护，自定义组件通常会新建一个文件 `Footer.ets`，通过模块化语法导出导入(默认|按需)使用。
+
+- File: `components/Footer.ets`
+
+```typescript
+@Component
+export default struct Footer {
+  build() {
+    Text('自定义组件')
+  }
+}
+```
+
+- File: `Index.ets`
+
+```typescript
+import Footer from './components/Footer.ets'
+
+@Entry
+@Component
+struct Index {
+  build() {
+    // 使用 `Footer` 组件
+    Footer()
+  }
+}
+```
+
+::: tip
+
+- `@Entry @Component` 是页面组件，将来需要页面跳转就需要再定义一个页面。
+- `@Component` 自定义组件，一个页面组件下可以有多个自定义组件。
+- `build(){}` 只能有一个根元素
+
+:::
+
+
+### 3. 基础-系统组件(ArkUI)
+
+常用系统组件 `Text` `Column` `Row` `Button` `TextInput`  [更多组件](https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/ts-components-summary-0000001478181369-V3)
+
+
+- Text 文本组件
+- Column 列组件，纵向排列，Flex布局主轴是Y
+- Row 行组件，横向向排列，Flex布局主轴是X
+- Button 按钮组件
+- InputText 输入框组件
+
+实现一个简易登录界面：
+
+<img src="./images/19.png" width="240"  />
+
+```typescript
+@Entry
+@Component
+struct Index {
+
+  build() {
+    Column(){
+      Row(){
+        Text('手机号')
+        TextInput()
+      }
+      Row(){
+        Text('验证码')
+        TextInput()
+      }
+      Row(){
+        Button('重置').backgroundColor('#ccc')
+        Button('登录')
+      }
+    }
+  }
+}
+```
+
+::: tip
+
+- ArkUI 组件都是 Flex 模式，由行和列组成。
+
+:::
+
 
 ### 4. 基础-组件状态
+
+> 如何使用 `@State` 定义一个状态变量？
+
+1）组件变量，不具备驱动UI更新能力。
+
+```typescript
+@Entry
+@Component
+struct Index {
+  count = 100
+
+  build() {
+    Text(this.count.toString())
+      .onClick(() => this.count++)
+  }
+}
+```
+
+2）状态变量，指驱动UI更新的数据，加上 `@State` 装饰器即可，注意：加上**类型**和**初始值**。
+```typescript
+@Entry
+@Component
+struct Index {
+
+  @State
+  count: number = 100
+
+  build() {
+    Text(this.count.toString())
+      .onClick(() => this.count++)
+  }
+}
+```
+
+
+::: tip
+
+- 状态变量不可设置的类型有：`any` `undefined` `null` `与复杂类型的联合类型`
+- 绑定事件在系统组件后链式使用 `onXxxxx` 进行绑定即可
+- 使用 `@ohos.promptAction` 可以使用亲提示 `promptAction.showToast({ message: 'Tip' })`
+
+:::
+
+
+📕📕📕 练习案例→实现登录表单数据收集、重置、模拟提交。
+
+<img src="./images/19.png" width="240"  />
+
+```typescript
+import promptAction from '@ohos.promptAction'
+@Entry
+@Component
+struct Index {
+
+  @State
+  mobile: string = ''
+  @State
+  code: string = ''
+
+  build() {
+    Column(){
+      Row(){
+        Text('手机号')
+        TextInput({ text: this.mobile }).onChange((value)=>this.mobile = value)
+      }
+      Row(){
+        Text('验证码')
+        TextInput({ text: this.code }).onChange((value)=>this.code = value)
+      }
+      Row(){
+        Button('重置')
+          .backgroundColor('#ccc')
+          .onClick(()=>{
+            this.mobile = ''
+            this.code = ''
+          })
+        Button('登录')
+          .onClick(()=>{
+            if (this.mobile && this.code) {
+              promptAction.showToast({ message: `${this.mobile} 登录成功` })
+            } else {
+              promptAction.showToast({ message: `请输入手机号或验证码` })
+            }
+          })
+      }
+    }
+  }
+}
+```
 
 ## 样式处理
 

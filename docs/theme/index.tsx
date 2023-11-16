@@ -1,4 +1,5 @@
 import Theme from "rspress/theme";
+import './index.css';
 
 const Layout = () => (
   <Theme.Layout

@@ -9,6 +9,6 @@
   "main": "",
   "version": "1.0.0",
   "dependencies": {
-    dayjs: 'latest'
+    "dayjs": "latest"
   }
 }

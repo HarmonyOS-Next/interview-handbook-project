@@ -1,0 +1,3 @@
+.rspress-doc :not(pre, div, a) > code {
+  color: #f60;
+}
