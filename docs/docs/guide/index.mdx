@@ -67,9 +67,9 @@ title: HM - 鸿蒙-组件基础
 4. Finish
    <img src="./images/08.png" width="600" />
 
-### 4. 起步-调试预览
+### 4. 起步-效果预览
 
-调试预览方法：
+效果预览方法：
 
 - Previewer 预览模式
 - Local Emulator 本地模拟器
@@ -125,7 +125,9 @@ title: HM - 鸿蒙-组件基础
 - Remote Device 远程真机
 - Local Device 本地真机
 
-条件：需要注册华为账号, 点这 https://developer.harmonyos.com/ 然后点击登录页面，去注册吧~
+条件：
+- 需要注册华为账号, 点这 https://developer.harmonyos.com/ 然后点击登录页面，去注册吧~
+- 登录之后，需要自动生成签名信息，这个我们后面讲真机调试再给大家演示。
 
 :::
 
@@ -165,7 +167,7 @@ ArkTS是HarmonyOS优选的主力应用开发语言。ArkTS围绕应用开发在T
 3. 渲染控制
     - 条件渲染、循环渲染、数据懒加载；
 
-::: tip 声明式UI？
+::: details 声明式UI？
 
 问题？通过一段 `HTML` 标签展示出对应的页面方便，还是使用 `document.createElement('tag')`创建标签构建页面方便？
 - 显然是 HTML , 其实 HTML 本身就是声明式的，通过描述的方式去声明 UI 界面。
@@ -221,9 +223,8 @@ struct Index {
 
 为了更好维护，自定义组件通常会新建一个文件 `Footer.ets`，通过模块化语法导出导入(默认|按需)使用。
 
-- File: `components/Footer.ets`
 
-```typescript
+```typescript title="components/Footer.ets"
 @Component
 export default struct Footer {
   build() {
@@ -232,9 +233,7 @@ export default struct Footer {
 }
 ```
 
-- File: `Index.ets`
-
-```typescript
+```typescript title="Index.ets"
 import Footer from './components/Footer.ets'
 
 @Entry
@@ -269,7 +268,7 @@ struct Index {
 
 实现一个简易登录界面：
 
-<img src="./images/19.png" width="240"  />
+    <img src="./images/19.png" width="240" />
 
 ```typescript
 @Entry
@@ -297,7 +296,7 @@ struct Index {
 
 ::: tip
 
-- ArkUI 组件都是 Flex 模式，由行和列组成。
+- ArkUI 组件一般都是 Flex 模式，大部分布局可以由行和列组成。
 
 :::
 
@@ -340,16 +339,20 @@ struct Index {
 
 ::: tip
 
+- 加上类型和初始值
 - 状态变量不可设置的类型有：`any` `undefined` `null` `与复杂类型的联合类型`
+
+其他：
+
 - 绑定事件在系统组件后链式使用 `onXxxxx` 进行绑定即可
-- 使用 `@ohos.promptAction` 可以使用亲提示 `promptAction.showToast({ message: 'Tip' })`
+- 使用 `@ohos.promptAction` 可以进行轻提示 `promptAction.showToast({ message: 'Tip' })`
 
 :::
 
 
 📕📕📕 练习案例→实现登录表单数据收集、重置、模拟提交。
 
-<img src="./images/19.png" width="240"  />
+    <img src="./images/19.png" width="240" />
 
 ```typescript
 import promptAction from '@ohos.promptAction'
@@ -366,11 +369,13 @@ struct Index {
     Column(){
       Row(){
         Text('手机号')
-        TextInput({ text: this.mobile }).onChange((value)=>this.mobile = value)
+        TextInput({ text: this.mobile })
+          .onChange((value)=>this.mobile = value)
       }
       Row(){
         Text('验证码')
-        TextInput({ text: this.code }).onChange((value)=>this.code = value)
+        TextInput({ text: this.code })
+          .onChange((value)=>this.code = value)
       }
       Row(){
         Button('重置')
@@ -395,13 +400,527 @@ struct Index {
 
 ## 样式处理
 
-### 1. 样式-布局容器
+### 1. 样式-语法(链式&枚举)
 
-### 2. 样式-语法(链式&枚举)
+> ArkTS以声明方式组合和扩展组件来描述应用程序的UI；  
+> 同时还提供了基本的属性、事件和子组件配置方法，帮助开发者实现应用交互逻辑。
 
-### 3. 样式-@Styles 复用
+1）样式属性
 
-### 4. 样式-@Extends 复用
+- 属性方法以 `.` 链式调用的方式配置系统组件的样式和其他属性，建议每个属性方法单独写一行。
+
+```typescript
+@Entry
+@Component
+struct Index {
+  build() {
+    Text('演示')
+      .backgroundColor('red')
+      .fontSize(50)
+      .width('100%')
+      .height(100)
+  }
+}
+```
+
+2）枚举值
+
+- 对于系统组件，ArkUI还为其属性预定义了一些枚举类型。[文档链接](https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/ts-appendix-enums-0000001478061741-V3)
+
+```typescript {9-11}
+@Entry
+@Component
+struct Index {
+  build() {
+    Text('演示')
+      .fontSize(50)
+      .width('100%')
+      .height(100)
+      .backgroundColor(Color.Blue)
+      .textAlign(TextAlign.Center)
+      .fontColor(Color.White)
+  }
+}
+```
+
+::: tip
+
+- 样式相关属性通过链式函数的方式进行设置
+- 如果类型是枚举的，通过枚举传入对应的值
+
+:::
+
+
+
+### 2. 样式-单位vp和适配
+
+> 知道 `vp` 单位，以及适配思想
+
+1） `vp` 是什么？virtual pixel
+
+- 屏幕密度相关像素，根据屏幕像素密度转换为屏幕物理像素，当数值不带单位时，默认单位 `vp`；在实际宽度为1440物理像素的屏幕上，`1vp` 约等于 `3px`（物理像素）
+
+    <img src="./images/22.png" width="600" />
+
+- 上图的意思是，使用这个单位在不同屏幕物理分辨率的实际尺寸一致(A设备1英寸，B设备1英寸)。
+
+
+2）之前 `vw` 、`rem` 和 `rpx` 相对于屏幕宽度的单位，可以实现等比例适配，`vp` 可以吗？
+
+```typescript
+import promptAction from '@ohos.promptAction'
+
+@Entry
+@Component
+struct Index {
+  build() {
+    Text('演示')
+      .width('100%')
+      .backgroundColor('red')
+      .onAreaChange((oldArea, newArea) => {
+        promptAction.showToast({
+          // 1. onAreaChange改变尺寸后会触发
+          // 2. newArea为现在元素尺寸
+          message: newArea.width.toString()
+        })
+      })
+  }
+}
+```
+    我们发现：不同的设备屏幕的宽度 `vp` 是不一致的，那怎么适配呢？
+
+3）根据官方的文档，结合自己的理解，采用：伸缩布局，网格系统，栅格系统进行布局适配。
+
+伸缩 `layoutWeight(flex: number)` 占剩余空间多少份，可以理解成CSS的 `flex: 1`
+
+```typescript
+@Entry
+@Component
+struct Index {
+  build() {
+    Row(){
+      Text('left')
+        .layoutWeight(1)
+        .backgroundColor('red')
+      Text('right')
+        .layoutWeight(2)
+        .backgroundColor('green')
+    }
+    .width('100%')
+  }
+}
+```
+
+等比例，设置元素宽高比 `aspectRatio(ratio: number)`
+
+```typescript
+@Entry
+@Component
+struct Index {
+  build() {
+    Text('left')
+      .width('50%')
+        // 宽高比例
+      .aspectRatio(1)
+      .backgroundColor('red')
+  }
+}
+```
+
+::: tip
+
+- vp 是鸿蒙默认单位，和屏幕像素有关，最终表现视觉大小在任何设备一致
+- 鸿蒙一般以伸缩`layoutWeight`、网格、栅格进行布局适配，如要等比例缩放可以设置高宽比 `aspectRatio`
+
+:::
+
+📕📕📕 练习案例→实现知乎评论回复-评论区域
+
+    <img src="./images/21.png" width="240" />
+
+设计稿一般是1080px：(这里没有设计稿，提供了一些尺寸)
+
+- Nav
+    - 左侧返回按钮24vp高宽背景颜色`#f5f5f5`，图标12vp尺寸颜色`#848484`
+    - 标题18vp
+- commen
+    - 头像尺寸32vp高宽，右侧间距10vp
+    - 标题15vp，颜色默认
+    - 内容16vp，颜色`#565656`
+    - 底部12vp，颜色`#c3c4c5`
+
+```typescript
+@Entry
+@Component
+struct Index {
+  build() {
+    Column() {
+      // nav
+      Row() {
+        Row() {
+          Image($r('app.media.left'))
+            .width(12)
+            .aspectRatio(1)
+            .fillColor('#848484')
+        }
+        .width(24)
+        .height(24)
+        .borderRadius(12)
+        .backgroundColor('#f5f5f5')
+        .justifyContent(FlexAlign.Center)
+        .margin({ left: 13 })
+
+        Text('评论回复')
+          .padding({ right: 50 })
+          .textAlign(TextAlign.Center)
+          .fontSize(18)
+          .layoutWeight(1)
+      }
+      .height(50)
+      // comment
+      Row() {
+        Image($r('app.media.avatar'))
+          .width(32)
+          .aspectRatio(1)
+          .borderRadius(16)
+        Column() {
+          Text('周杰伦')
+            .fontSize(15)
+            .fontWeight(FontWeight.Bold)
+            .margin({ bottom: 5 })
+          Text('大理石能雕刻出肌肉和皮肤的质感，那个年代的工匠好牛啊')
+            .margin({ bottom: 5 })
+            .fontColor('#565656')
+            .lineHeight(20)
+          Row() {
+            Text('10-21•IP 属地辽宁')
+              .layoutWeight(1)
+              .fontSize(14)
+              .fontColor('#c3c4c5')
+            Row() {
+              Image($r('app.media.heart'))
+                .width(14)
+                .aspectRatio(1)
+                .fillColor('#c3c4c5')
+                .margin({ right: 4 })
+              Text('100')
+                .fontSize(14)
+                .fontColor('#c3c4c5')
+            }
+          }
+        }
+        .layoutWeight(1)
+        .padding({ left: 10 })
+        .alignItems(HorizontalAlign.Start)
+      }
+      .width('100%')
+      .padding({ left: 15, right: 15, bottom: 15 })
+      .alignItems(VerticalAlign.Top)
+    }
+  }
+}
+```
+
+### 2. 样式-@Styles 复用
+
+> 在开发过程中会出现大量代码在进行重复样式设置，`@Styles` 可以帮我们进行样式复用
+
+- 当前@Styles仅支持 [通用属性](https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/ts-universal-attributes-size-0000001428061700-V3) 和 [通用事件](https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/ts-universal-events-click-0000001477981153-V3)。
+- 支持 **全局** 定义和 **组件内** 定义，同时存在组件内覆盖全局生效。
+
+```typescript {2,3,9,10,14}
+// 全局
+@Styles 
+function functionName() { ... }
+
+@Entry
+@Component
+sturt Index{
+  // 组件内
+  @Styles 
+  functionName() { ... }
+
+  build() {
+    Text('Text')
+      .functionName()
+  }
+}
+```
+
+    需求：文字和按钮相同背景，点击+1
+    <img src="./images/24.png" width="240" />
+
+1）全局
+
+```typescript
+@Styles function sameStyle() {
+  .backgroundColor(Color.Green)
+  .onClick(() => {
+    this.count++
+  })
+}
+
+@Entry
+@Component
+struct Index {
+  @State
+  count: number = 10
+
+  build() {
+    Column() {
+      Text(this.count.toString())
+        .width(100)
+        .height(50)
+        .margin({ bottom: 10 })
+        .textAlign(TextAlign.Center)
+        .sameStyle()
+
+      Button('+1')
+        .sameStyle()
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+2）组件内
+
+```typescript
+@Entry
+@Component
+struct Index {
+  @State
+  count: number = 10
+
+  // 不需要 `function` 关键字，覆盖全局
+  @Styles
+  sameStyle (){
+    .backgroundColor(Color.Pink)
+    .onClick(() => {
+      this.count += 10
+    })
+  }
+
+  build() {
+    Column() {
+      Text(this.count.toString())
+        .width(100)
+        .height(50)
+        .margin({ bottom: 10 })
+        .textAlign(TextAlign.Center)
+        .sameStyle()
+
+      Button('+1')
+        .sameStyle()
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+
+📕📕📕 练习案例-登录表单-样式优化
+
+    <img src="./images/23.png" width="240" />
+
+```typescript {12-18,34,51}
+import promptAction from '@ohos.promptAction'
+@Entry
+@Component
+struct Index {
+
+  @State
+  mobile: string = ''
+  @State
+  code: string = ''
+
+
+  @Styles
+  inputStyle () {
+    .border({ width: 1, color: Color.Gray })
+    .layoutWeight(1)
+    .margin({ left: 10, bottom: 10, top: 10 })
+    .backgroundColor(Color.White)
+  }
+
+  build() {
+    Column(){
+      Row(){
+        Text('手机号')
+        TextInput({ text: this.mobile })
+          .inputStyle()
+          .onChange((value)=>this.mobile = value)
+      }
+      Row(){
+        Text('验证码')
+        TextInput({ text: this.code })
+          .inputStyle()
+          .onChange((value)=>this.code = value)
+      }
+      Row({ space: 15 }){
+        Button('重置')
+          .backgroundColor('#ccc')
+          .onClick(()=>{
+            this.mobile = ''
+            this.code = ''
+          })
+        Button('登录')
+          .onClick(()=>{
+            if (this.mobile && this.code) {
+              promptAction.showToast({ message: `${this.mobile} 登录成功` })
+            } else {
+              promptAction.showToast({ message: `请输入手机号或验证码` })
+            }
+          })
+      }
+    }
+    .padding({ left: 15, right: 15 })
+  }
+}
+```
+
+### 3. 样式-@Extends 复用
+
+> `@Extend` 用于扩展原生组件样式，通过传参提供更灵活的样式复用
+
+- 使用 `@Extend` 装饰器修饰的函数只能是 **全局**
+- 函数可以进行 **传参**，如果参数是状态变量，状态更新后会刷新UI
+- 且参数可以是一个函数，实现复用事件且可处理不同逻辑
+
+```typescript
+// 全局  原生组件                     参数
+//  ↓     ↓                          ↓ 
+@Extend(Text) function functionName(w: number) { 
+  .width(w)
+}
+```
+
+    需求：把 `Text` 改成按钮样式，且绑定 `click` 事件执行不同逻辑
+    <img src="./images/25.png" width="240" />
+
+
+```typescript {3-10,21-23,25-27}
+import promptAction from '@ohos.promptAction'
+
+@Extend(Text) function myClick(color: string, cb: () => void) {
+  .backgroundColor(color)
+  .width(100)
+  .height(50)
+  .textAlign(TextAlign.Center)
+  .borderRadius(25)
+  .onClick(() => cb())
+}
+
+@Entry
+@Component
+struct Other {
+  @State
+  color: string = '#ccc'
+
+  build() {
+    Column({ space: 20 }) {
+      Text('Text1')
+        .myClick(this.color, () => {
+          this.color = '#069'
+        })
+      Text('Text2')
+        .myClick('green', () => {
+          promptAction.showToast({ message: '做其他事~' })
+        })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+
+### 4. 样式-多态
+
+> stateStyles可以依据组件的内部状态的不同，快速设置不同样式。
+
+`stateStyles` 是属性方法，可以根据UI内部状态来设置样式，类似于 css 伪类，但语法不同。ArkUI 提供以下四种状态：
+- focused：获焦态。
+- normal：正常态。
+- pressed：按压态。
+- disabled：不可用态。
+
+
+```typescript
+import promptAction from '@ohos.promptAction'
+
+// 胶囊按钮
+@Extend(Text)
+function capsule(){
+  .height(40)
+  .borderRadius(20)
+  .backgroundColor(Color.Gray)
+  .padding({ left: 15, right: 15 })
+  .margin({ bottom: 15 })
+}
+
+@Entry
+@Component
+struct Index {
+  @State
+  disabled: boolean = false
+  @State
+  focused: boolean = false
+
+  build() {
+    Column() {
+
+      // Button TextInput 默认开启获取焦点，页面中默认第一个这样的元素获取焦点
+      // Button 比较多限制，一个是默认开启获取焦点能看，二是禁用状态下样式无法修改
+      // Button('Button').focusable(false)
+
+      Text('toggle disabled：' + this.disabled)
+        .capsule()
+        .onClick(()=>{
+          this.disabled = !this.disabled
+        })
+      Text('toggle focused：' + this.focused)
+        .capsule()
+        .onClick(()=>{
+          this.focused = !this.focused
+        })
+      Text('clickMe')
+        .capsule()
+        .enabled(!this.disabled)
+        .focusable(this.focused)
+        .onClick(() => {
+          promptAction.showToast({ message: 'click' })
+        })
+        .fontColor('#fff')
+        .stateStyles({
+          normal: {
+            .backgroundColor(Color.Blue)
+          },
+          focused: {
+            .backgroundColor(Color.Red)
+          },
+          disabled: {
+            .backgroundColor(Color.Black)
+          },
+          pressed: {
+            .backgroundColor(Color.Orange)
+          }
+        })
+    }
+  }
+}
+```
+
+::: tip
+
+- 使用比较多的应该是 `normal` `pressed` 结合下的按压效果。
+
+:::
 
 ## 组件状态
 
@@ -416,3 +935,154 @@ struct Index {
 ### 2. 渲染-循环渲染
 
 ## 今日案例
+
+    <img src="./images/20.png" width="240" />
+
+页面参考结构：
+
+```typescript
+@Entry
+@Component
+struct Index {
+
+  build() {
+    Stack() {
+      Scroll() {
+        Column() {
+          // nav
+          Row() {
+            Row() {
+              Image($r('app.media.left'))
+                .width(12)
+                .height(12)
+                .fillColor('#848484')
+            }
+            .width(24)
+            .height(24)
+            .borderRadius(12)
+            .backgroundColor('#f5f5f5')
+            .justifyContent(FlexAlign.Center)
+            .margin({ left: 13 })
+
+            Text('评论回复')
+              .padding({ right: 50 })
+              .textAlign(TextAlign.Center)
+              .fontSize(18)
+              .layoutWeight(1)
+          }
+          .height(50)
+          // comment
+          Row() {
+            Image($r('app.media.avatar'))
+              .width(32)
+              .height(32)
+              .borderRadius(16)
+            Column() {
+              Text('周杰伦')
+                .fontSize(15)
+                .fontWeight(FontWeight.Bold)
+                .margin({ bottom: 5 })
+              Text('大理石能雕刻出肌肉和皮肤的质感，那个年代的工匠好牛啊')
+                .margin({ bottom: 5 })
+                .fontColor('#565656')
+                .lineHeight(20)
+              Row() {
+                Text('10-21•IP 属地辽宁')
+                  .layoutWeight(1)
+                  .fontSize(14)
+                  .fontColor('#c3c4c5')
+                Row() {
+                  Image($r('app.media.heart'))
+                    .width(14)
+                    .height(14)
+                    .fillColor('#c3c4c5')
+                    .margin({ right: 4 })
+                  Text('100')
+                    .fontSize(14)
+                    .fontColor('#c3c4c5')
+                }
+              }
+            }
+            .layoutWeight(1)
+            .padding({ left: 10 })
+            .alignItems(HorizontalAlign.Start)
+          }
+          .width('100%')
+          .padding({ left: 15, right: 15, bottom: 15 })
+          .alignItems(VerticalAlign.Top)
+          // space
+          Divider()
+            .strokeWidth(8)
+            .color('#f5f5f5')
+          // reply
+          Column() {
+            Text('回复 7')
+              .width('100%')
+              .margin({ bottom: 15 })
+              .fontWeight(500)
+            ForEach([1, 2, 3, 4, 5, 6, 7], () => {
+              Row() {
+                Image($r('app.media.avatar'))
+                  .width(32)
+                  .height(32)
+                  .borderRadius(16)
+                Column() {
+                  Text('周杰伦')
+                    .fontSize(15)
+                    .fontWeight(FontWeight.Bold)
+                    .margin({ bottom: 5 })
+                  Text('大理石能雕刻出肌肉和皮肤的质感，那个年代的工匠好牛啊')
+                    .margin({ bottom: 5 })
+                    .fontColor('#565656')
+                    .lineHeight(20)
+                  Row() {
+                    Text('10-21•IP 属地辽宁')
+                      .layoutWeight(1)
+                      .fontSize(14)
+                      .fontColor('#c3c4c5')
+                    Row() {
+                      Image($r('app.media.heart'))
+                        .width(14)
+                        .height(14)
+                        .fillColor('#c3c4c5')
+                        .margin({ right: 4 })
+                      Text('100')
+                        .fontSize(14)
+                        .fontColor('#c3c4c5')
+                    }
+                  }
+                }
+                .layoutWeight(1)
+                .padding({ left: 10 })
+                .alignItems(HorizontalAlign.Start)
+              }
+              .width('100%')
+              .padding({ bottom: 15 })
+              .alignItems(VerticalAlign.Top)
+            })
+          }
+          .padding({ left: 15, right: 15, top: 15 })
+        }
+      }
+      .padding({ bottom: 50 })
+
+      Row() {
+        TextInput({ placeholder: '回复~' })
+          .placeholderColor('#c3c4c5')
+          .layoutWeight(1)
+        Text('发布')
+          .fontSize(14)
+          .fontColor('#09f')
+          .margin({ left: 15 })
+      }
+      .width('100%')
+      .height(50)
+      .padding({ left: 15, right: 15 })
+      .position({ y: '100%' })
+      .translate({ y: -50 })
+      .backgroundColor('#fff')
+      .border({ width: { top: 0.5 }, color: '#e4e4e4' })
+    }
+  }
+}
+```

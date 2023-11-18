@@ -15,6 +15,9 @@ export default defineConfig({
     enableContentAnimation: true,
     footer: {
       message: 'Copyright © 2023-present Shugang Zhou · ITCAST',
-    }
+    },
   },
+  markdown: {
+    showLineNumbers: true
+  }
 });
