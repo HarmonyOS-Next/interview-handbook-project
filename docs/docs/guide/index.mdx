@@ -2,6 +2,7 @@
 title: HM - 鸿蒙-组件基础
 ---
 
+
 # 鸿蒙-组件基础
 
 ## 开发环境
@@ -851,7 +852,7 @@ struct Other {
 - disabled：不可用态。
 
 
-```typescript
+```typescript {46-59}
 import promptAction from '@ohos.promptAction'
 
 // 胶囊按钮
@@ -918,98 +919,644 @@ struct Index {
 
 ::: tip
 
-- 使用比较多的应该是 `normal` `pressed` 结合下的按压效果。
+- 使用比较多的应该是 `normal` `pressed` 结合下的按压效果
+- `enabled(true|false)` 开启|禁用 `focusable(true|false)` 开启获取焦点能力|关闭
+
+注意：
+- 页面初始化的时候，默认第一个能获取焦点的元素，会自动获取焦点
 
 :::
 
 ## 组件状态
 
-### 1. 状态-简单状态
+### 1. 状态-class语法
+
+> 在鸿蒙开发中关于对象状态范式采用 `class` 方式，后续组件传值遇到深层对象嵌套需要利用 `class`
+
+1）`class` 创建对象和 `class` 类型
+
+```typescript
+class Person {
+  age: number;
+  name: string;
+
+  constructor(name: string, age: number) {
+    this.name = name
+    this.age = age
+  }
+}
+
+// 当类型使用和构当造函数使用
+const p: Person = new Person('jack', 18)
+// 当类型使用这种使用后续居多，我们使用字面量对象居多，可以省略 constructor
+const p1: Person = {
+  name: 'tom',
+  age: 20
+}
+```
+
+2）`implements` 实现 `interface` 接口
+
+```typescript
+interface IPerson {
+  name: string,
+  age: number,
+  say: () => void
+}
+
+// 实现 IPerson 接口，需要符合接口约定
+class Person implements IPerson{
+  age: number;
+  name: string;
+
+  constructor(name: string, age: number) {
+    this.name = name
+    this.age = age
+  }
+
+  say () {
+    promptAction.showToast({ message: this.name })
+  }
+}
+```
+
+3）`extends` 继承
+
+```typescript
+class HmPerson extends Person {
+  github: string = 'https://github.com/zhousg'
+
+  coding () {
+    promptAction.showToast({ message: this.name + ': coding' })
+  }
+}
+```
+
+::: tip
+
+- 定义类 `class 类名 { 属性 + 构造器  + 方法  }`，类可以创建对象，也可以当**类型**使用。
+
+扩展：
+- class 可以实现 `implements` 接口，需要受到接口约束
+- class 可以继承 `extends` 另外一个class的属性和方法
+
+:::
+
 
 ### 2. 状态-复杂状态
+
+> 当装饰的数据类型为class或者Object时，可以观察到自身的赋值的变化，和其属性赋值的变化，即Object.keys(observedObject)返回的所有属性。
+
+1）对象类型状态
+
+```typescript {1-5,11-12}
+// 对象模型
+class User {
+  nickname: string
+  age: number
+}
+
+@Entry
+@Component
+struct Index {
+
+  @State
+  user: User = { nickname: 'jack', age: 18 }
+
+  build() {
+    Column({ space: 20 }){
+      Text(this.user.nickname)
+      Text(this.user.age.toString())
+      Button('age++')
+        .onClick(() => {
+          this.user.age ++
+        })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+2）嵌套对象类型状态
+
+```typescript
+// 对象模型
+class User {
+  nickname: string
+  age: number
+}
+
+class UserData {
+  code: number
+  message: string
+  // 嵌套对象
+  data: User
+}
+
+@Entry
+@Component
+struct Index {
+  @State
+  res: UserData = {
+    code: 10000,
+    message: '获取用户信息成功',
+    // 嵌套对象
+    data: { nickname: 'jack', age: 18 }
+  }
+
+  build() {
+    Column({ space: 20 }) {
+      Text(this.res.data.nickname)
+      Text(this.res.data.age.toString())
+      Button('age++')
+        .onClick(() => {
+          // ❌ this.res.data.age ++
+          const user = this.res.data
+          // 替换属性，触发UI更新
+          this.res.data = { ...user, age: user.age + 1 }
+        })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+3）对象数组类型状态
+
+```typescript
+// 对象模型
+class User {
+  nickname: string
+  age: number
+}
+
+@Entry
+@Component
+struct Index {
+  @State
+  list: User[] = [
+    { nickname: 'jack', age: 18 },
+    { nickname: 'tom', age: 16 }
+  ]
+  build() {
+    Column({ space: 20 }) {
+      Text(JSON.stringify(this.list[0]))
+      Text(JSON.stringify(this.list[1]))
+      Button('age++')
+        .onClick(() => {
+          // ❌ this.list[1].age ++
+          const user = this.list[1]
+          this.list[1] = { ...user, age: user.age + 1 }
+        })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+::: tip
+
+- 使用 `class` 来约束对象类型，和嵌套对象和对象数组。
+- 嵌套对象和对象数组，采用赋值的方式进行更新，可以更新UI。
+
+:::
+
 
 ## 界面渲染
 
 ### 1. 渲染-条件渲染
 
+> 条件渲染可根据应用的不同状态，使用if、else和else if渲染对应状态下的UI内容。
+
+
+- 条件渲染，是根据状态数据进行判断展示不同UI
+- 添加渲染，是会销毁和创建组件，组件状态将不会保留
+
+1）使用 `if` `else` 实现 loading 效果 
+
+```typescript {10,14,18}
+@Entry
+@Component
+struct Index {
+
+  @State
+  loading: boolean = false
+
+  build() {
+    Column({ space: 20 }){
+      if (this.loading) {
+        LoadingProgress()
+          .width(100)
+          .height(100)
+      } else  {
+        Text('后台数据')
+        Text('后台数据')
+        Text('后台数据')
+      }
+      Button('更新数据')
+        .onClick(() => {
+          this.loading = true
+          setTimeout(() => {
+            this.loading = false
+          }, 2000)
+        })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+2）添加渲染会销毁和重新创建组件，组件状态将不会保留。
+
+```typescript {24,25}
+@Component
+struct CounterComp {
+  @State
+  count: number = 0
+
+  build() {
+    Text(this.count.toString())
+      .onClick(() => {
+        this.count ++
+      })
+  }
+}
+
+@Entry
+@Component
+struct Index {
+
+  @State
+  show: boolean = true
+
+  build() {
+    Column({ space: 20 }){
+      if (this.show) {
+        // 累计的 count 切换时候不会保留
+        CounterComp()
+      }
+      Button('toggle')
+        .onClick(() => {
+          this.show = !this.show
+        })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+
 ### 2. 渲染-循环渲染
+
+> `ForEach` 接口基于数组类型数据来进行循环渲染，需要与容器组件配合使用。
+
+语法：
+
+```typescript
+ForEach(
+  // 数据源
+  arr: Array,
+  // 组件生成函数
+  itemGenerator: (item: Array, index?: number) => void,
+  // 键值生成函数
+  keyGenerator?: (item: Array, index?: number): string => string
+)
+```
+
+应用：
+
+```typescript {17-28}
+class User {
+  id: string
+  name: string
+  age: number
+}
+
+
+@Entry
+@Component
+struct Index {
+  @State
+  userList: User[] = []
+
+  build() {
+    Scroll() {
+      Column({ space: 20 }) {
+        // 循环渲染
+        ForEach(
+          // 1. 数据源
+          this.userList,
+          // 2. 组件生成函数
+          (item: User) => {
+            // 内容
+            Text(`${item.name} 今年 ${item.age} 岁`)
+          },
+          // 3. 键值生成函数
+          item => item.id
+        )
+        Button('加载更多')
+          .onClick(() => {
+            const arr: User[] = []
+            for (let index = 0; index < 10; index++) {
+              arr.push({ id: Math.random().toString(), name: 'jack', age: Math.ceil(Math.random() * 100) })
+            }
+            this.userList.push(...arr)
+          })
+      }
+    }
+    .width('100%')
+  }
+}
+```
+
+
+::: tip
+
+关于 `keyGenerator` 键生成函数的一些建议：
+- 不能缺省
+- 避免最终生成的键包含 `index`
+- 对象数组，建议使用对象中 `id` 唯一标识
+- 基本数据数字，建议转换成具有 `id` 唯一标识的对象，再使用
+
+:::
+
 
 ## 今日案例
 
-    <img src="./images/20.png" width="240" />
+    <img src="./images/26.png" width="240" />
 
-页面参考结构：
+
+### 1. 底部输入区域
 
 ```typescript
 @Entry
 @Component
 struct Index {
+  build() {
+    Stack() {
+      Scroll() {
+        Column() {
+          NavComp()
+          CommentComp()
+          // TODO space
+          // TODO reply
+        }
+      }
+      .padding({ bottom: 50 })
+
+      Row() {
+        TextInput({ placeholder: '回复~' })
+          .placeholderColor('#c3c4c5')
+          .layoutWeight(1)
+        Text('发布')
+          .fontSize(14)
+          .fontColor('#09f')
+          .margin({ left: 15 })
+      }
+      .width('100%')
+      .height(50)
+      .padding({ left: 15, right: 15 })
+      .position({ y: '100%' })
+      .translate({ y: -50 })
+      .backgroundColor('#fff')
+      .border({ width: { top: 0.5 }, color: '#e4e4e4' })
+    }
+  }
+}
+
+
+@Component
+struct NavComp {
+  build() {
+    // nav
+    Row() {
+      Row() {
+        Image($r('app.media.left'))
+          .width(12)
+          .height(12)
+          .fillColor('#848484')
+      }
+      .width(24)
+      .height(24)
+      .borderRadius(12)
+      .backgroundColor('#f5f5f5')
+      .justifyContent(FlexAlign.Center)
+      .margin({ left: 13 })
+
+      Text('评论回复')
+        .padding({ right: 50 })
+        .textAlign(TextAlign.Center)
+        .fontSize(18)
+        .layoutWeight(1)
+    }
+    .height(50)
+  }
+}
+
+@Component
+struct CommentComp {
+  build() {
+    // comment
+    Row() {
+      Image('https://picx.zhimg.com/1754b6bd9_xl.jpg?source=c885d018')
+        .width(32)
+        .height(32)
+        .borderRadius(16)
+      Column() {
+        Text('欧洲足球锦标赛')
+          .fontSize(15)
+          .fontWeight(FontWeight.Bold)
+          .margin({ bottom: 5 })
+        Text('14-0！欧洲杯超级惨案+刷爆纪录！姆巴佩帽子戏法，法国7连胜，怎么评价这场比赛？')
+          .margin({ bottom: 5 })
+          .fontColor('#565656')
+          .lineHeight(20)
+        Row() {
+          Text('10-21•IP 属地辽宁')
+            .layoutWeight(1)
+            .fontSize(14)
+            .fontColor('#c3c4c5')
+          Row() {
+            Image($r('app.media.heart'))
+              .width(14)
+              .height(14)
+              .fillColor('#c3c4c5')
+              .margin({ right: 4 })
+            Text('100')
+              .fontSize(14)
+              .fontColor('#c3c4c5')
+          }
+        }
+      }
+      .layoutWeight(1)
+      .padding({ left: 10 })
+      .alignItems(HorizontalAlign.Start)
+    }
+    .width('100%')
+    .padding({ left: 15, right: 15, bottom: 15 })
+    .alignItems(VerticalAlign.Top)
+  }
+}
+```
+
+
+### 2. 静态回复列表
+
+```typescript
+
+// space
+Divider()
+  .strokeWidth(8)
+  .color('#f5f5f5')
+// reply
+Column() {
+  Text('回复 7')
+    .width('100%')
+    .margin({ bottom: 15 })
+    .fontWeight(500)
+  ForEach([1, 2, 3, 4, 5, 6, 7], () => {
+    Row() {
+      Image($r('app.media.avatar'))
+        .width(32)
+        .height(32)
+        .borderRadius(16)
+      Column() {
+        Text('周杰伦')
+          .fontSize(15)
+          .fontWeight(FontWeight.Bold)
+          .margin({ bottom: 5 })
+        Text('大理石能雕刻出肌肉和皮肤的质感，那个年代的工匠好牛啊')
+          .margin({ bottom: 5 })
+          .fontColor('#565656')
+          .lineHeight(20)
+        Row() {
+          Text('10-21•IP 属地辽宁')
+            .layoutWeight(1)
+            .fontSize(14)
+            .fontColor('#c3c4c5')
+          Row() {
+            Image($r('app.media.heart'))
+              .width(14)
+              .height(14)
+              .fillColor('#c3c4c5')
+              .margin({ right: 4 })
+            Text('100')
+              .fontSize(14)
+              .fontColor('#c3c4c5')
+          }
+        }
+      }
+      .layoutWeight(1)
+      .padding({ left: 10 })
+      .alignItems(HorizontalAlign.Start)
+    }
+    .width('100%')
+    .padding({ bottom: 15 })
+    .alignItems(VerticalAlign.Top)
+  })
+}
+.padding({ left: 15, right: 15, top: 15 })
+```
+
+### 3. 实现渲染
+
+
+```typescript title="models/Index.ets"
+export class ReplyItem {
+  id: number
+  avatar: string
+  author: string
+  content: string
+  time: string
+  area: string
+  likeNum: number
+  likeFlag?: boolean
+}
+
+export const replyList: ReplyItem[] = [
+  {
+    id: 1,
+    avatar: 'https://picx.zhimg.com/027729d02bdf060e24973c3726fea9da_l.jpg?source=06d4cd63',
+    author: '偏执狂-妄想家',
+    content: '更何况还分到一个摩洛哥[惊喜]',
+    time: '11-30',
+    area: '海南',
+    likeNum: 34
+  },
+  {
+    id: 2,
+    avatar: 'https://pic1.zhimg.com/v2-5a3f5190369ae59c12bee33abfe0c5cc_xl.jpg?source=32738c0c',
+    author: 'William',
+    content: '当年希腊可是把1：0发挥到极致了',
+    time: '11-29',
+    area: '北京',
+    likeNum: 58
+  },
+  {
+    id: 3,
+    avatar: 'https://picx.zhimg.com/v2-e6f4605c16e4378572a96dad7eaaf2b0_l.jpg?source=06d4cd63',
+    author: 'Andy Garcia',
+    content: '欧洲杯其实16队球队打正赛已经差不多，24队打正赛意味着正赛阶段在小组赛一样有弱队。',
+    time: '11-28',
+    area: '上海',
+    likeNum: 10
+  },
+  {
+    id: 4,
+    avatar: 'https://picx.zhimg.com/v2-53e7cf84228e26f419d924c2bf8d5d70_l.jpg?source=06d4cd63',
+    author: '正宗好鱼头',
+    content: '确实眼红啊，亚洲就没这种球队，让中国队刷',
+    time: '11-27',
+    area: '香港',
+    likeNum: 139
+  },
+  {
+    id: 5,
+    avatar: 'https://pic1.zhimg.com/v2-eeddfaae049df2a407ff37540894c8ce_l.jpg?source=06d4cd63',
+    author: '柱子哥',
+    content: '我是支持扩大的，亚洲杯欧洲杯扩到32队，世界杯扩到64队才是好的，世界上有超过200支队伍，欧洲区55支队伍，亚洲区47支队伍，即使如此也就六成出现率',
+    time: '11-27',
+    area: '旧金山',
+    likeNum: 29
+  },
+  {
+    id: 6,
+    avatar: 'https://picx.zhimg.com/v2-fab3da929232ae911e92bf8137d11f3a_l.jpg?source=06d4cd63',
+    author: '飞轩逸',
+    content: '禁止欧洲杯扩军之前，应该先禁止世界杯扩军，或者至少把亚洲名额一半给欧洲。',
+    time: '11-26',
+    area: '里约',
+    likeNum: 100
+  }
+]
+```
+
+```typescript title="pages/Index.ets"
+import { ReplyItem, replyList } from '../models'
+
+@Entry
+@Component
+struct Index {
+
+  @State
+  replyList: ReplyItem[] = replyList
 
   build() {
     Stack() {
       Scroll() {
         Column() {
-          // nav
-          Row() {
-            Row() {
-              Image($r('app.media.left'))
-                .width(12)
-                .height(12)
-                .fillColor('#848484')
-            }
-            .width(24)
-            .height(24)
-            .borderRadius(12)
-            .backgroundColor('#f5f5f5')
-            .justifyContent(FlexAlign.Center)
-            .margin({ left: 13 })
-
-            Text('评论回复')
-              .padding({ right: 50 })
-              .textAlign(TextAlign.Center)
-              .fontSize(18)
-              .layoutWeight(1)
-          }
-          .height(50)
-          // comment
-          Row() {
-            Image($r('app.media.avatar'))
-              .width(32)
-              .height(32)
-              .borderRadius(16)
-            Column() {
-              Text('周杰伦')
-                .fontSize(15)
-                .fontWeight(FontWeight.Bold)
-                .margin({ bottom: 5 })
-              Text('大理石能雕刻出肌肉和皮肤的质感，那个年代的工匠好牛啊')
-                .margin({ bottom: 5 })
-                .fontColor('#565656')
-                .lineHeight(20)
-              Row() {
-                Text('10-21•IP 属地辽宁')
-                  .layoutWeight(1)
-                  .fontSize(14)
-                  .fontColor('#c3c4c5')
-                Row() {
-                  Image($r('app.media.heart'))
-                    .width(14)
-                    .height(14)
-                    .fillColor('#c3c4c5')
-                    .margin({ right: 4 })
-                  Text('100')
-                    .fontSize(14)
-                    .fontColor('#c3c4c5')
-                }
-              }
-            }
-            .layoutWeight(1)
-            .padding({ left: 10 })
-            .alignItems(HorizontalAlign.Start)
-          }
-          .width('100%')
-          .padding({ left: 15, right: 15, bottom: 15 })
-          .alignItems(VerticalAlign.Top)
+          NavComp()
+          CommentComp()
           // space
           Divider()
             .strokeWidth(8)
@@ -1020,23 +1567,23 @@ struct Index {
               .width('100%')
               .margin({ bottom: 15 })
               .fontWeight(500)
-            ForEach([1, 2, 3, 4, 5, 6, 7], () => {
+            ForEach(this.replyList, (item: ReplyItem) => {
               Row() {
-                Image($r('app.media.avatar'))
+                Image(item.avatar)
                   .width(32)
                   .height(32)
                   .borderRadius(16)
                 Column() {
-                  Text('周杰伦')
+                  Text(item.author)
                     .fontSize(15)
                     .fontWeight(FontWeight.Bold)
                     .margin({ bottom: 5 })
-                  Text('大理石能雕刻出肌肉和皮肤的质感，那个年代的工匠好牛啊')
+                  Text(item.content)
                     .margin({ bottom: 5 })
                     .fontColor('#565656')
                     .lineHeight(20)
                   Row() {
-                    Text('10-21•IP 属地辽宁')
+                    Text(`${item.time}•IP 属地${item.area}`)
                       .layoutWeight(1)
                       .fontSize(14)
                       .fontColor('#c3c4c5')
@@ -1046,7 +1593,7 @@ struct Index {
                         .height(14)
                         .fillColor('#c3c4c5')
                         .margin({ right: 4 })
-                      Text('100')
+                      Text(item.likeNum.toString())
                         .fontSize(14)
                         .fontColor('#c3c4c5')
                     }
@@ -1084,5 +1631,95 @@ struct Index {
       .border({ width: { top: 0.5 }, color: '#e4e4e4' })
     }
   }
+}
+```
+
+
+### 4. 实现点赞
+
+
+```typescript
+onLike(item: ReplyItem) {
+  const reply = { ...item }
+  if (reply.likeFlag) {
+    reply.likeNum--
+    reply.likeFlag = false
+    promptAction.showToast({ message: '取消点赞' })
+  } else {
+    reply.likeNum++
+    reply.likeFlag = true
+    promptAction.showToast({ message: '点赞成功' })
+  }
+  const index = this.replyList.findIndex(rep => rep.id === reply.id)
+  this.replyList.splice(index, 1, reply)
+}
+```
+
+```typescript
+Row() {
+  Image($r('app.media.heart'))
+    .width(14)
+    .height(14)
+    .fillColor(item.likeFlag ? '#ff6600' : '#c3c4c5')
+    .margin({ right: 4 })
+  Text(item.likeNum.toString())
+    .fontSize(14)
+    .fontColor(item.likeFlag ? '#ff6600' : '#c3c4c5')
+}
+.onClick(() => {
+  this.onLike(item)
+})
+```
+
+
+### 6. 进行回复
+
+
+```diff title="models/Index.ets"
+export class ReplyItem {
+  id: number
++  avatar: string | Resource
+  author: string
+  content: string
+  time: string
+  area: string
+  likeNum: number
+  likeFlag?: boolean
+}
+```
+
+
+```typescript title="pages/Index.ets"
+onReply () {
+  const reply: ReplyItem = {
+    id: this.replyList[this.replyList.length-1].id + 1,
+    content: this.content,
+    author: 'Zhousg',
+    avatar: $r('app.media.avatar'),
+    time: '12-01',
+    likeNum: 0,
+    area: '北京'
+  }
+  this.replyList.unshift(reply)
+  this.content = ''
+  promptAction.showToast({ message: '回复成功' })
+}
+```
+
+```typescript title="pages/Index.ets"
+Row() {
+  TextInput({ placeholder: '回复~', text: this.content })
+    .placeholderColor('#c3c4c5')
+    .layoutWeight(1)
+    .onChange((value) => {
+      this.content = value
+    })
+  Text('发布')
+    .fontSize(14)
+    .fontColor('#09f')
+    .margin({ left: 15 })
+    .onClick(()=>{
+      this.onReply()
+    })
 }
 ```
