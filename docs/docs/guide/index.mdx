@@ -531,7 +531,7 @@ struct Index {
 ::: tip
 
 - vp 是鸿蒙默认单位，和屏幕像素有关，最终表现视觉大小在任何设备一致
-- 鸿蒙一般以伸缩`layoutWeight`、网格、栅格进行布局适配，如要等比例缩放可以设置高宽比 `aspectRatio`
+- 鸿蒙一般以伸缩 `layoutWeight`、网格、栅格进行布局适配，如要等比例缩放可以设置高宽比 `aspectRatio`
 
 :::
 
@@ -544,7 +544,7 @@ struct Index {
 - Nav
     - 左侧返回按钮24vp高宽背景颜色`#f5f5f5`，图标12vp尺寸颜色`#848484`
     - 标题18vp
-- commen
+- Comment
     - 头像尺寸32vp高宽，右侧间距10vp
     - 标题15vp，颜色默认
     - 内容16vp，颜色`#565656`
@@ -626,7 +626,7 @@ struct Index {
 
 > 在开发过程中会出现大量代码在进行重复样式设置，`@Styles` 可以帮我们进行样式复用
 
-- 当前@Styles仅支持 [通用属性](https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/ts-universal-attributes-size-0000001428061700-V3) 和 [通用事件](https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/ts-universal-events-click-0000001477981153-V3)。
+- 当前 `@Styles` 仅支持 [通用属性](https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/ts-universal-attributes-size-0000001428061700-V3) 和 [通用事件](https://developer.harmonyos.com/cn/docs/documentation/doc-references-V3/ts-universal-events-click-0000001477981153-V3)。
 - 支持 **全局** 定义和 **组件内** 定义，同时存在组件内覆盖全局生效。
 
 ```typescript {2,3,9,10,14}
@@ -843,7 +843,7 @@ struct Other {
 
 ### 4. 样式-多态
 
-> stateStyles可以依据组件的内部状态的不同，快速设置不同样式。
+> `stateStyles()` 可以依据组件的内部状态的不同，快速设置不同样式。
 
 `stateStyles` 是属性方法，可以根据UI内部状态来设置样式，类似于 css 伪类，但语法不同。ArkUI 提供以下四种状态：
 - focused：获焦态。
@@ -1124,6 +1124,7 @@ struct Index {
 
 - 使用 `class` 来约束对象类型，和嵌套对象和对象数组。
 - 嵌套对象和对象数组，采用赋值的方式进行更新，可以更新UI。
+- 🚦 后期如果拆分了组件，会给大家补充另外一种深层数据变更更新UI的方式
 
 :::
 
