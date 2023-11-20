@@ -1,0 +1,555 @@
+---
+title: HM - 鸿蒙-状态管理
+---
+
+# 鸿蒙-状态管理
+
+## 自定义构建函数
+
+### 1. 构建函数-@Builder 
+> ArkUI还提供了一种更**轻量**的UI元素复用机制 `@Builder`，可以将重复使用的UI元素抽象成一个方法，在 `build` 方法里调用。
+
+- 组件内定义 
+- 全局定义
+
+1）组件内定义
+
+```typescript
+@Builder MyBuilderFunction() {}
+```
+```typescript
+this.MyBuilderFunction()
+```
+
+2）全局定义
+
+```typescript
+@Builder function MyGlobalBuilderFunction() {}
+```
+```typescript
+MyGlobalBuilderFunction()
+```
+
+📕📕📕 练习案例→商品详情-更多按钮
+
+<img src="./images/27.png" width="240" />
+
+- 待实现页面
+
+```typescript
+@Entry
+@Component
+struct Index {
+  build() {
+    Column() {
+      GridRow({ columns: 2, gutter: 15 }) {
+        GridCol({ span: 2 }) {
+          Column() {
+            Row() {
+              Text('评价（2000+）')
+                .layoutWeight(1)
+                .fontWeight(600)
+              // TODO
+            }
+            .padding(10)
+
+            Row()
+              .height(100)
+          }
+          .borderRadius(12)
+          .backgroundColor('#fff')
+        }
+
+        GridCol() {
+          Column() {
+            Row() {
+              Text('推荐')
+                .layoutWeight(1)
+                .fontWeight(600)
+              // TODO
+            }
+            .padding(10)
+
+            Row()
+              .height(100)
+          }
+          .borderRadius(12)
+          .backgroundColor('#fff')
+        }
+
+        GridCol() {
+          Column() {
+            Row() {
+              Text('体验')
+                .layoutWeight(1)
+                .fontWeight(600)
+              // TODO
+            }
+            .padding(10)
+
+            Row()
+              .height(100)
+          }
+          .borderRadius(12)
+          .backgroundColor('#fff')
+        }
+      }
+    }
+    .height('100%')
+    .padding(15)
+    .backgroundColor('#f5f5f5')
+  }
+}
+```
+- 使用 @Builder 提取UI结构
+
+```typescript {5-15,26,43,60}
+@Entry
+@Component
+struct Index {
+
+  @Builder
+  MoreBuilder () {
+    Row() {
+      Text('查看更多')
+        .fontSize(14)
+        .fontColor('#666666')
+      Image($r('app.media.ic_public_arrow_right'))
+        .width(16)
+        .fillColor('#666666')
+    }
+  }
+
+  build() {
+    Column() {
+      GridRow({ columns: 2, gutter: 15 }) {
+        GridCol({ span: 2 }) {
+          Column() {
+            Row() {
+              Text('评价（2000+）')
+                .layoutWeight(1)
+                .fontWeight(600)
+              this.MoreBuilder()
+            }
+            .padding(10)
+
+            Row()
+              .height(100)
+          }
+          .borderRadius(12)
+          .backgroundColor('#fff')
+        }
+
+        GridCol() {
+          Column() {
+            Row() {
+              Text('推荐')
+                .layoutWeight(1)
+                .fontWeight(600)
+              this.MoreBuilder()
+            }
+            .padding(10)
+
+            Row()
+              .height(100)
+          }
+          .borderRadius(12)
+          .backgroundColor('#fff')
+        }
+
+        GridCol() {
+          Column() {
+            Row() {
+              Text('体验')
+                .layoutWeight(1)
+                .fontWeight(600)
+              this.MoreBuilder()
+            }
+            .padding(10)
+
+            Row()
+              .height(100)
+          }
+          .borderRadius(12)
+          .backgroundColor('#fff')
+        }
+      }
+    }
+    .height('100%')
+    .padding(15)
+    .backgroundColor('#f5f5f5')
+  }
+}
+```
+
+::: tip
+
+小结：
+- 遇到非遍历情况下，一个组件分散着相同的UI结构，可以使用 `@Builder` 更轻量
+
+其他：
+- 华为官方图标下载 [链接](https://developer.harmonyos.com/cn/design/harmonyos-icon/)
+
+:::
+
+
+
+
+### 2. 构建函数-传参传递
+
+
+1）按值传递（场景：构建不同的UI）
+
+```typescript
+@Builder MyBuilderFunction( title: string ) {}
+```
+```typescript
+this.MyBuilderFunction('Title')
+```
+
+需求：不同板块查看更多文案不一样
+
+- 评价 好评率 98%
+- 推荐 查看全部
+- 体验 4 条测评
+
+```typescript
+  @Builder
+  MoreBuilder (title: string) {
+    Row() {
+      Text(title)
+        .fontSize(14)
+        .fontColor('#666666')
+      Image($r('app.media.ic_public_arrow_right'))
+        .width(16)
+        .fillColor('#666666')
+    }
+  }
+```
+
+```typescript
+this.MoreBuilder('好评率 98%')
+this.MoreBuilder('查看全部')
+this.MoreBuilder('4 条测评')
+```
+
+
+2）引用传递（场景：当传递的数据更新，需要更新UI）
+
+
+需求：
+- 点击按钮后模拟加载好评率数据
+
+```typescript {7-17,33,50,67}
+@Entry
+@Component
+struct Index {
+  @State
+  rate: number = 0
+
+  @Builder
+  MoreBuilder(params: { title: string }) {
+    Row() {
+      Text(params.title)
+        .fontSize(14)
+        .fontColor('#666666')
+      Image($r('app.media.ic_public_arrow_right'))
+        .width(16)
+        .fillColor('#666666')
+    }
+  }
+
+  build() {
+    Column() {
+      Button('获取数据')
+        .margin({ bottom: 15 })
+        .onClick(() => {
+          this.rate = 99
+        })
+      GridRow({ columns: 2, gutter: 15 }) {
+        GridCol({ span: 2 }) {
+          Column() {
+            Row() {
+              Text('评价（2000+）')
+                .layoutWeight(1)
+                .fontWeight(600)
+              this.MoreBuilder({ title: `好评率 ${this.rate} %` })
+            }
+            .padding(10)
+
+            Row()
+              .height(100)
+          }
+          .borderRadius(12)
+          .backgroundColor('#fff')
+        }
+
+        GridCol() {
+          Column() {
+            Row() {
+              Text('推荐')
+                .layoutWeight(1)
+                .fontWeight(600)
+              this.MoreBuilder({ title: '查看全部' })
+            }
+            .padding(10)
+
+            Row()
+              .height(100)
+          }
+          .borderRadius(12)
+          .backgroundColor('#fff')
+        }
+
+        GridCol() {
+          Column() {
+            Row() {
+              Text('体验')
+                .layoutWeight(1)
+                .fontWeight(600)
+              this.MoreBuilder({ title: '4 条测评' })
+            }
+            .padding(10)
+
+            Row()
+              .height(100)
+          }
+          .borderRadius(12)
+          .backgroundColor('#fff')
+        }
+      }
+    }
+    .height('100%')
+    .padding(15)
+    .backgroundColor('#f5f5f5')
+  }
+}
+```
+
+::: tip
+
+- 使用 `@Builder` 复用逻辑的时候，支持传参可以更灵活的渲染UI
+- 参数可以使用`状态数据`，不过建议通过对象的方式传入 `@Builder`
+
+:::
+
+### 3. 构建函数-@BuilderParam 传递UI
+
+> `@BuilderParam` 该装饰器用于声明任意UI描述的一个元素，类似 slot 占位符
+
+::: details 前置知识
+
+组件属性初始化：
+- 定义组件声明属性  `title: string`
+- 使用组件初始化属性 `Comp({ title: string })`
+
+:::
+
+- 尾随闭包初始化组件
+    - 组件内有且仅有一个使用 `@BuilderParam` 装饰的属性
+
+- 参数初始化组件
+    - 组件内有多个使用 `@BuilderParam` 装饰器属性
+
+
+1）尾随闭包初始化组件(默认插槽)
+
+需求：
+- 标题文字和更多文案通过属性传入
+- 内容结构需要传入
+
+```typescript {5-13,31,47,51-53,57-59}
+@Component
+struct PanelComp {
+  title: string
+  more: string
+  @BuilderParam
+  panelContent: () => void = this.DefaultPanelContent
+
+  // 备用 Builder
+  @Builder
+  DefaultPanelContent () {
+    Text('默认内容')
+  }
+
+  build() {
+    Column() {
+      Row() {
+        Text(this.title)
+          .layoutWeight(1)
+          .fontWeight(600)
+        Row() {
+          Text(this.more)
+            .fontSize(14)
+            .fontColor('#666666')
+          Image($r('app.media.ic_public_arrow_right'))
+            .width(16)
+            .fillColor('#666666')
+        }
+      }
+      .padding(10)
+
+      Row() {
+        this.panelContent()
+      }
+      .height(100)
+    }
+    .borderRadius(12)
+    .backgroundColor('#fff')
+  }
+}
+
+@Entry
+@Component
+struct Index {
+  build() {
+    Column() {
+      GridRow({ columns: 2, gutter: 15 }) {
+        GridCol({ span: 2 }) {
+          PanelComp({ title: '评价（2000+）', more: '好评率98%' })
+        }
+
+        GridCol() {
+          PanelComp({ title: '推荐', more: '查看全部' }){
+            Text('推荐内容')
+          }
+        }
+
+        GridCol() {
+          PanelComp({ title: '体验', more: '4 条测评' }){
+            Text('体验内容')
+          }
+        }
+      }
+    }
+    .height('100%')
+    .padding(15)
+    .backgroundColor('#f5f5f5')
+  }
+}
+```
+
+2）参数初始化组件（具名插槽）
+
+需求：需要传入内容结构和底部结构
+
+```typescript {5-8,28,32,44-51,57-62}
+@Component
+struct PanelComp {
+  title: string
+  more: string
+  @BuilderParam
+  panelContent: () => void
+  @BuilderParam
+  panelFooter: () => void
+
+  build() {
+    Column() {
+      Row() {
+        Text(this.title)
+          .layoutWeight(1)
+          .fontWeight(600)
+        Row() {
+          Text(this.more)
+            .fontSize(14)
+            .fontColor('#666666')
+          Image($r('app.media.ic_public_arrow_right'))
+            .width(16)
+            .fillColor('#666666')
+        }
+      }
+      .padding(10)
+
+      Row() {
+        this.panelContent()
+      }
+      .height(100)
+      Row() {
+        this.panelFooter()
+      }
+      .height(50)
+    }
+    .borderRadius(12)
+    .backgroundColor('#fff')
+  }
+}
+
+@Entry
+@Component
+struct Index {
+  @Builder
+  ContentBuilderA() {
+    Text('评价内容')
+  }
+  @Builder
+  FooterBuilderA() {
+    Text('评价底部')
+  }
+
+  build() {
+    Column() {
+      GridRow({ columns: 2, gutter: 15 }) {
+        GridCol({ span: 2 }) {
+          PanelComp({
+            title: '评价（2000+）',
+            more: '好评率98%',
+            panelFooter: this.FooterBuilderA,
+            panelContent: this.ContentBuilderA
+          })
+        }
+
+        // GridCol() {
+        //   PanelComp({ title: '推荐', more: '查看全部' }){
+        //     Text('推荐内容')
+        //   }
+        // }
+        //
+        // GridCol() {
+        //   PanelComp({ title: '体验', more: '4 条测评' }){
+        //     Text('体验内容')
+        //   }
+        // }
+      }
+    }
+    .height('100%')
+    .padding(15)
+    .backgroundColor('#f5f5f5')
+  }
+}
+```
+
+::: tip
+
+- 当子组件使用一个 `@BuilderParam` 的时候，使用组件的时候在尾随 `{}` 插入UI结构
+- 当子组件使用多个 `@BuilderParam` 的时候，使用组件的时候 `Comp({ xxx: this.builderFn })` 传入
+- 子组件本身可以提供一个默认的 `@Builder` 函数作为 `@BuilderParam` 备用函数，当做备用内容使用
+
+:::
+
+
+### 4. 构建函数-系统组件自定义UI
+
+## 组件状态共享
+
+### 1. 状态共享-父子单向
+### 2. 状态共享-父子双向
+### 3. 状态共享-后代组件
+### 4. 状态共享-状态监听器
+### 5. @Observed与@ObjectLink
+
+
+## 应用状态
+
+### 1. 应用状态-LocalStorage
+### 2. 应用状态-AppStorage
+### 3. 应用状态-PersistentStorage
+### 4. 应用状态-Environment
+
+
+## 网络管理
+
+### 1. 应用权限
+### 2. HTTP请求
+
+
+## 今日案例
