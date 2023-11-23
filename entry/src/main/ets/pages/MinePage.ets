@@ -3,7 +3,7 @@ import promptAction from '@ohos.promptAction'
 import { ClockIn } from '../components/ClockIn'
 import { EVENT_MAP, PAGE_MAP } from '../constants'
 import { UserInfo } from '../models'
-import { getTimeText } from '../utils/base'
+import { getTimeText, vp2vp } from '../utils/base'
 import router from '../utils/router'
 
 @Preview
@@ -45,9 +45,9 @@ export struct MinePage {
   @Styles
   boxStyle() {
     .backgroundColor('#ffffff')
-    .padding({ top: 15, bottom: 15 })
-    .borderRadius(8)
-    .margin({ bottom: 15 })
+    .padding({ top: vp2vp(15), bottom: vp2vp(15) })
+    .borderRadius(vp2vp(8))
+    .margin({ bottom: vp2vp(15) })
   }
 
   build() {
@@ -55,9 +55,9 @@ export struct MinePage {
       // 头部
       Row() {
         Image(this.user.avatar || $rawfile('avatar.png'))
-          .width(55)
-          .height(55)
-          .borderRadius(30)
+          .width(vp2vp(55))
+          .height(vp2vp(55))
+          .borderRadius(vp2vp(30))
           .border({ width: 0.5, color: '#e4e4e4' })
           .onError(() => {
             this.user.avatar =  $rawfile('avatar.png') as unknown as string
@@ -65,18 +65,18 @@ export struct MinePage {
         Column() {
           if (this.user.token) {
             Text(this.user.nickName || this.user.username)
-              .fontSize(18)
+              .fontSize(vp2vp(18))
               .fontWeight(600)
               .width('100%')
-              .margin({ bottom: 5 })
+              .margin({ bottom: vp2vp(5) })
             Row() {
               Text('编辑个人信息')
                 .fontColor($r('app.color.ih_gray_color'))
-                .fontSize(11)
-                .margin({ right: 4 })
+                .fontSize(vp2vp(11))
+                .margin({ right: vp2vp(4) })
               Image($r('app.media.icon_edit'))
-                .width(10)
-                .height(10)
+                .width(vp2vp(10))
+                .height(vp2vp(10))
                 .fillColor($r('app.color.ih_gray_color'))
             }.onClick(() => {
               router.push({
@@ -86,7 +86,7 @@ export struct MinePage {
             .width('100%')
           } else {
             Text('登录/注册')
-              .fontSize(18)
+              .fontSize(vp2vp(18))
               .fontWeight(600)
               .width('100%')
               .onClick(() => {
@@ -97,72 +97,72 @@ export struct MinePage {
           }
         }
         .layoutWeight(1)
-        .padding({ left: 12, right: 12 })
+        .padding({ left: vp2vp(12), right: vp2vp(12) })
 
         ClockIn()
       }
-      .height(100)
+      .height(vp2vp(100))
 
       // 导航
       GridRow({ columns: 4 }) {
         GridCol() {
           Column() {
             Image($r('app.media.icon_my_history'))
-              .width(30)
-              .height(30)
-              .margin({ bottom: 8 })
+              .width(vp2vp(30))
+              .height(vp2vp(30))
+              .margin({ bottom: vp2vp(8) })
               .objectFit(ImageFit.Contain)
             Text('历史记录')
               .fontColor($r('app.color.ih_gray_color'))
-              .fontSize(14)
+              .fontSize(vp2vp(14))
           }
         }
 
         GridCol() {
           Column() {
             Image($r('app.media.icon_my_favo'))
-              .width(30)
-              .height(30)
-              .margin({ bottom: 8 })
+              .width(vp2vp(30))
+              .height(vp2vp(30))
+              .margin({ bottom: vp2vp(8) })
               .objectFit(ImageFit.Contain)
             Text('我的收藏')
               .fontColor($r('app.color.ih_gray_color'))
-              .fontSize(14)
+              .fontSize(vp2vp(14))
           }
         }
 
         GridCol() {
           Column() {
             Image($r('app.media.icon_my_zan'))
-              .width(30)
-              .height(30)
-              .margin({ bottom: 8 })
+              .width(vp2vp(30))
+              .height(vp2vp(30))
+              .margin({ bottom: vp2vp(8) })
               .objectFit(ImageFit.Contain)
             Text('我的点赞')
               .fontColor($r('app.color.ih_gray_color'))
-              .fontSize(14)
+              .fontSize(vp2vp(14))
           }
         }
 
         GridCol() {
           Column() {
             Image($r('app.media.icon_my_time'))
-              .width(30)
-              .height(30)
-              .margin({ bottom: 8 })
+              .width(vp2vp(30))
+              .height(vp2vp(30))
+              .margin({ bottom: vp2vp(8) })
               .objectFit(ImageFit.Contain)
             Text('累计学时')
               .fontColor($r('app.color.ih_gray_color'))
-              .fontSize(14)
-              .margin({ bottom: 2 })
+              .fontSize(vp2vp(14))
+              .margin({ bottom: vp2vp(2) })
             Row() {
               Text(getTimeText(this.user.totalTime))
                 .fontColor('#C3C3C5')
-                .fontSize(12)
+                .fontSize(vp2vp(12))
               Image($r('app.media.icon_my_arrow'))
                 .fillColor('#C3C3C5')
-                .width(12)
-                .height(12)
+                .width(vp2vp(12))
+                .height(vp2vp(12))
             }
           }
         }.onClick(()=>{
@@ -176,17 +176,18 @@ export struct MinePage {
       // 单词
       Row() {
         Text()
-          .width(3)
-          .height(12)
+          .width(vp2vp(3))
+          .height(vp2vp(12))
           .backgroundColor('#41B883')
         Text('前端常用词')
+          .fontSize(vp2vp(16))
           .fontColor('#121826')
-          .layoutWeight(1)
-          .padding({ left: 12 })
+          .layoutWeight(vp2vp(1))
+          .padding({ left: vp2vp(12) })
         Image($r('app.media.icon_my_new'))
-          .width(53)
-          .height(22)
-          .margin({ right: 10 })
+          .width(vp2vp(53))
+          .height(vp2vp(22))
+          .margin({ right: vp2vp(10) })
       }
       .boxStyle()
 
@@ -194,63 +195,63 @@ export struct MinePage {
       List() {
         ListItem() {
           Row() {
-            Text('推荐分享')
+            Text('推荐分享').fontSize(vp2vp(16))
             Image($r('app.media.icon_my_arrow'))
               .fillColor('#C3C3C5')
-              .width(18)
-              .height(18)
+              .width(vp2vp(18))
+              .height(vp2vp(18))
           }
           .width('100%')
           .justifyContent(FlexAlign.SpaceBetween)
-          .padding({ left: 15, right: 15 })
+          .padding({ left: vp2vp(15), right: vp2vp(15) })
         }
-        .height(46)
+        .height(vp2vp(46))
 
         ListItem() {
           Row() {
-            Text('意见反馈')
+            Text('意见反馈').fontSize(vp2vp(16))
             Image($r('app.media.icon_my_arrow'))
               .fillColor('#C3C3C5')
-              .width(18)
-              .height(18)
+              .width(vp2vp(18))
+              .height(vp2vp(18))
           }
           .width('100%')
           .justifyContent(FlexAlign.SpaceBetween)
-          .padding({ left: 15, right: 15 })
+          .padding({ left: vp2vp(15), right: vp2vp(15) })
         }
-        .height(46)
+        .height(vp2vp(46))
 
         ListItem() {
           Row() {
-            Text('关于我们')
+            Text('关于我们').fontSize(vp2vp(16))
             Image($r('app.media.icon_my_arrow'))
               .fillColor('#C3C3C5')
-              .width(18)
-              .height(18)
+              .width(vp2vp(18))
+              .height(vp2vp(18))
           }
           .width('100%')
           .justifyContent(FlexAlign.SpaceBetween)
-          .padding({ left: 15, right: 15 })
+          .padding({ left: vp2vp(15), right: vp2vp(15) })
         }
-        .height(46)
+        .height(vp2vp(46))
 
         if (this.user.token) {
           ListItem() {
             Row() {
-              Text('退出登录')
+              Text('退出登录').fontSize(vp2vp(16))
               Image($r('app.media.icon_my_arrow'))
                 .fillColor('#C3C3C5')
-                .width(18)
-                .height(18)
+                .width(vp2vp(18))
+                .height(vp2vp(18))
             }
             .width('100%')
             .justifyContent(FlexAlign.SpaceBetween)
-            .padding({ left: 15, right: 15 })
+            .padding({ left: vp2vp(15), right: vp2vp(15) })
             .onClick(() => {
               this.logout()
             })
           }
-          .height(46)
+          .height(vp2vp(46))
         }
       }
       .boxStyle()
@@ -258,6 +259,6 @@ export struct MinePage {
     .backgroundColor($r('app.color.ih_bg_color'))
     .width('100%')
     .height('100%')
-    .padding(15)
+    .padding(vp2vp(15))
   }
 }

@@ -5,6 +5,7 @@ import fs from '@ohos.file.fs'
 import { UserInfo } from '../models'
 import { requestGet, requestPost } from '../utils/request'
 import logger from '../utils/logger'
+import { vp2vp } from '../utils/base'
 
 @Entry
 @Component
@@ -109,9 +110,9 @@ struct ProfileEditPage {
             Row() {
               Text('头像')
               Image(this.user.avatar || $rawfile('avatar.png'))
-                .width(40)
-                .width(40)
-                .borderRadius(40)
+                .width(vp2vp(40))
+                .width(vp2vp(40))
+                .borderRadius(vp2vp(40))
                 .border({ width: 0.5, color: '#e4e4e4' })
                 .onError(() => {
                   this.user.avatar = $rawfile('avatar.png') as unknown as string
@@ -119,7 +120,7 @@ struct ProfileEditPage {
                 .onClick(() => {
                   this.pickerAvatar()
                 })
-            }.width('100%').height(60).justifyContent(FlexAlign.SpaceBetween)
+            }.width('100%').height(vp2vp(60)).justifyContent(FlexAlign.SpaceBetween)
           }
 
           ListItem() {
@@ -129,7 +130,7 @@ struct ProfileEditPage {
                 .textAlign(TextAlign.End)
                 .layoutWeight(1)
                 .padding(0)
-                .height(60)
+                .height(vp2vp(60))
                 .backgroundColor(Color.White)
                 .borderRadius(0)
                 .onChange((value) => this.user.nickName = value)
@@ -141,12 +142,12 @@ struct ProfileEditPage {
         }
         .width('100%')
         .height('100%')
-        .padding({ left: 45, right: 45, top: 15, bottom: 15 })
+        .padding({ left: vp2vp(45), right: vp2vp(45), top: vp2vp(15), bottom: vp2vp(15) })
         .divider({ strokeWidth: 0.5, color: '#f5f5f5' })
 
         if (this.loading) {
           Column() {
-            LoadingProgress().width(100).height(100).color('#fff')
+            LoadingProgress().width(vp2vp(100)).height(vp2vp(100)).color('#fff')
           }.width('100%')
           .height('100%')
           .alignItems(HorizontalAlign.Center)
@@ -156,6 +157,6 @@ struct ProfileEditPage {
 
       }.width('100%')
       .height('100%')
-    }.title('完善个人信息').titleMode(NavigationTitleMode.Mini)
+    }.title('完善个人信息').titleMode(NavigationTitleMode.Mini).mode(NavigationMode.Stack)
   }
 }

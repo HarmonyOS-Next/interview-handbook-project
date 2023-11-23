@@ -188,6 +188,7 @@ struct Index {
 - 遇到非遍历情况下，一个组件分散着相同的UI结构，可以使用 `@Builder` 更轻量
 
 其他：
+- `GridRow` `GridCol` 栅格布局
 - 华为官方图标下载 [链接](https://developer.harmonyos.com/cn/design/harmonyos-icon/)
 
 :::
@@ -212,6 +213,8 @@ this.MyBuilderFunction('Title')
 - 评价 好评率 98%
 - 推荐 查看全部
 - 体验 4 条测评
+
+<img src="./images/29.png" width="240" />
 
 ```typescript
   @Builder
@@ -239,6 +242,8 @@ this.MoreBuilder('4 条测评')
 
 需求：
 - 点击按钮后模拟加载好评率数据
+
+<img src="./images/30.png" width="240" />
 
 ```typescript {7-17,33,50,67}
 @Entry
@@ -358,6 +363,8 @@ struct Index {
 - 标题文字和更多文案通过属性传入
 - 内容结构需要传入
 
+<img src="./images/31.png" width="240" />
+
 ```typescript {5-13,31,47,51-53,57-59}
 @Component
 struct PanelComp {
@@ -432,6 +439,8 @@ struct Index {
 2）参数初始化组件（具名插槽）
 
 需求：需要传入内容结构和底部结构
+
+<img src="./images/32.png" width="240" />
 
 ```typescript {5-8,28,32,44-51,57-62}
 @Component
@@ -529,13 +538,309 @@ struct Index {
 
 ### 4. 构建函数-系统组件自定义UI
 
+> 在一些系统组件中，根据配置无法达到预期UI，可以使用 @Builder 构建函数自定义UI
+
+<img src="./images/28.png" width="240" />
+
+需求：自定义 `Tabs` 组件的 `TabBar` UI结构
+
+```typescript
+class ToolBarItem {
+  defaultIcon: string | Resource
+  activeIcon: string | Resource
+  label: string
+}
+
+@Entry
+@Component
+struct Index {
+  @State
+  activeIndex: number = 0
+  toolBars: ToolBarItem[] = [
+    { defaultIcon: $r('app.media.home'), activeIcon: $r('app.media.home_select'), label: '首页' },
+    { defaultIcon: $r('app.media.project'), activeIcon: $r('app.media.project_select'), label: '项目' },
+    { defaultIcon: $r('app.media.interview'), activeIcon: $r('app.media.interview_select'), label: '面经' },
+    { defaultIcon: $r('app.media.mine'), activeIcon: $r('app.media.mine_select'), label: '我的' }
+  ]
+
+  @Builder
+  TabBarBuilder(item: ToolBarItem, index: number) {
+    Column() {
+      Image(this.activeIndex === index ? item.activeIcon : item.defaultIcon)
+        .width(24)
+      Text(item.label)
+        .fontSize(12)
+        .margin({ top: 4 })
+        .lineHeight(12)
+        .fontColor(this.activeIndex === index ? '#000' : '#aaa')
+    }
+  }
+
+  build() {
+    Tabs() {
+      ForEach(this.toolBars, (item: ToolBarItem, index: number) => {
+        TabContent() {
+          Text(index.toString())
+        }
+        .tabBar(this.TabBarBuilder(item, index))
+      })
+    }
+    .barPosition(BarPosition.End)
+    .onChange(index => this.activeIndex = index)
+  }
+}
+```
+
+
 ## 组件状态共享
 
 ### 1. 状态共享-父子单向
+
+> `@Prop` 装饰的变量可以和父组件建立单向的同步关系。`@Prop` 装饰的变量是可变的，但是变化不会同步回其父组件。
+
+
+```typescript {26,27}
+@Entry
+@Component
+struct Index {
+
+  @State
+  money: number = 0
+
+  build() {
+    Column({ space: 20 }){
+      Text('父组件：' + this.money)
+        .onClick(() => {
+          this.money ++
+        })
+      Child({ money: this.money })
+    }
+    .width('100%')
+    .height('100%')
+    .alignItems(HorizontalAlign.Center)
+    .justifyContent(FlexAlign.Center)
+  }
+}
+
+@Component
+struct Child {
+
+  @Prop
+  money: number
+
+  build() {
+    Text('子组件：' + this.money)
+      .onClick(() => {
+        this.money ++
+      })
+  }
+}
+```
+
+::: tip
+
+- 支持类型 `string、number、boolean、enum` 类型
+- 子组件可修改 `Prop` 数据值，但不同步到父组件，父组件更新后覆盖子组件 `Prop` 数据
+- 子组件可以初始化默认值，**注意：目前编译器会提示错误，请忽略，下个版本将修复**
+
+:::
+
+
 ### 2. 状态共享-父子双向
+
+> 子组件中被@Link装饰的变量与其父组件中对应的数据源建立双向数据绑定。
+
+
+1）简单类型 `string、number、boolean、enum`
+
+```typescript {14,26,27}
+@Entry
+@Component
+struct Index {
+
+  @State
+  money: number = 0
+
+  build() {
+    Column({ space: 20 }){
+      Text('父组件：' + this.money)
+        .onClick(() => {
+          this.money ++
+        })
+      Child({ money: $money })
+    }
+    .width('100%')
+    .height('100%')
+    .alignItems(HorizontalAlign.Center)
+    .justifyContent(FlexAlign.Center)
+  }
+}
+
+@Component
+struct Child {
+
+  @Link
+  money: number
+
+  build() {
+    Text('子组件：' + this.money)
+      .onClick(() => {
+        this.money ++
+      })
+  }
+}
+```
+
+2）复杂类型 `Object、class`
+
+```typescript {1-4,10-11,19,31-32}
+class Person {
+  name: string
+  age: number
+}
+
+@Entry
+@Component
+struct Index {
+
+  @State
+  person: Person = { name: 'jack', age: 18 }
+
+  build() {
+    Column({ space: 20 }){
+      Text('父组件：' + `${this.person.name} 今年 ${ this.person.age } 岁`)
+        .onClick(() => {
+          this.person.age ++
+        })
+      Child({ person: $person })
+    }
+    .width('100%')
+    .height('100%')
+    .alignItems(HorizontalAlign.Center)
+    .justifyContent(FlexAlign.Center)
+  }
+}
+
+@Component
+struct Child {
+
+  @Link
+  person: Person
+
+  build() {
+    Text('子组件：' +  `${this.person.name} 今年 ${ this.person.age } 岁`)
+      .onClick(() => {
+        this.person.age ++
+      })
+  }
+}
+```
+
+
+::: tip
+
+- 父组件传值的时候需要 `this.` 改成 `$`，子组件 `@Link` 修饰数据
+
+:::
+
+
 ### 3. 状态共享-后代组件
+
+
+> `@Provide` 和 `@Consume`，应用于与后代组件的双向数据同步，应用于状态数据在多个层级之间传递的场景。
+
+
+1）通过相同的变量名绑定
+
+```typescript {4-5,24-25,40-41}
+@Entry
+@Component
+struct Index {
+  @Provide
+  money: number = 0
+
+  build() {
+    Column({ space: 20 }) {
+      Text('父组件：' + this.money)
+        .onClick(() => {
+          this.money++
+        })
+      Parent()
+    }
+    .width('100%')
+    .height('100%')
+    .alignItems(HorizontalAlign.Center)
+    .justifyContent(FlexAlign.Center)
+  }
+}
+
+@Component
+struct Parent {
+  @Consume
+  money: number
+
+  build() {
+    Column({ space: 20 }) {
+      Text('父组件：' + this.money)
+        .onClick(() => {
+          this.money++
+        })
+      Child()
+    }
+  }
+}
+
+@Component
+struct Child {
+  @Consume
+  money: number
+
+  build() {
+    Text('子组件：' + this.money)
+      .onClick(() => {
+        this.money++
+      })
+  }
+}
+```
+
+
+::: tip
+
+- `Object、class、string、number、boolean、enum` 类型均支持
+- 通过相同的变量别名绑定 `@Provide('key')` 和 `@Consume('key')` key需要保持一致
+
+:::
+
+
 ### 4. 状态共享-状态监听器
+
+> 子组件中被@Link装饰的变量与其父组件中对应的数据源建立双向数据绑定。
+
+
+1）简单类型 `string、number、boolean、enum`
+
+
+2）复杂类型 `Object、class`
+
+::: tip
+
+:::
+
+
 ### 5. @Observed与@ObjectLink
+
+> 子组件中被@Link装饰的变量与其父组件中对应的数据源建立双向数据绑定。
+
+
+1）简单类型 `string、number、boolean、enum`
+
+
+2）复杂类型 `Object、class`
+
+::: tip
+
+:::
 
 
 ## 应用状态

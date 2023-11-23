@@ -7,6 +7,7 @@ import emitter from '@ohos.events.emitter';
 import { EVENT_MAP } from '../constants';
 import logger from '../utils/logger'
 import promptAction from '@ohos.promptAction';
+import { vp2vp } from '../utils/base';
 
 const storage = LocalStorage.GetShared()
 
@@ -47,15 +48,15 @@ struct Index {
   TabBarBuilder(title: string, targetIndex: number, defaultImg: Resource, selectedImg: Resource) {
     Column() {
       Image(this.activeIndex === targetIndex ? selectedImg : defaultImg)
-        .size({ width: 25, height: 25 })
+        .size({ width: vp2vp(25), height:vp2vp(25) })
       Text(title)
         .fontColor(this.activeIndex === targetIndex ? $r('app.color.tab_selected_color') : $r('app.color.tab_default_color'))
-        .fontSize(12)
-        .padding({ top: 3 })
-        .lineHeight(12)
+        .fontSize(vp2vp(12))
+        .padding({ top: vp2vp(3) })
+        .lineHeight(vp2vp(12))
     }
     .width('100%')
-    .height(50)
+    .height(vp2vp(50))
     .justifyContent(FlexAlign.Center)
     .border({ width: { top: 0.5 }, color: $r('app.color.ih_bg_color'), style: BorderStyle.Solid })
     .onClick(() => {
@@ -88,5 +89,6 @@ struct Index {
     .onChange((index) => {
       this.activeIndex = index
     })
+    .barHeight(vp2vp(50))
   }
 }

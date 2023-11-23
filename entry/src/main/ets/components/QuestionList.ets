@@ -5,6 +5,7 @@ import router from '../utils/router'
 import { requestGet } from '../utils/request'
 import emitter from '@ohos.events.emitter'
 import { LoadingWrapper } from './LoadingWrapper'
+import { vp2vp } from '../utils/base'
 
 // const mockList = [
 //   {
@@ -97,6 +98,8 @@ export struct QuestionList {
     keyword: undefined,
   }
   questionDataSource = new QuestionDataSource()
+  @State
+  refreshing: boolean = false
 
   aboutToAppear() {
     this.initQuestionList()
@@ -143,80 +146,91 @@ export struct QuestionList {
   ListFooterBuilder() {
     if (this.finished) {
       Row() {
-        Text('没有更多了~').fontColor($r('app.color.ih_gray_color')).fontSize(14)
-      }.width('100%').height(50).justifyContent(FlexAlign.Center)
+        Text('没有更多了~').fontColor($r('app.color.ih_gray_color')).fontSize(vp2vp(14))
+      }.width('100%').height(vp2vp(50)).justifyContent(FlexAlign.Center)
     } else {
       if (this.loading) {
         Row() {
-          LoadingProgress().width(24).margin({ right: 5 })
-          Text('加载中...').fontColor($r('app.color.ih_gray_color')).fontSize(14)
-        }.width('100%').height(50).justifyContent(FlexAlign.Center)
+          LoadingProgress().width(vp2vp(24)).margin({ right: vp2vp(5) })
+          Text('加载中...').fontColor($r('app.color.ih_gray_color')).fontSize('14fp')
+        }.width('100%').height(vp2vp(50)).justifyContent(FlexAlign.Center)
       }
     }
   }
 
   build() {
-    List() {
-      LazyForEach(this.questionDataSource, (item: QuestionItem) => {
-        ListItem() {
-          Column() {
-            Row() {
-              Text(DIFFICULTY_MAP[item.difficulty]?.text)
-                .fontColor(DIFFICULTY_MAP[item.difficulty]?.color)
-                .fontSize(10)
-                .width(34)
-                .height(18)
-                .backgroundColor($r('app.color.ih_bg_color'))
-                .borderRadius(2)
-                .textAlign(TextAlign.Center)
-                .margin({ right: 7 })
-              Text(item.stem)
-                .fontSize(16)
-                .layoutWeight(1)
-                .textOverflow({ overflow: TextOverflow.Ellipsis })
-                .maxLines(1)
-            }.width('100%')
+    Refresh({ refreshing: $$this.refreshing, offset: 0, friction: 60}) {
+      List() {
+        LazyForEach(this.questionDataSource, (item: QuestionItem) => {
+          ListItem() {
+            Column() {
+              Row() {
+                Text(DIFFICULTY_MAP[item.difficulty]?.text)
+                  .fontColor(DIFFICULTY_MAP[item.difficulty]?.color)
+                  .fontSize(vp2vp(10))
+                  .width(vp2vp(34))
+                  .height(vp2vp(18))
+                  .backgroundColor($r('app.color.ih_bg_color'))
+                  .borderRadius(vp2vp(2))
+                  .textAlign(TextAlign.Center)
+                  .margin({ right: vp2vp(7) })
+                Text(item.stem)
+                  .fontSize(vp2vp(16))
+                  .layoutWeight(1)
+                  .textOverflow({ overflow: TextOverflow.Ellipsis })
+                  .maxLines(1)
+              }.width('100%')
 
-            Row() {
-              Text(`点赞 ${item.likeCount}`).fontColor('#C3C3C5').fontSize(13)
-              Text('|').width(30).textAlign(TextAlign.Center).fontColor('#C3C3C5').fontSize(13)
-              Text(`浏览 ${item.views}`).fontColor('#C3C3C5').fontSize(13)
-              if (item.readFlag === 1) {
-                Text('|').width(30).textAlign(TextAlign.Center).fontColor('#C3C3C5').fontSize(13)
-                Text(`已看过`).fontColor('#C3C3C5').fontSize(13)
+              Row() {
+                Text(`点赞 ${item.likeCount}`).fontColor('#C3C3C5').fontSize(vp2vp(13))
+                Text('|').width(vp2vp(30)).textAlign(TextAlign.Center).fontColor('#C3C3C5').fontSize(vp2vp(13))
+                Text(`浏览 ${item.views}`).fontColor('#C3C3C5').fontSize(vp2vp(13))
+                if (item.readFlag === 1) {
+                  Text('|')
+                    .width(vp2vp(30))
+                    .textAlign(TextAlign.Center)
+                    .fontColor('#C3C3C5')
+                    .fontSize(vp2vp(13))
+                  Text(`已看过`).fontColor('#C3C3C5').fontSize(vp2vp(13))
+                }
               }
-            }
-            .width('100%')
-            .margin({ top: 10 })
-          }.onClick(() => {
-            router.push({
-              url: PAGE_MAP.question_detail,
-              params: {
-                id: item.id,
-                stem: item.stem
-              }
+              .width('100%')
+              .margin({ top: vp2vp(10) })
+            }.onClick(() => {
+              router.push({
+                url: PAGE_MAP.question_detail,
+                params: {
+                  id: item.id,
+                  stem: item.stem
+                }
+              })
             })
+          }
+          .height(vp2vp(80))
+          .width('100%')
+        }, ({id,likeCount,readFlag}) => JSON.stringify({ id, likeCount, readFlag }))
+        ListItem() {
+          LoadingWrapper({
+            loading: this.loading,
+            finished: this.finished
           })
         }
-        .height(80)
-        .width('100%')
-      }, ({id,likeCount,readFlag}) => JSON.stringify({ id, likeCount, readFlag }))
-      ListItem() {
-        LoadingWrapper({
-          loading: this.loading,
-          finished: this.finished
-        })
       }
+      .divider({
+        strokeWidth: 0.5,
+        color: $r('app.color.ih_bg_color')
+      })
+      .padding({ left: vp2vp(15), right: vp2vp(15) })
+      .height('100%')
+      .width('100%')
+      .onReachEnd(() => {
+        this.loadQuestionList()
+      })
     }
-    .divider({
-      strokeWidth: 0.5,
-      color: $r('app.color.ih_bg_color')
-    })
-    .padding({ left: 15, right: 15 })
-    .height('100%')
-    .width('100%')
-    .onReachEnd(() => {
-      this.loadQuestionList()
+    .onRefreshing(()=>{
+      setTimeout(() => {
+        this.refreshing = false
+      }, 1000)
     })
   }
 }

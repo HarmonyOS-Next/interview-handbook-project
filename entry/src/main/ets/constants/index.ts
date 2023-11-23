@@ -14,7 +14,8 @@ export const PAGE_MAP = {
   project_list: 'pages/ProjectListPage',
   interview_detail: 'pages/InterviewDetailPage',
   profile_edit: 'pages/ProfileEditPage',
-  study_time: 'pages/StudyTimePage'
+  study_time: 'pages/StudyTimePage',
+  preview_web: 'pages/PreviewWebPage'
 }
 
 export const EVENT_MAP = {

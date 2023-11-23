@@ -2,6 +2,7 @@ import router from '../utils/router'
 import { QuestionType, ResponseData, TagItem } from '../models'
 import { requestGet } from '../utils/request'
 import { PAGE_MAP } from '../constants'
+import { vp2vp } from '../utils/base'
 
 
 @Preview
@@ -45,15 +46,15 @@ export struct ProjectPage {
         ListItem() {
           Row() {
             Image(item.icon)
-              .width(60)
-              .height(80)
+              .width(vp2vp(60))
+              .height(vp2vp(80))
             Column() {
-              Text(item.name).width('100%').margin({ bottom: 5 })
+              Text(item.name).width('100%').margin({ bottom: vp2vp(5) }).fontSize(vp2vp(16))
               Row() {
                 Text(item.describeInfo)
                   .width('100%')
                   .fontColor($r('app.color.ih_gray_color'))
-                  .fontSize(12)
+                  .fontSize(vp2vp(12))
                   .maxLines(2)
                   .textOverflow({ overflow: TextOverflow.Ellipsis })
               }
@@ -64,22 +65,22 @@ export struct ProjectPage {
               Row() {
                 ForEach(item.tags, (tag: TagItem) => {
                   Text(tag.tagName)
-                    .fontSize(10)
-                    .lineHeight(10)
-                    .padding(5)
-                    .borderRadius(4)
+                    .fontSize(vp2vp(10))
+                    .lineHeight(vp2vp(10))
+                    .padding(vp2vp(5))
+                    .borderRadius(vp2vp(4))
                     .backgroundColor('#EDF2FF')
                     .fontColor('#3266EE')
-                    .margin({ right: 5 })
+                    .margin({ right: vp2vp(5) })
                 })
               }
               .width('100%')
             }
-            .padding({ left: 15 })
+            .padding({ left: vp2vp(15) })
           }
         }
-        .padding({ top: 15, bottom: 15 })
-        .height(110)
+        .padding({ top: vp2vp(15), bottom: vp2vp(15) })
+        .height(vp2vp(110))
         .onClick(()=>{
           router.push({
             url: PAGE_MAP.project_list,
@@ -91,7 +92,7 @@ export struct ProjectPage {
         })
       })
     }
-    .padding(15)
+    .padding(vp2vp(15))
     .height('100%')
     .width('100%')
     .divider({

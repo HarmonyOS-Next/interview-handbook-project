@@ -5,6 +5,7 @@ import { ClockIn } from '../components/ClockIn'
 import SearchWrapper from '../components/SearchWrapper'
 import { requestGet } from '../utils/request'
 import logger from '../utils/logger'
+import { vp2vp } from '../utils/base'
 
 @Preview
 @Component
@@ -52,24 +53,24 @@ export struct HomePage {
     Row() {
       Stack() {
         Text(item.name)
-          .fontSize(15)
-          .height(44)
+          .fontSize(vp2vp(15))
+          .height(vp2vp(44))
           .fontColor(this.activeIndex === index ? '#121826' : $r('app.color.ih_gray_color'))
         Text()
-          .width(this.activeIndex === index ? 20 : 0)
-          .height(2)
+          .width(this.activeIndex === index ? vp2vp(20) : 0)
+          .height(vp2vp(2))
           .backgroundColor('#121826')
           .animation({ duration: this.activeIndex === index ? 200 : 0 })
       }.alignContent(Alignment.Bottom)
 
       if (item.displayNewestFlag === 1) {
         Image($r('app.media.new'))
-          .width(34)
-          .height(14)
-          .margin({ left: 4 })
+          .width(vp2vp(34))
+          .height(vp2vp(14))
+          .margin({ left: vp2vp(4) })
       }
     }
-    .padding({ left: index === 0 ? 15 : 10, right: index === this.questionTypes.length - 1 ? 54 : 10 })
+    .padding({ left: index === 0 ? vp2vp(15) : vp2vp(10), right: index === this.questionTypes.length - 1 ? vp2vp(54) : vp2vp(10) })
     .onClick(() => {
       this.activeIndex = index
       this.activeQuestionTypeId = this.questionTypes[index].id
@@ -81,10 +82,10 @@ export struct HomePage {
     Column() {
       Row() {
         ForEach([1, 2, 3, 4], (item) => {
-          Skeleton({ w: 50 + item % 3 * 10 }).margin({ right: 10 })
+          Skeleton({ w: vp2vp(50) + item % 3 * vp2vp(10) }).margin({ right: vp2vp(10) })
         })
       }
-      .height(60)
+      .height(vp2vp(60))
       .width('100%')
       .justifyContent(FlexAlign.Start)
 
@@ -93,16 +94,16 @@ export struct HomePage {
           ListItem() {
             Column() {
               Row() {
-                Skeleton({ w: 40 }).margin({ right: 10 })
+                Skeleton({ w: vp2vp(40) }).margin({ right: vp2vp(10) })
                 Skeleton({ w: '100%' }).layoutWeight(1)
               }
               .width('100%')
-              .margin({ bottom: 10 })
+              .margin({ bottom: vp2vp(10) })
 
-              Skeleton({ w: 120 })
+              Skeleton({ w: vp2vp(120) })
             }.alignItems(HorizontalAlign.Start)
           }
-          .height(80)
+          .height(vp2vp(80))
         })
       }
       .width('100%')
@@ -112,7 +113,7 @@ export struct HomePage {
         color: $r('app.color.ih_bg_color')
       })
     }
-    .padding({ left: 15, right: 15 })
+    .padding({ left: vp2vp(15), right: vp2vp(15) })
     .layoutWeight(1)
     .justifyContent(FlexAlign.Start)
   }
@@ -124,28 +125,29 @@ export struct HomePage {
           SearchWrapper()
         }
         .layoutWeight(1)
-        .margin({ right: 5 })
+        .margin({ right: vp2vp(5) })
 
         ClockIn()
-      }.padding(15)
+      }.padding(vp2vp(15))
 
       Row() {
         Swiper() {
           Flex() {
             Image($rawfile('banner_qa.png')).objectFit(ImageFit.Fill)
-          }.padding({ left: 15, right: 15 })
+          }.padding({ left: vp2vp(15), right: vp2vp(15) })
 
           Flex() {
             Image($rawfile('banner_pj.png')).objectFit(ImageFit.Fill)
-          }.padding({ left: 15, right: 15 })
+          }.padding({ left: vp2vp(15), right: vp2vp(15) })
 
           Flex() {
             Image($rawfile('banner_ai.png')).objectFit(ImageFit.Fill)
-          }.padding({ left: 15, right: 15 })
+          }.padding({ left: vp2vp(15), right: vp2vp(15) })
         }
         .autoPlay(true)
         .indicator(false)
-      }.height(132)
+      }
+      .aspectRatio(2.8)
 
       if (this.questionTypes.length) {
         Row() {
@@ -162,7 +164,7 @@ export struct HomePage {
             })
           }
           .barMode(BarMode.Scrollable)
-          .margin({ top: 4 })
+          .margin({ top: vp2vp(4) })
           .onChange((index) => {
             this.activeIndex = index
             this.activeQuestionTypeId = this.questionTypes[this.activeIndex].id

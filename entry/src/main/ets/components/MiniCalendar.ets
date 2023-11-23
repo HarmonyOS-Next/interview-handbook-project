@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { vp2vp } from '../utils/base'
 import logger from '../utils/logger'
 const img = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEQAAABECAYAAAA4E5OyAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAF5SURBVHgB7drLUcMwFIXhGzvOMKwoJXSAO0gJ0BkdECoQJaQT2II1MTo8NiZsmLm6R+R8mzjJIuN/Yo0tyUxERERERERE/rmVOUopXa3Xm4dyeFN+ap/z6904ji9GrDNHfT/s7CMGzLsSJyGSEXMNMs+2PPktexTXIMfjdF9eDouPqaO4jiHwNY6kcrhdfHXI+W1kG1Pcg0BLUaoEgVaiVAsCLUSpGgTYo1QPAsxRQoIAa5SwIMAYJTQIsEUJDwJMUSiCAEsUmiDAEIUqCERHoQsCkVFcH///CieME7cTUwddN9yaI8og31Yn/r993z+bI8oguGSGYZPKjNuPS2aaLh7NEeWg+luMnC/L1XR9PoNqdAygujGLjgE0t+4MMYDi4Y4lBoQ//jPFgNAJIrYYEDaFyBgDQiaZWWNA9WUI5hhQdaGKPQZUW8psIQZUWexuJQa47yBqKQa47yBqKQbU3kFEHQNq7CDaf76bn9hjiIiIiIiIiMhZeAeOPE1Nm7TnTQAAAABJRU5ErkJggg=='
 
@@ -82,17 +83,17 @@ export default struct MiniCalendar {
 
   @Styles
   btnStyle() {
-    .width(20)
-    .height(20)
+    .width(vp2vp(20))
+    .height(vp2vp(20))
     .backgroundColor('#f6f7f9')
-    .borderRadius(4)
+    .borderRadius(vp2vp(4))
   }
 
   build() {
     Column() {
       Row() {
         Column() {
-          Image(img).width(14).width(14).rotate({ angle: 180 })
+          Image(img).width(vp2vp(14)).width(vp2vp(14)).rotate({ angle: 180 })
         }
         .btnStyle()
         .justifyContent(FlexAlign.Center)
@@ -102,12 +103,12 @@ export default struct MiniCalendar {
 
         Text(dayjs(this.currentDate).format('YYYY年MM月'))
           .fontColor('#6B7897')
-          .margin({ right: 20, left: 20 })
-          .width(110)
+          .margin({ right: vp2vp(20), left: vp2vp(20) })
+          .width(vp2vp(110))
           .textAlign(TextAlign.Center)
 
         Column() {
-          Image(img).width(14).width(14)
+          Image(img).width(vp2vp(14)).width(vp2vp(14))
         }
         .btnStyle()
         .justifyContent(FlexAlign.Center)
@@ -124,7 +125,7 @@ export default struct MiniCalendar {
               Text(item)
                 .fontColor('#6E7B8A')
             }
-          }.height(40)
+          }.height(vp2vp(40))
         })
         ForEach(this.days, (item: DayItem) => {
           GridCol() {
@@ -132,22 +133,22 @@ export default struct MiniCalendar {
               if (item.isSelected) {
                 Text(item.date.toString())
                   .fontColor('#fff')
-                  .width(32)
-                  .height(32)
-                  .borderRadius(16)
+                  .width(vp2vp(32))
+                  .height(vp2vp(32))
+                  .borderRadius(vp2vp(16))
                   .backgroundColor('#FFC531')
                   .textAlign(TextAlign.Center)
-                  .fontSize(14)
+                  .fontSize(vp2vp(14))
                 Text(this.selectedText)
                   .fontColor('#FFC531')
-                  .fontSize(10)
-                  .margin({ top: 2 })
+                  .fontSize(vp2vp(10))
+                  .margin({ top: vp2vp(2) })
 
               } else {
                 Text(item.date.toString())
-                  .width(32)
-                  .height(32)
-                  .fontSize(14)
+                  .width(vp2vp(32))
+                  .height(vp2vp(32))
+                  .fontSize(vp2vp(14))
                   .textAlign(TextAlign.Center)
                   .fontColor(this.isTheMonth(item.month) ? '#6E7B8A' : '#E1E4E7')
               }
@@ -156,14 +157,14 @@ export default struct MiniCalendar {
                 .padStart(2, '0')}`
               this.onClickItem(date)
             })
-          }.height(48)
+          }.height(vp2vp(48))
         })
       }
-      .padding({ top: 15 })
+      .padding({ top: vp2vp(15) })
       .border({ width: { top: 0.5 }, color: '#f6f7f9' })
     }
     .width('100%')
     .backgroundColor('#fff')
-    .borderRadius(8)
+    .borderRadius(vp2vp(8))
   }
 }

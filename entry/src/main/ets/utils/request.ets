@@ -49,10 +49,12 @@ const request = <T = unknown>(url: string = '', method: http.RequestMethod = htt
         return result
       }
       if (result.code === 401) {
-        router.pushUrl({
-          url: PAGE_MAP.login
-        })
-        AppStorage.Set('user', '{}')
+        if (router.getState().path !== PAGE_MAP.login) {
+          AppStorage.Set('user', '{}')
+          router.pushUrl({
+            url: PAGE_MAP.login
+          })
+        }
       }
     }
     return Promise.reject(res.result)

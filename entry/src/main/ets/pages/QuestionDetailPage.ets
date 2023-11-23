@@ -6,6 +6,7 @@ import { requestGet, requestPost } from '../utils/request'
 import emitter from '@ohos.events.emitter'
 import { DetailRichText } from '../components/DetailRichText'
 import logger from '../utils/logger'
+import { vp2vp } from '../utils/base'
 
 const storage = LocalStorage.GetShared()
 
@@ -98,29 +99,29 @@ struct QuestionDetailPage {
   @Builder
   titleBuilder(text: string) {
     Row() {
-      Text().width(2).height(12).backgroundColor('#121826').margin({ right: 13 })
+      Text().width(vp2vp(2)).height(vp2vp(12)).backgroundColor('#121826').margin({ right: vp2vp(13) })
       Text(text).fontWeight(600)
     }
     .width('100%')
-    .padding({ top: 10 })
-    .height(32)
+    .padding({ top: vp2vp(10) })
+    .height(vp2vp(32))
   }
 
   @Builder
   tagBuilder(text: string, color: string = '#41B883') {
     Text(text)
-      .fontSize(10)
-      .padding(5)
+      .fontSize(vp2vp(10))
+      .padding(vp2vp(5))
       .backgroundColor($r('app.color.ih_bg_color'))
-      .borderRadius(2)
+      .borderRadius(vp2vp(2))
       .fontColor(color)
-      .margin({ right: 5 })
+      .margin({ right: vp2vp(5) })
   }
 
   @Builder
   toggleBuilder() {
     Row() {
-      Image($r("app.media.prev_black")).width(80).onClick(() => {
+      Image($r("app.media.prev_black")).width(vp2vp(80)).onClick(() => {
         const index = this.sharedQuestionList.findIndex(item => item.id === this.questionId)
         if (index > 0) {
           const prev = this.sharedQuestionList[index - 1]
@@ -136,7 +137,7 @@ struct QuestionDetailPage {
           promptAction.showToast({ message: '没有更多题~' })
         }
       })
-      Image($r("app.media.next_black")).width(80).onClick(() => {
+      Image($r("app.media.next_black")).width(vp2vp(80)).onClick(() => {
         const index = this.sharedQuestionList.findIndex(item => item.id === this.questionId)
         if (index < this.sharedQuestionList.length - 1) {
           const next = this.sharedQuestionList[index + 1]
@@ -210,14 +211,14 @@ struct QuestionDetailPage {
                 .layoutWeight(1)
               }
             }
-            .height(40)
+            .height(vp2vp(40))
             .width('100%')
-            .padding({ top: 15 })
-          }.padding(15)
+            .padding({ top: vp2vp(15) })
+          }.padding(vp2vp(15))
         }
 
         Divider()
-          .strokeWidth(8)
+          .strokeWidth(vp2vp(8))
           .color($r('app.color.ih_bg_color'))
 
         Column() {
@@ -227,7 +228,7 @@ struct QuestionDetailPage {
               DetailRichText({ content: this.question.answer })
             }
           }
-          .padding(15)
+          .padding(vp2vp(15))
           .layoutWeight(1)
         }.layoutWeight(1)
       }

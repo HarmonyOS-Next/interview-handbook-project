@@ -3,7 +3,7 @@ import { PAGE_MAP } from '../constants';
 import { UserInfo } from '../models';
 
 
-const list = ['pages/Index', 'pages/LoginPage']
+const list = [PAGE_MAP.index, PAGE_MAP.login, PAGE_MAP.preview_web]
 
 const push = (options: router.RouterOptions) => {
   const user = JSON.parse(AppStorage.Get('user') || '{}') as UserInfo

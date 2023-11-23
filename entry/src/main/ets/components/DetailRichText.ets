@@ -1,3 +1,4 @@
+import { vp2vp } from '../utils/base'
 @Component
 export struct DetailRichText {
   @Prop
@@ -29,12 +30,12 @@ export struct DetailRichText {
         })
       if (this.loading) {
         Column() {
-          LoadingProgress().width(50).height(50).color('#979797')
+          LoadingProgress().width(vp2vp(50)).height(vp2vp(50)).color('#979797')
         }
         .width("100%")
         .height("100%")
         .backgroundColor('#ffffff')
-        .padding({ top: 50 })
+        .padding({ top: vp2vp(50) })
       }
     }
     .width("100%")

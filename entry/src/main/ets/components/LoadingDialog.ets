@@ -1,3 +1,4 @@
+import { vp2vp } from '../utils/base'
 @CustomDialog
 export struct LoadingDialog {
   @State
@@ -6,10 +7,10 @@ export struct LoadingDialog {
 
   build() {
     Flex({ direction: FlexDirection.Column, alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
-      LoadingProgress().width(48).height(48).color('#fff')
+      LoadingProgress().width(vp2vp(48)).height(vp2vp(48)).color('#fff')
       if (this.message) {
-        Text(this.message).fontSize(14).fontColor('#fff')
+        Text(this.message).fontSize(vp2vp(14)).fontColor('#fff')
       }
-    }.width(120).height(120).backgroundColor('rgba(0,0,0,0.5)').borderRadius(16)
+    }.width(vp2vp(120)).height(vp2vp(120)).backgroundColor('rgba(0,0,0,0.5)').borderRadius(vp2vp(16))
   }
 }

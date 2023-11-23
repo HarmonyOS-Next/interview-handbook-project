@@ -1,6 +1,8 @@
 import promptAction from '@ohos.promptAction';
 import router from '@ohos.router';
+import { PAGE_MAP } from '../constants';
 import { ResponseData, UserInfo } from '../models/index';
+import { vp2vp } from '../utils/base';
 import { requestPost } from '../utils/request';
 
 @Entry
@@ -57,9 +59,9 @@ struct LoginPage {
 
   @Styles
   inputStyle() {
-    .margin({ bottom: 15 })
-    .height(44)
-    .borderRadius(2)
+    .margin({ bottom: vp2vp(15) })
+    .height(vp2vp(44))
+    .borderRadius(vp2vp(2))
     .backgroundColor('#ffffff')
     .border({ width: { bottom: 0.5 }, color: '#e4e4e4' })
     .padding({ left: 0 })
@@ -70,9 +72,9 @@ struct LoginPage {
       Scroll() {
         Flex({ direction: FlexDirection.Column, alignItems: ItemAlign.Center }) {
           Column() {
-            Image($r('app.media.icon')).width(120).height(120)
-            Text('面试宝典').fontSize(28).margin({ bottom: 15 })
-            Text('搞定企业面试真题，就用面试宝典').fontSize(14).fontColor($r('app.color.ih_gray_color'))
+            Image($r('app.media.icon')).width(vp2vp(120)).height(vp2vp(120))
+            Text('面试宝典').fontSize(vp2vp(28)).margin({ bottom: vp2vp(15) })
+            Text('搞定企业面试真题，就用面试宝典').fontSize(vp2vp(14)).fontColor($r('app.color.ih_gray_color'))
           }.padding(20)
 
           Column() {
@@ -91,42 +93,47 @@ struct LoginPage {
             Row() {
               Checkbox()
                 .selectedColor('#fa711d')
-                .size({ width: 14, height: 14 })
+                .size({ width: vp2vp(14), height: vp2vp(14) })
                 .select(this.isAgree)
                 .onChange((val) => {
                   this.isAgree = val
                 })
               Text('已阅读并同意')
-                .fontSize(14)
+                .fontSize(vp2vp(14))
                 .fontColor($r('app.color.ih_gray_color'))
-                .padding({ right: 4 })
+                .padding({ right: vp2vp(4) })
               Text('用户协议')
-                .fontSize(14)
-                .padding({ right: 4 })
+                .fontSize(vp2vp(14))
+                .padding({ right: vp2vp(4) })
               Text('和')
-                .fontSize(14)
+                .fontSize(vp2vp(14))
                 .fontColor($r('app.color.ih_gray_color'))
-                .padding({ right: 4 })
+                .padding({ right: vp2vp(4) })
               Text('隐私政策')
-                .fontSize(14)
-            }.width('100%').margin({ bottom: 15 })
+                .fontSize(vp2vp(14))
+                .onClick(() => {
+                  router.pushUrl({
+                    url: PAGE_MAP.preview_web
+                  })
+                })
+            }.width('100%').margin({ bottom: vp2vp(15) })
 
             Button({ type: ButtonType.Normal }) {
               Row(){
                 if (this.loading) {
                   LoadingProgress()
                     .color('#ffffff')
-                    .width(24)
-                    .height(24)
-                    .margin({ right: 10 })
+                    .width(vp2vp(24))
+                    .height(vp2vp(24))
+                    .margin({ right: vp2vp(10) })
                 }
                 Text('立即登录').fontColor('#ffffff')
               }
             }
             .width('100%')
             .backgroundColor('none')
-            .borderRadius(4)
-            .height(44)
+            .borderRadius(vp2vp(4))
+            .height(vp2vp(44))
             .linearGradient({
               direction: GradientDirection.Right,
               colors: [['#fc9c1c', 0], ['#fa711d', 1]]
@@ -135,17 +142,18 @@ struct LoginPage {
             .onClick(() => {
               this.login()
             })
-          }.padding(30)
+          }.padding(vp2vp(30))
 
           Column() {
             Text('其他登录方式')
-              .fontSize(14)
+              .fontSize(vp2vp(14))
               .fontColor($r('app.color.ih_gray_color'))
-          }.padding({ top: 70, bottom: 100 })
+          }.padding({ top: vp2vp(70), bottom: vp2vp(100) })
         }
       }
     }
     .titleMode(NavigationTitleMode.Mini)
+    .mode(NavigationMode.Stack)
     .mode(NavigationMode.Stack)
   }
 }

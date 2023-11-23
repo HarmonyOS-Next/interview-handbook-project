@@ -155,7 +155,7 @@ title: HM - 鸿蒙-组件基础
 
 ArkTS是HarmonyOS优选的主力应用开发语言。ArkTS围绕应用开发在TypeScript（简称TS）生态基础上做了进一步扩展，继承了TS的所有特性，是TS的超集。
 
-    <img src="./images/18.png" width="400" />
+    <img src="./images/18.png" width="300" />
 
 扩展能力如下：
 
@@ -1572,7 +1572,7 @@ struct Index {
             .color('#f5f5f5')
           // reply
           Column() {
-            Text('回复 7')
+            Text('回复 '+this.replyList.length)
               .width('100%')
               .margin({ bottom: 15 })
               .fontWeight(500)

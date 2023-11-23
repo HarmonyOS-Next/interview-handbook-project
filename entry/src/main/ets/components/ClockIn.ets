@@ -4,7 +4,7 @@ import { EVENT_MAP, PAGE_MAP } from '../constants'
 import { ClockInfo, UserInfo } from '../models'
 import { requestGet, requestPost } from '../utils/request'
 import router from '../utils/router'
-import logger from '../utils/logger'
+import { vp2vp } from '../utils/base'
 
 @Component
 export struct ClockIn {
@@ -32,8 +32,8 @@ export struct ClockIn {
 
   clockIn() {
     const user = JSON.parse(AppStorage.Get('user') || '{}') as UserInfo
-    if ( user.token ) {
-      requestPost<{ clockinNumbers: number }>('clockin').then((res)=>{
+    if (user.token) {
+      requestPost<{ clockinNumbers: number }>('clockin').then((res) => {
         promptAction.showToast({ message: '打卡成功' })
         this.clockInCount = res.data.clockinNumbers
       })
@@ -50,26 +50,26 @@ export struct ClockIn {
         Image($r('app.media.clocked'))
           .objectFit(ImageFit.Fill)
         Column() {
-          Text('连续打卡').fontSize(9)
+          Text('连续打卡').fontSize(vp2vp(9))
           Text() {
-            Span(`${this.clockInCount} `).fontSize(10).fontWeight(600)
-            Span('天').fontSize(9)
+            Span(`${this.clockInCount} `).fontSize(vp2vp(10)).fontWeight(600)
+            Span('天').fontSize(vp2vp(9))
           }
         }
         .width('100%')
-        .padding({ left: 26 })
+        .padding({ left: vp2vp(26) })
       } else {
         Image($r('app.media.unclock'))
           .objectFit(ImageFit.Fill)
         Text('打卡')
-          .fontSize(18)
+          .fontSize(vp2vp(18))
           .fontWeight(600)
-          .position({ x: 28, y: 2 })
+          .position({ x: vp2vp(28), y: vp2vp(2) })
       }
 
     }
-    .width(70)
-    .height(28)
+    .width(vp2vp(70))
+    .height(vp2vp(28))
     .onClick(() => {
       if (this.clockInCount > 0) {
         router.push({
