@@ -241,9 +241,11 @@ import Footer from './components/Footer.ets'
 @Component
 struct Index {
   build() {
-    // 使用 `Footer` 组件
-    Footer()
-  }
+    // build 函数内需要一个根标签
+    Row() {
+      // 使用 `Footer` 组件
+      Footer()
+    }
 }
 ```
 
