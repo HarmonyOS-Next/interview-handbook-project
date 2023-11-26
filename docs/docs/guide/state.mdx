@@ -189,7 +189,6 @@ struct Index {
 
 其他：
 - `GridRow` `GridCol` 栅格布局
-- 华为官方图标下载 [链接](https://developer.harmonyos.com/cn/design/harmonyos-icon/)
 
 :::
 
@@ -538,7 +537,7 @@ struct Index {
 
 ### 4. 构建函数-系统组件自定义UI
 
-> 在一些系统组件中，根据配置无法达到预期UI，可以使用 @Builder 构建函数自定义UI
+> 在一些系统组件中，根据配置无法达到预期UI，可以使用 @Builder 构建函数自定义UI，前提该组件支持自定义。
 
 <img src="./images/28.png" width="240" />
 
@@ -815,40 +814,786 @@ struct Child {
 
 ### 4. 状态共享-状态监听器
 
-> 子组件中被@Link装饰的变量与其父组件中对应的数据源建立双向数据绑定。
+> 如果开发者需要关注某个状态变量的值是否改变，可以使用 `@Watch` 为状态变量设置回调函数。
+
+- `@State、@Prop、@Link` 等装饰器在 `@Watch` 装饰之前
 
 
-1）简单类型 `string、number、boolean、enum`
+```typescript {5-7}
+import promptAction from '@ohos.promptAction'
 
+@Component
+struct Child {
+  @Prop
+  @Watch('onActiveIndex')
+  activeIndex: number
 
-2）复杂类型 `Object、class`
+  onActiveIndex() {
+    promptAction.showToast({ message: '监听变化' })
+  }
+
+  build() {
+    Column() {
+      Text('Child' + this.activeIndex)
+    }
+  }
+}
+
+@Entry
+@Component
+struct Index {
+  @State activeIndex: number = 0
+
+  onChange (index: number) {
+    this.activeIndex = index
+    promptAction.showToast({ message: '点击' })
+  }
+
+  build() {
+    Navigation() {
+      Child({ activeIndex: this.activeIndex })
+    }.toolBar({
+      items: [
+        { value: '首页', action: () => this.onChange(0) },
+        { value: '我的', action: () => this.onChange(1) },
+      ]
+    })
+  }
+}
+```
 
 ::: tip
+
+- 在第一次初始化的时候，@Watch装饰的方法不会被调用
 
 :::
 
 
 ### 5. @Observed与@ObjectLink
 
-> 子组件中被@Link装饰的变量与其父组件中对应的数据源建立双向数据绑定。
+> 之前我们通过 **赋值的方式** 修改嵌套对象或对象数组这类复杂数据来更新UI，会影响对象对应所有UI更新；
+> 通过 `@Observed `与 `@ObjectLink` 可以优化这个问题；
+
+使用步骤：
+- 类 `class` 数据模拟需要定义通过构造函数，使用 `@Observed` 修饰这个类
+- 初始化数据：需要通过初始化构造函数的方式添加
+- 通过 `@ObjectLink` 关联对象，可以直接修改被关联对象来更新UI
 
 
-1）简单类型 `string、number、boolean、enum`
+需求：改造下知乎评论案例
+
+1）定义构造函数和使用`@Observed` 修饰符，以及初始化数据
+
+```typescript {1,12-16,20,29,38,47,56,65} title="models/index.ets"
+@Observed
+export class ReplyItem {
+  id: number
+  avatar: string | Resource
+  author: string
+  content: string
+  time: string
+  area: string
+  likeNum: number
+  likeFlag?: boolean
+
+  constructor(item: ReplyItem) {
+    for (const key in item) {
+      this[key] = item[key]
+    }
+  }
+}
+
+export const replyList: ReplyItem[] = [
+  new ReplyItem({
+    id: 1,
+    avatar: 'https://picx.zhimg.com/027729d02bdf060e24973c3726fea9da_l.jpg?source=06d4cd63',
+    author: '偏执狂-妄想家',
+    content: '更何况还分到一个摩洛哥[惊喜]',
+    time: '11-30',
+    area: '海南',
+    likeNum: 34
+  }),
+  new ReplyItem({
+    id: 2,
+    avatar: 'https://pic1.zhimg.com/v2-5a3f5190369ae59c12bee33abfe0c5cc_xl.jpg?source=32738c0c',
+    author: 'William',
+    content: '当年希腊可是把1：0发挥到极致了',
+    time: '11-29',
+    area: '北京',
+    likeNum: 58
+  }),
+  new ReplyItem({
+    id: 3,
+    avatar: 'https://picx.zhimg.com/v2-e6f4605c16e4378572a96dad7eaaf2b0_l.jpg?source=06d4cd63',
+    author: 'Andy Garcia',
+    content: '欧洲杯其实16队球队打正赛已经差不多，24队打正赛意味着正赛阶段在小组赛一样有弱队。',
+    time: '11-28',
+    area: '上海',
+    likeNum: 10
+  }),
+  new ReplyItem({
+    id: 4,
+    avatar: 'https://picx.zhimg.com/v2-53e7cf84228e26f419d924c2bf8d5d70_l.jpg?source=06d4cd63',
+    author: '正宗好鱼头',
+    content: '确实眼红啊，亚洲就没这种球队，让中国队刷',
+    time: '11-27',
+    area: '香港',
+    likeNum: 139
+  }),
+  new ReplyItem({
+    id: 5,
+    avatar: 'https://pic1.zhimg.com/v2-eeddfaae049df2a407ff37540894c8ce_l.jpg?source=06d4cd63',
+    author: '柱子哥',
+    content: '我是支持扩大的，亚洲杯欧洲杯扩到32队，世界杯扩到64队才是好的，世界上有超过200支队伍，欧洲区55支队伍，亚洲区47支队伍，即使如此也就六成出现率',
+    time: '11-27',
+    area: '旧金山',
+    likeNum: 29
+  }),
+  new ReplyItem({
+    id: 6,
+    avatar: 'https://picx.zhimg.com/v2-fab3da929232ae911e92bf8137d11f3a_l.jpg?source=06d4cd63',
+    author: '飞轩逸',
+    content: '禁止欧洲杯扩军之前，应该先禁止世界杯扩军，或者至少把亚洲名额一半给欧洲。',
+    time: '11-26',
+    area: '里约',
+    likeNum: 100
+  })
+]
+```
+
+2）嵌套的对象，或者数组中的对象，传入子组件，组件使用 `@ObjectLink` 修饰符获取数据
+
+```typescript {14,82-95} title="pages/Index.ets"
+import promptAction from '@ohos.promptAction'
+import { ReplyItem, replyList } from '../models'
 
 
-2）复杂类型 `Object、class`
+@Entry
+@Component
+struct Index {
+  @State
+  replyList: ReplyItem[] = replyList
+  @State
+  content: string = ''
 
-::: tip
+  onReply() {
+    const reply: ReplyItem = new ReplyItem({
+      id: this.replyList[this.replyList.length-1].id + 1,
+      content: this.content,
+      author: 'Zhousg',
+      avatar: $r('app.media.avatar'),
+      time: '12-01',
+      likeNum: 0,
+      area: '北京'
+    })
+    this.replyList.unshift(reply)
+    this.content = ''
+    promptAction.showToast({ message: '回复成功' })
+  }
+
+  build() {
+    Stack() {
+      Scroll() {
+        Column() {
+          NavComp()
+          CommentComp()
+          // space
+          Divider()
+            .strokeWidth(8)
+            .color('#f5f5f5')
+          // reply
+          Column() {
+            Text('回复 7')
+              .width('100%')
+              .margin({ bottom: 15 })
+              .fontWeight(500)
+            ForEach(this.replyList, (item: ReplyItem) => {
+              ReplyComp({ item })
+            })
+          }
+          .padding({ left: 15, right: 15, top: 15 })
+        }
+      }
+      .padding({ bottom: 50 })
+
+      Row() {
+        TextInput({ placeholder: '回复~', text: this.content })
+          .placeholderColor('#c3c4c5')
+          .layoutWeight(1)
+          .onChange((value) => {
+            this.content = value
+          })
+        Text('发布')
+          .fontSize(14)
+          .fontColor('#09f')
+          .margin({ left: 15 })
+          .onClick(() => {
+            this.onReply()
+          })
+      }
+      .width('100%')
+      .height(50)
+      .padding({ left: 15, right: 15 })
+      .position({ y: '100%' })
+      .translate({ y: -50 })
+      .backgroundColor('#fff')
+      .border({ width: { top: 0.5 }, color: '#e4e4e4' })
+    }
+
+  }
+}
+
+@Component
+struct ReplyComp {
+  @ObjectLink
+  item: ReplyItem
+
+  onLike() {
+    if (this.item.likeFlag) {
+      this.item.likeNum--
+      this.item.likeFlag = false
+      promptAction.showToast({ message: '取消点赞' })
+    } else {
+      this.item.likeNum++
+      this.item.likeFlag = true
+      promptAction.showToast({ message: '点赞成功' })
+    }
+  }
+
+  build() {
+    Row() {
+      Image(this.item.avatar)
+        .width(32)
+        .height(32)
+        .borderRadius(16)
+      Column() {
+        Text(this.item.author)
+          .fontSize(15)
+          .fontWeight(FontWeight.Bold)
+          .margin({ bottom: 5 })
+        Text(this.item.content)
+          .margin({ bottom: 5 })
+          .fontColor('#565656')
+          .lineHeight(20)
+        Row() {
+          Text(`${this.item.time}•IP 属地${this.item.area}`)
+            .layoutWeight(1)
+            .fontSize(14)
+            .fontColor('#c3c4c5')
+          Row() {
+            Image($r('app.media.heart'))
+              .width(14)
+              .height(14)
+              .fillColor(this.item.likeFlag ? '#ff6600' : '#c3c4c5')
+              .margin({ right: 4 })
+            Text(this.item.likeNum.toString())
+              .fontSize(14)
+              .fontColor(this.item.likeFlag ? '#ff6600' : '#c3c4c5')
+          }
+          .onClick(() => {
+            this.onLike()
+          })
+        }
+      }
+      .layoutWeight(1)
+      .padding({ left: 10 })
+      .alignItems(HorizontalAlign.Start)
+    }
+    .width('100%')
+    .padding({ bottom: 15 })
+    .alignItems(VerticalAlign.Top)
+  }
+}
+
+@Component
+struct NavComp {
+  build() {
+    // nav
+    Row() {
+      Row() {
+        Image($r('app.media.ic_public_arrow_left'))
+          .width(12)
+          .height(12)
+          .fillColor('#848484')
+      }
+      .width(24)
+      .height(24)
+      .borderRadius(12)
+      .backgroundColor('#f5f5f5')
+      .justifyContent(FlexAlign.Center)
+      .margin({ left: 13 })
+
+      Text('评论回复')
+        .padding({ right: 50 })
+        .textAlign(TextAlign.Center)
+        .fontSize(18)
+        .layoutWeight(1)
+    }
+    .height(50)
+
+  }
+}
+
+@Component
+struct CommentComp {
+  build() {
+    // comment
+    Row() {
+      Image('https://picx.zhimg.com/1754b6bd9_xl.jpg?source=c885d018')
+        .width(32)
+        .height(32)
+        .borderRadius(16)
+      Column() {
+        Text('欧洲足球锦标赛')
+          .fontSize(15)
+          .fontWeight(FontWeight.Bold)
+          .margin({ bottom: 5 })
+        Text('14-0！欧洲杯超级惨案+刷爆纪录！姆巴佩帽子戏法，法国7连胜，怎么评价这场比赛？')
+          .margin({ bottom: 5 })
+          .fontColor('#565656')
+          .lineHeight(20)
+        Row() {
+          Text('10-21•IP 属地辽宁')
+            .layoutWeight(1)
+            .fontSize(14)
+            .fontColor('#c3c4c5')
+          Row() {
+            Image($r('app.media.heart'))
+              .width(14)
+              .height(14)
+              .fillColor('#c3c4c5')
+              .margin({ right: 4 })
+            Text('100')
+              .fontSize(14)
+              .fontColor('#c3c4c5')
+          }
+        }
+      }
+      .layoutWeight(1)
+      .padding({ left: 10 })
+      .alignItems(HorizontalAlign.Start)
+    }
+    .width('100%')
+    .padding({ left: 15, right: 15, bottom: 15 })
+    .alignItems(VerticalAlign.Top)
+  }
+}
+```
+
+::: tip 注意：
+
+- 对象需要通过构造函数初始化
+- 需要嵌套组件，因为需要使用 `@ObjectLink`
 
 :::
 
 
 ## 应用状态
 
-### 1. 应用状态-LocalStorage
+### 1. UIAbility内状态-LocalStorage
+
+> `LocalStorage` 是页面级的UI状态存储，通过 `@Entry` 装饰器接收的参数可以在页面内共享同一个 `LocalStorage` 实例。 `LocalStorage` 也可以在 `UIAbility` 内，页面间共享状态。
+
+
+1）页面内共享
+
+- 创建 `LocalStorage` 实例：`const storage = new LocalStorage({ key: value })`
+- 单向 `@LocalStorageProp('user')` 组件内可变
+- 双向 `@LocalStorageLink('user')` 全局均可变
+
+```typescript {5-7,9,12-13,32-33,48-49}
+class User {
+  name?: string
+  age?: number
+}
+const storage = new LocalStorage({
+  user: { name: 'jack', age: 18 }
+})
+
+@Entry(storage)
+@Component
+struct Index {
+  @LocalStorageProp('user')
+  user: User = {}
+
+  build() {
+    Column({ space: 15 }){
+      Text('Index：')
+      Text(this.user.name + this.user.age)
+      Divider()
+      ChildA()
+      Divider()
+      ChildB()
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+
+@Component
+struct ChildA {
+  @LocalStorageProp('user')
+  user: User = {}
+
+  build() {
+    Column({ space: 15 }){
+      Text('ChildA：')
+      Text(this.user.name + this.user.age)
+        .onClick(()=>{
+          this.user.age ++
+        })
+    }
+  }
+}
+
+@Component
+struct ChildB {
+  @LocalStorageLink('user')
+  user: User = {}
+
+  build() {
+    Column({ space: 15 }){
+      Text('ChildB：')
+      Text(this.user.name + this.user.age)
+        .onClick(()=>{
+          this.user.age ++
+        })
+    }
+  }
+}
+```
+
+2）页面间共享
+
+- 在 `UIAbility` 创建 `LocalStorage` 通过 `loadContent` 提供给加载的窗口
+- 在页面使用 `const storage = LocalStorage.GetShared()` 得到实例，通过 `@Entry(storage)` 传入页面
+
+
+```diff title="entryAbility/EntryAbility.ts"
++  storage = new LocalStorage({
++    user: { name: 'jack', age: 18 }
++  })
+
+  onWindowStageCreate(windowStage: window.WindowStage) {
+    // Main window is created, set main page for this ability
+    hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
+
++    windowStage.loadContent('pages/Index', this.storage , (err, data) => {
+      if (err.code) {
+        hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');
+        return;
+      }
+      hilog.info(0x0000, 'testTag', 'Succeeded in loading the content. Data: %{public}s', JSON.stringify(data) ?? '');
+    });
+  }
+```
+
+```typescript title="models/index.ets"
+export class User {
+  name?: string
+  age?: number
+}
+```
+
+```typescript {2,4} title="pages/Index.ets"
+import { User } from '../models'
+const storage = LocalStorage.GetShared()
+
+@Entry(storage)
+@Component
+struct Index {
+  @LocalStorageProp('user')
+  user: User = {}
+
+  build() {
+    Column({ space: 15 }) {
+      Text('Index：')
+      Text(this.user.name + this.user.age)
+        .onClick(()=>{
+          this.user.age ++
+        })
+      Navigator({ target: 'pages/OtherPage' }){
+        Text('Go Other Page')
+      }
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+```typescript {2,4} title="pages/OtherPage.ets"
+import { User } from '../models'
+const storage = LocalStorage.GetShared()
+
+@Entry(storage)
+@Component
+struct OtherPage {
+  @LocalStorageLink('user')
+  user: User = {}
+
+  build() {
+    Column({ space: 15 }) {
+      Text('OtherPage：')
+      Text(this.user.name + this.user.age)
+        .onClick(()=>{
+          this.user.age ++
+        })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+::: tip
+
+- 应用逻辑中使用参考 [链接](https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/arkts-localstorage-0000001524537149-V3#section614118685518)
+
+:::
+
+
 ### 2. 应用状态-AppStorage
-### 3. 应用状态-PersistentStorage
-### 4. 应用状态-Environment
+
+> `AppStorage` 是应用全局的UI状态存储，是和应用的进程绑定的，由UI框架在应用程序启动时创建，为应用程序UI状态属性提供中央存储。
+
+- 如果是初始化使用 `AppStorage.SetOrCreate(key,value)`
+- 单向 `@StorageProp('user')` 组件内可变
+- 双向 `@StorageLink('user')` 全局均可变
+
+1）通过UI装饰器使用
+
+```typescript {3,8-10,30-31}
+import { User } from '../models'
+
+AppStorage.SetOrCreate<User>('user', { name: 'jack', age: 18 })
+
+@Entry
+@Component
+struct Index {
+  @StorageProp('user')
+  // 可忽略，编辑器类型错误
+  user: User = {}
+
+  build() {
+    Column({ space: 15 }) {
+      Text('Index：')
+      Text(this.user.name + this.user.age)
+        .onClick(() => {
+          this.user.age++
+        })
+      Divider()
+      ChildA()
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+
+@Component
+struct ChildA {
+  @StorageLink('user')
+  user: User = {}
+
+  build() {
+    Column({ space: 15 }){
+      Text('ChildA：')
+      Text(this.user.name + this.user.age)
+        .onClick(()=>{
+          this.user.age ++
+        })
+    }
+  }
+}
+```
+
+2）通过逻辑使用
+
+- `AppStorage.Get<ValueType>(key)` 获取数据
+- `AppStorage.Set<ValueType>(key,value)` 覆盖数据
+- `const link: SubscribedAbstractProperty<ValueType> = AppStorage.Link(key)` 覆盖数据
+    - `link.set(value)` 修改
+    - `link.get()` 获取
+
+```typescript {23,31,40}
+import promptAction from '@ohos.promptAction'
+import { User } from '../models'
+
+AppStorage.SetOrCreate<User>('user', { name: 'jack', age: 18 })
+
+@Entry
+@Component
+struct Index {
+  @StorageLink('user')
+  user: User = {}
+
+  build() {
+    Column({ space: 15 }) {
+      Text('Index：')
+      Text(this.user.name + this.user.age)
+        .onClick(() => {
+          this.user.age++
+        })
+      Divider()
+      Text('Get()')
+        .onClick(() => {
+          // 仅获取
+          const user = AppStorage.Get<User>('user')
+          promptAction.showToast({
+            message: JSON.stringify(user)
+          })
+        })
+      Text('Set()')
+        .onClick(() => {
+          // 直接设置
+          AppStorage.Set<User>('user', {
+            name: 'tom',
+            age: 100
+          })
+          // 观察页面更新没
+        })
+      Text('Link()')
+        .onClick(() => {
+          // 获取user的prop
+          const user: SubscribedAbstractProperty<User> = AppStorage.Link('user')
+          user.set({
+            name: user.get().name,
+            // 获取后修改
+            age: user.get().age + 1
+          })
+        })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+### 3. 状态持久化-PersistentStorage
+
+> `PersistentStorage` 将选定的 `AppStorage` 属性保留在设备磁盘上。  
+
+::: details
+UI和业务逻辑不直接访问 `PersistentStorage` 中的属性，所有属性访问都是对 `AppStorage` 的访问，`AppStorage` 中的更改会自动同步到 `PersistentStorage`。
+:::
+
+::: warning
+- 支持：number, string, boolean, enum 等简单类型; 
+- 如果：要支持对象类型，可以转换成json字符串
+- 持久化变量最好是小于2kb的数据，如果开发者需要存储大量的数据，建议使用数据库api。
+
+:::
+
+
+1）简单数据类型的持久化，和获取和修改
+
+
+```typescript
+import { User } from '../models'
+
+PersistentStorage.PersistProp('count', 100)
+
+@Entry
+@Component
+struct Index {
+  @StorageLink('count')
+  count: number = 0
+
+  build() {
+    Column({ space: 15 }) {
+      Text(this.count.toString())
+        .onClick(() => {
+          this.count++
+        })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+2）复杂数据类型的吃就好，和获取和修改
+
+```typescript
+import promptAction from '@ohos.promptAction'
+import { User } from '../models'
+
+PersistentStorage.PersistProp('userJson', `{ "name": "jack", "age": 18 }`)
+
+@Entry
+@Component
+struct Index {
+  @StorageProp('userJson')
+  @Watch('onUpdateUser')
+  userJson: string = '{}'
+  @State
+  user: User = JSON.parse(this.userJson)
+
+  onUpdateUser() {
+    this.user = JSON.parse(this.userJson)
+  }
+
+  build() {
+    Column({ space: 15 }) {
+      Text('Index：')
+      Text(this.user.name + this.user.age)
+        .onClick(() => {
+          this.user.age++
+          // 修改
+          AppStorage.Set('userJson', JSON.stringify(this.user))
+        })
+      Divider()
+      Text('Get()')
+        .onClick(() => {
+          // 获取
+          const user = AppStorage.Get<string>('userJson')
+          promptAction.showToast({ message: user })
+        })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+
+### 4. 设备环境-Environment
+
+> 开发者如果需要应用程序运行的设备的环境参数，以此来作出不同的场景判断，比如多语言，暗黑模式等，需要用到 `Environment` 设备环境查询。
+
+- `Environment` 的所有属性都是不可变的（即应用不可写入），所有的属性都是简单类型。
+
+```typescript
+Environment.EnvProp('lang', 'zh');
+
+@Entry
+@Component
+struct Index{
+  @StorageProp('lang')
+  lang: string = 'zh'
+
+  build() {
+    Column() {
+      Text(this.lang)
+        .onClick(()=>{
+          // 不能修改
+          // Environment.EnvProp('lang', 'en');
+        })
+    }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
 
 
 ## 网络管理

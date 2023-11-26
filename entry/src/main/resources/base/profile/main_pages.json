@@ -8,6 +8,7 @@
     "pages/InterviewDetailPage",
     "pages/ProfileEditPage",
     "pages/StudyTimePage",
-    "pages/PreviewWebPage"
+    "pages/PreviewWebPage",
+    "pages/RegisterPage"
   ]
 }
