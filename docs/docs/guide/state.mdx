@@ -32,7 +32,7 @@ MyGlobalBuilderFunction()
 
 📕📕📕 练习案例→商品详情-更多按钮
 
-<img src="./images/27.png" width="240" />
+    <img src="./images/27.png" width="240" />
 
 - 待实现页面
 
@@ -213,7 +213,7 @@ this.MyBuilderFunction('Title')
 - 推荐 查看全部
 - 体验 4 条测评
 
-<img src="./images/29.png" width="240" />
+    <img src="./images/29.png" width="240" />
 
 ```typescript
   @Builder
@@ -242,7 +242,7 @@ this.MoreBuilder('4 条测评')
 需求：
 - 点击按钮后模拟加载好评率数据
 
-<img src="./images/30.png" width="240" />
+    <img src="./images/30.png" width="240" />
 
 ```typescript {7-17,33,50,67}
 @Entry
@@ -362,7 +362,7 @@ struct Index {
 - 标题文字和更多文案通过属性传入
 - 内容结构需要传入
 
-<img src="./images/31.png" width="240" />
+    <img src="./images/31.png" width="240" />
 
 ```typescript {5-13,31,47,51-53,57-59}
 @Component
@@ -439,7 +439,7 @@ struct Index {
 
 需求：需要传入内容结构和底部结构
 
-<img src="./images/32.png" width="240" />
+    <img src="./images/32.png" width="240" />
 
 ```typescript {5-8,28,32,44-51,57-62}
 @Component
@@ -539,7 +539,7 @@ struct Index {
 
 > 在一些系统组件中，根据配置无法达到预期UI，可以使用 @Builder 构建函数自定义UI，前提该组件支持自定义。
 
-<img src="./images/28.png" width="240" />
+    <img src="./images/28.png" width="240" />
 
 需求：自定义 `Tabs` 组件的 `TabBar` UI结构
 
@@ -1563,6 +1563,11 @@ struct Index {
 }
 ```
 
+::: tip
+
+- 测试：需要在真机或模拟器调试
+
+:::
 
 ### 4. 设备环境-Environment
 
@@ -1570,14 +1575,18 @@ struct Index {
 
 - `Environment` 的所有属性都是不可变的（即应用不可写入），所有的属性都是简单类型。
 
-```typescript
-Environment.EnvProp('lang', 'zh');
+```typescript {5,10-11}
+import i18n from '@ohos.i18n';
+// 获取系统语言
+const lang = i18n.getSystemLanguage()
+// 设置环境状态
+Environment.EnvProp('lang', lang);
 
 @Entry
 @Component
 struct Index{
   @StorageProp('lang')
-  lang: string = 'zh'
+  lang: string = ''
 
   build() {
     Column() {
@@ -1594,12 +1603,1077 @@ struct Index{
 }
 ```
 
+::: tip
 
+- 测试：需要在真机或模拟器调试
+
+:::
 
 ## 网络管理
 
 ### 1. 应用权限
+
+> ATM (AccessTokenManager) 是HarmonyOS上基于AccessToken构建的统一的应用权限管理能力。
+
+应用权限保护的对象可以分为数据和功能：
+
+- 数据包含了个人数据（如照片、通讯录、日历、位置等）、设备数据（如设备标识、相机、麦克风等）、应用数据。
+- 功能则包括了设备功能（如打电话、发短信、联网等）、应用功能（如弹出悬浮框、创建快捷方式等）等。
+
+
+根据授权方式的不同，权限类型可分为system_grant（系统授权）和user_grant（用户授权）。
+- 配置文件权限声明
+- 向用户申请授权
+
+
+例如：访问网络需要联网权限
+
+    <img src="./images/33.png" width="400" />
+
+```json title="module.json5"
+{
+  "module" : {
+    // ...
+    "requestPermissions":[
+      {
+        "name" : "ohos.permission.INTERNET"
+      }
+    ]
+  }
+}
+```
+
+::: tip
+- 应用权限[列表](https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/permission-list-0000001544464017-V3)
+
+:::
+
+
 ### 2. HTTP请求
 
 
+1）启动 `json-server` 服务，`npm i json-server -g` 全局安装。
+
+- 新建 `data.json` 文件在任意目录，比如 `server` 文件夹
+
+```json
+{
+  "takeaway": [
+    {
+      "tag": "318569657",
+      "name": "一人套餐",
+      "foods": [
+        {
+          "id": 8078956697,
+          "name": "烤羊肉串(10串)",
+          "like_ratio_desc": "好评度100%",
+          "month_saled": 40,
+          "unit": "10串",
+          "food_tag_list": [
+            "点评网友推荐"
+          ],
+          "price": 90,
+          "picture": "https://zqran.gitee.io/images/waimai/8078956697.jpg",
+          "description": "",
+          "tag": "318569657",
+          "count": 1
+        },
+        {
+          "id": 7384994864,
+          "name": "腊味煲仔饭",
+          "like_ratio_desc": "好评度81%",
+          "month_saled": 100,
+          "unit": "1人份",
+          "food_tag_list": [],
+          "price": 39,
+          "picture": "https://zqran.gitee.io/images/waimai/7384994864.jpg",
+          "description": "",
+          "tag": "318569657",
+          "count": 1
+        },
+        {
+          "id": 2305772036,
+          "name": "鸡腿胡萝卜焖饭",
+          "like_ratio_desc": "好评度91%",
+          "month_saled": 300,
+          "unit": "1人份",
+          "food_tag_list": [],
+          "price": 34.32,
+          "picture": "https://zqran.gitee.io/images/waimai/2305772036.jpg",
+          "description": "主料：大米、鸡腿、菜心、胡萝卜",
+          "tag": "318569657",
+          "count": 1
+        },
+        {
+          "id": 2233861812,
+          "name": "小份酸汤莜面鱼鱼+肉夹馍套餐",
+          "like_ratio_desc": "好评度73%",
+          "month_saled": 600,
+          "unit": "1人份",
+          "food_tag_list": [
+            "“口味好,包装很好～点赞”"
+          ],
+          "price": 34.32,
+          "picture": "https://zqran.gitee.io/images/waimai/2233861812.jpg",
+          "description": "酸汤莜面鱼鱼，主料：酸汤、莜面 肉夹馍，主料：白皮饼、猪肉",
+          "tag": "318569657",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "tag": "82022594",
+      "name": "特色烧烤",
+      "foods": [
+        {
+          "id": 3823780596,
+          "name": "藤椒鸡肉串",
+          "like_ratio_desc": "",
+          "month_saled": 200,
+          "unit": "10串",
+          "food_tag_list": [
+            "点评网友推荐"
+          ],
+          "price": 6,
+          "picture": "https://zqran.gitee.io/images/waimai/3823780596.jpg",
+          "description": "1串。藤椒味，主料：鸡肉",
+          "tag": "82022594",
+          "count": 1
+        },
+        {
+          "id": 6592009498,
+          "name": "烤羊排",
+          "like_ratio_desc": "",
+          "month_saled": 50,
+          "unit": "1人份",
+          "food_tag_list": [],
+          "price": 169,
+          "picture": "https://zqran.gitee.io/images/waimai/6592009498.jpg",
+          "description": "6-8个月草原羔羊肋排，烤到皮脆肉香",
+          "tag": "82022594",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "tag": "98147100",
+      "name": "杂粮主食",
+      "foods": [
+        {
+          "id": 4056954171,
+          "name": "五常稻花香米饭",
+          "like_ratio_desc": "",
+          "month_saled": 1000,
+          "unit": "约300克",
+          "food_tag_list": [],
+          "price": 5,
+          "picture": "https://zqran.gitee.io/images/waimai/4056954171.jpg",
+          "description": "浓浓的稻米清香，软糯Q弹有嚼劲",
+          "tag": "98147100",
+          "count": 1
+        },
+        {
+          "id": 740430262,
+          "name": "小米发糕(3个)",
+          "like_ratio_desc": "好评度100%",
+          "month_saled": 100,
+          "unit": "3块",
+          "food_tag_list": [],
+          "price": 13,
+          "picture": "https://zqran.gitee.io/images/waimai/740430262.jpg",
+          "description": "柔软蓬松，葡萄干和蔓越莓酸甜适口",
+          "tag": "98147100",
+          "count": 1
+        },
+        {
+          "id": 7466390504,
+          "name": "沙枣玉米窝头(3个)",
+          "like_ratio_desc": "好评度100%",
+          "month_saled": 100,
+          "unit": "3个",
+          "food_tag_list": [],
+          "price": 13,
+          "picture": "https://zqran.gitee.io/images/waimai/7466390504.jpg",
+          "description": "",
+          "tag": "98147100",
+          "count": 1
+        }
+      ]
+    }
+  ]
+}
+```
+
+- 进入 `server` 文件夹，按照下面命令启动接口服务器，查看本机IP `ipconfig | ifconfig`
+
+```bash
+json-server data.json --host 192.168.0.1
+```
+
+2）使用 `@ohos.net.http` 模块发请求
+
+```typescript
+const req = http.createHttp()
+
+req.request('http://192.168.0.1:3000/takeaway')
+  .then(res => {
+    const data = JSON.parse(res.result as string)
+    console.log(data.length)  // === 3  注意：字符长度大于1024字节，控制台不可见。
+  })
+  .catch(err => {
+    console.error('MEITU', err.message)
+  })
+```
+
+
 ## 今日案例
+
+|商品页|购物车|
+|----|----|
+|<img src="./images/34.png" width="320" />|<img src="./images/35.png" width="320" />|
+
+
+### 1. 页面结构-入口页面
+
+
+```typescript title="pages/Index.ets"
+import { Cart } from '../components/Cart'
+import { Footer } from '../components/Footer'
+import { MenuWrapper } from '../components/MenuWrapper'
+import { Nav } from '../components/Nav'
+
+@Entry
+@Component
+struct Index {
+
+  @State
+  showCart: boolean = false
+
+  build() {
+    Stack({ alignContent: Alignment.Bottom }) {
+      Column() {
+        Nav()
+        MenuWrapper()
+      }
+      .width('100%')
+      .height('100%')
+      if (this.showCart) {
+        Cart()
+      }
+      Footer({ showCart: $showCart })
+    }
+  }
+}
+```
+
+### 2. 页面结构-底部组件
+
+```typescript title="components/Footer.ets"
+@Component
+export struct Footer {
+  @Link
+  showCart: boolean
+
+  build() {
+    Row() {
+      Row() {
+        Badge({
+          value: '0',
+          position: BadgePosition.Right,
+          style: { badgeSize: 18 }
+        }) {
+          Image('https://zqran.gitee.io/images/waimai/cart-2.png')
+            .width(47)
+            .height(69)
+            .position({ y: -19 })
+        }
+        .width(50)
+        .height(50)
+        .margin({ left: 25, right: 10 })
+        .onClick(() => {
+          this.showCart = !this.showCart
+        })
+
+        Column() {
+          Text() {
+            Span('¥')
+              .fontColor('#fff')
+              .fontSize(12)
+            Span('0.00')
+              .fontColor('#fff')
+              .fontSize(24)
+          }
+
+          Text('预估另需配送费 ¥5')
+            .fontSize(12)
+            .fontColor('#999')
+        }
+        .layoutWeight(1)
+        .alignItems(HorizontalAlign.Start)
+
+        Text('去结算')
+          .backgroundColor('#f8c74e')
+          .alignSelf(ItemAlign.Stretch)
+          .padding(15)
+          .borderRadius({
+            topRight: 25,
+            bottomRight: 25
+          })
+      }
+      .height(50)
+      .layoutWeight(1)
+      .backgroundColor('#222426')
+      .borderRadius(25)
+    }
+    .padding(15)
+    .height(80)
+  }
+}
+```
+
+
+### 3. 页面结构-导航组件
+
+```typescript  title="components/Nav.ets"
+@Component
+export struct Nav {
+  @Builder
+  NavItem(active: boolean, title: string, subTitle?: string) {
+    Column() {
+      Text() {
+        Span(title)
+        if (subTitle) {
+          Span(' ' + subTitle)
+            .fontSize(10)
+            .fontColor(active ? '#000' : '#666')
+        }
+      }.layoutWeight(1)
+      .fontColor(active ? '#000' : '#666')
+      .fontWeight(active ? FontWeight.Bold : FontWeight.Normal)
+
+      Text()
+        .height(1)
+        .width(20)
+        .margin({ left: 6 })
+        .backgroundColor(active ? '#fa0' : 'transparent')
+    }
+    .width(73)
+    .alignItems(HorizontalAlign.Start)
+    .padding({ top: 3 })
+  }
+
+  build() {
+    Row() {
+      this.NavItem(true, '点菜')
+      this.NavItem(false, '评价', '1796')
+      this.NavItem(false, '商家')
+
+      Row() {
+        Image($r('app.media.ic_public_input_search'))
+          .width(14)
+          .aspectRatio(1)
+          .fillColor('#999')
+        Text('请输入菜品名称')
+          .fontSize(12)
+          .fontColor('#999')
+      }
+      .backgroundColor('#eee')
+      .height(25)
+      .borderRadius(13)
+      .padding({ left: 5, right: 5 })
+      .layoutWeight(1)
+    }
+    .padding({ left: 15, right: 15 })
+    .height(40)
+    .border({ width: { bottom: 0.5 }, color: '#e4e4e4' })
+  }
+}
+```
+
+### 4. 页面结构-商品菜单和商品列表
+
+```typescript title="components/MenuWrapper.ets"
+
+import { MenuWrapperItem } from './MenuWrapperItem'
+
+@Component
+export struct MenuWrapper {
+  list: string[] = ['一人套餐', '特色烧烤', '杂粮主食']
+  @State
+  activeIndex: number = 0
+
+  @Builder
+  TabBarItem(text: string, index: number) {
+    Text(text)
+      .height(50)
+      .width('100%')
+      .textAlign(TextAlign.Center)
+      .fontSize(14)
+      .backgroundColor('#fff')
+  }
+
+  build() {
+    Row() {
+      Column() {
+        ForEach(this.list, (item: string, index: number) => {
+          Text(item)
+            .height(50)
+            .width('100%')
+            .textAlign(TextAlign.Center)
+            .fontSize(14)
+            .backgroundColor(this.activeIndex === index ? '#fff' : '#f5f5f5')
+            .onClick(() => {
+              this.activeIndex = index
+            })
+        })
+      }
+      .width(90)
+
+      List() {
+        ListItem(){
+          MenuWrapperItem()
+        }
+      }
+      .layoutWeight(1)
+      .height('100%')
+      .backgroundColor('#fff')
+    }
+    .layoutWeight(1)
+    .alignItems(VerticalAlign.Top)
+    .backgroundColor('#f5f5f5')
+  }
+}
+```
+
+```typescript title="components/MenuWrapperItem.ets"
+import { CalcBtn } from './CalcBtn'
+
+@Component
+export struct MenuWrapperItem {
+  build() {
+    Row() {
+      Image('https://zqran.gitee.io/images/waimai/8078956697.jpg')
+        .width(90)
+        .aspectRatio(1)
+      Column({ space: 5 }) {
+        Text('小份酸汤莜面鱼鱼+肉夹馍套餐')
+          .textOverflow({
+            overflow: TextOverflow.Ellipsis,
+          })
+          .maxLines(2)
+          .fontWeight(600)
+        Text('酸汤莜面鱼鱼，主料：酸汤、莜面 肉夹馍，主料：白皮饼、猪肉')
+          .textOverflow({
+            overflow: TextOverflow.Ellipsis,
+          })
+          .maxLines(1)
+          .fontSize(12)
+          .fontColor('#333')
+        Text('点评网友推荐')
+          .fontSize(10)
+          .backgroundColor('#fff5e2')
+          .fontColor('#ff8000')
+          .padding({ top: 2, bottom: 2, right: 5, left: 5 })
+          .borderRadius(2)
+        Text() {
+          Span('月销售40')
+          Span(' ')
+          Span('好评度100%')
+        }
+        .fontSize(12)
+        .fontColor('#999')
+
+        Row() {
+          Text() {
+            Span('¥ ')
+              .fontColor('#ff8000')
+              .fontSize(10)
+            Span('34.23')
+              .fontColor('#ff8000')
+              .fontWeight(FontWeight.Bold)
+          }
+
+          CalcBtn({ icon: $r('app.media.ic_public_add_filled') })
+        }
+        .justifyContent(FlexAlign.SpaceBetween)
+        .width('100%')
+      }
+      .layoutWeight(1)
+      .alignItems(HorizontalAlign.Start)
+      .padding({ left: 10, right: 10 })
+    }
+    .padding(10)
+    .alignItems(VerticalAlign.Top)
+  }
+}
+```
+
+```typescript title="components/CalcBtn.ets"
+@Component
+export struct CalcBtn {
+
+  icon: Resource
+
+  plain?: boolean
+
+  build() {
+    Row() {
+      Image(this.icon)
+        .width(10)
+        .aspectRatio(1)
+    }
+    .width(16)
+    .aspectRatio(1)
+    .backgroundColor(this.plain ? '#fff' : '#f8c74e')
+    .border(this.plain ? { width: 0.5 , color: '#f8c74e'}: {})
+    .borderRadius(4)
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+
+### 5. 页面结构-购物车
+
+```typescript title="components/Cart.ets"
+import { CartItemComp } from './CartItemComp'
+
+@Component
+export struct Cart {
+  build() {
+    Column() {
+      Column() {
+        Row() {
+          Text('购物车')
+            .fontSize(12)
+            .fontWeight(600)
+          Text('清空购物车')
+            .fontSize(12)
+            .fontColor('#999')
+        }
+        .width('100%')
+        .height(40)
+        .justifyContent(FlexAlign.SpaceBetween)
+        .border({ width: { bottom: 0.5 }, color: '#f5f5f5' })
+        .margin({ bottom: 10 })
+        .padding({ left: 15, right: 15 })
+
+        List({ space: 30 }) {
+          ListItem() {
+            CartItemComp()
+          }
+
+          ListItem() {
+            CartItemComp()
+          }
+
+          ListItem() {
+            CartItemComp()
+          }
+        }
+        .divider({
+          strokeWidth: 0.5,
+          color: '#f5f5f5'
+        })
+        .padding({ left: 15, right: 15, bottom: 100 })
+      }
+      .backgroundColor('#fff')
+      .borderRadius({
+        topLeft: 16,
+        topRight: 16
+      })
+    }
+    .justifyContent(FlexAlign.End)
+    .height('100%')
+    .backgroundColor('rgba(0,0,0,0.5)')
+  }
+}
+```
+
+```typescript title="components/CartItem.ets"
+import { CalcBtn } from './CalcBtn'
+
+@Component
+export struct CartItemComp {
+  build() {
+    Row() {
+      Image('https://zqran.gitee.io/images/waimai/7384994864.jpg')
+        .width(60)
+        .aspectRatio(1)
+        .borderRadius(8)
+      Column({ space: 5 }) {
+        Text('小份酸汤莜面鱼鱼+肉夹馍套餐')
+          .fontSize(14)
+          .textOverflow({
+            overflow: TextOverflow.Ellipsis
+          })
+          .maxLines(2)
+        Row() {
+          Text() {
+            Span('¥ ')
+              .fontColor('#ff8000')
+              .fontSize(10)
+            Span('34.23')
+              .fontColor('#ff8000')
+              .fontWeight(FontWeight.Bold)
+          }
+
+          Row() {
+            CalcBtn({ icon: $r('app.media.ic_screenshot_line'), plain: true })
+            Text('0')
+              .padding(10)
+              .fontSize(12)
+            CalcBtn({ icon: $r('app.media.ic_public_add_filled') })
+          }
+        }
+        .justifyContent(FlexAlign.SpaceBetween)
+        .width('100%')
+      }
+      .layoutWeight(1)
+      .alignItems(HorizontalAlign.Start)
+      .padding({ left: 10, right: 10 })
+    }
+    .alignItems(VerticalAlign.Top)
+  }
+}
+```
+
+### 6. 业务逻辑-渲染商品菜单和列表
+
+
+
+1）定义 model 数据模型
+
+```typescript title="models/index.ets"
+@Observed
+export class FoodItem {
+  id: number
+  name: string
+  like_ratio_desc: string
+  food_tag_list: string[]
+  price: number
+  picture: string
+  description: string
+  tag: string
+  month_saled: number
+}
+
+@Observed
+export class Category {
+  tag: string
+  name: string
+  foods: FoodItem[]
+}
+```
+
+2）使用 `http` 发送请求，获取数据
+
+
+```typescript {1,6,16,17,19-28,34} title="pages/Index.ets"
+import http from '@ohos.net.http'
+import { Cart } from '../components/Cart'
+import { Footer } from '../components/Footer'
+import { MenuWrapper } from '../components/MenuWrapper'
+import { Nav } from '../components/Nav'
+import { Category } from '../models'
+
+const req = http.createHttp()
+
+@Entry
+@Component
+struct Index {
+  @State
+  showCart: boolean = false
+
+  @State
+  categoryList: Category[] = []
+
+  aboutToAppear() {
+    req.request('http://172.16.39.26:3000/takeaway')
+      .then(res => {
+        const data = JSON.parse(res.result as string) as Category[]
+        this.categoryList = data
+      })
+      .catch(err => {
+        console.error('MEITU', err.message)
+      })
+  }
+
+  build() {
+    Stack({ alignContent: Alignment.Bottom }) {
+      Column() {
+        Nav()
+        MenuWrapper({ categoryList: $categoryList })
+      }
+      .width('100%')
+      .height('100%')
+
+      if (this.showCart) {
+        Cart()
+      }
+      Footer({ showCart: $showCart })
+    }
+  }
+}
+```
+
+3）传入列表数据给，商品菜单组件，进行渲染
+
+```typescript {1,6,7,24-34,39-43} title="components/MenuWrapper.ets"
+import { Category, FoodItem } from '../models'
+import { MenuWrapperItem } from './MenuWrapperItem'
+
+@Component
+export struct MenuWrapper {
+  @Link
+  categoryList: Category[]
+  @State
+  activeIndex: number = 0
+
+  @Builder
+  TabBarItem(text: string, index: number) {
+    Text(text)
+      .height(50)
+      .width('100%')
+      .textAlign(TextAlign.Center)
+      .fontSize(14)
+      .backgroundColor('#fff')
+  }
+
+  build() {
+    Row() {
+      Column() {
+        ForEach(this.categoryList, (item: Category, index: number) => {
+          Text(item.name)
+            .height(50)
+            .width('100%')
+            .textAlign(TextAlign.Center)
+            .fontSize(14)
+            .backgroundColor(this.activeIndex === index ? '#fff' : '#f5f5f5')
+            .onClick(() => {
+              this.activeIndex = index
+            })
+        })
+      }
+      .width(90)
+
+      List() {
+        ForEach(this.categoryList[this.activeIndex]?.foods, (item: FoodItem) => {
+          ListItem() {
+            MenuWrapperItem({ food: item })
+          }
+        })
+      }
+      .layoutWeight(1)
+      .height('100%')
+      .backgroundColor('#fff')
+    }
+    .layoutWeight(1)
+    .alignItems(VerticalAlign.Top)
+    .backgroundColor('#f5f5f5')
+  }
+}
+```
+
+
+```typescript {1,7,8,12,16,22,29,30,38,40,50} title="components/MenuWrapperItem.ets"
+import { FoodItem } from '../models'
+import { CalcBtn } from './CalcBtn'
+
+@Component
+export struct MenuWrapperItem {
+
+  @ObjectLink
+  food: FoodItem
+
+  build() {
+    Row() {
+      Image(this.food.picture)
+        .width(90)
+        .aspectRatio(1)
+      Column({ space: 5 }) {
+        Text(this.food.name)
+          .textOverflow({
+            overflow: TextOverflow.Ellipsis,
+          })
+          .maxLines(2)
+          .fontWeight(600)
+        Text(this.food.description)
+          .textOverflow({
+            overflow: TextOverflow.Ellipsis,
+          })
+          .maxLines(1)
+          .fontSize(12)
+          .fontColor('#333')
+        ForEach(this.food.food_tag_list, (tag) => {
+          Text(tag)
+            .fontSize(10)
+            .backgroundColor('#fff5e2')
+            .fontColor('#ff8000')
+            .padding({ top: 2, bottom: 2, right: 5, left: 5 })
+            .borderRadius(2)
+        })
+        Text() {
+          Span('月销售'+this.food.month_saled)
+          Span(' ')
+          Span(this.food.like_ratio_desc)
+        }
+        .fontSize(12)
+        .fontColor('#999')
+
+        Row() {
+          Text() {
+            Span('¥ ')
+              .fontColor('#ff8000')
+              .fontSize(10)
+            Span(this.food.price.toFixed(2))
+              .fontColor('#ff8000')
+              .fontWeight(FontWeight.Bold)
+          }
+
+          CalcBtn({ icon: $r('app.media.ic_public_add_filled') })
+        }
+        .justifyContent(FlexAlign.SpaceBetween)
+        .width('100%')
+      }
+      .layoutWeight(1)
+      .alignItems(HorizontalAlign.Start)
+      .padding({ left: 10, right: 10 })
+    }
+    .padding(10)
+    .alignItems(VerticalAlign.Top)
+  }
+}
+```
+
+### 7. 业务逻辑-加入购物车
+
+
+1）购物车数据模型
+
+```typescript title="models/index.ets"
+@Observed
+export class CartItem {
+  id: number
+  name: string
+  price: number
+  picture: string
+  count: number
+}
+```
+
+2）购物车添加逻辑
+
+```typescript title="utils/index.ets"
+import { CartItem, FoodItem } from '../models'
+
+export const CART_KEY = 'CART_KEY'
+
+export const getCart = () => {
+  return JSON.parse(AppStorage.Get(CART_KEY) || '[]') as CartItem[]
+}
+
+export const addCart = (food: FoodItem) => {
+  const cart = getCart()
+  const f = cart.find(f => f.id === food.id)
+  if (f) {
+    f.count++
+  } else {
+    const { id, price, picture, name } = food
+    cart.unshift({
+      id,
+      price,
+      picture,
+      name,
+      count: 1
+    })
+  }
+  AppStorage.Set(CART_KEY, JSON.stringify(cart))
+}
+```
+
+3）购物车状态持久化
+
+```typescript title="pages/Index.ets"
+import { CART_KEY } from '../utils'
+
+
+PersistentStorage.PersistProp(CART_KEY, '[]')
+```
+
+
+4）监听购物车数据变化，设置购物车状态，底部组件显示数量和总价
+
+```typescript title="pages/Index.ets"
+  @StorageProp(CART_KEY)
+  @Watch('onUpdateCart')
+  cartJson: string = '[]'
+  @State
+  cart: CartItem[] = JSON.parse(this.cartJson)
+  onUpdateCart () {
+    this.cart = JSON.parse(this.cartJson)
+  }
+```
+
+```typescript title="pages/Index.ets"
+Footer({ showCart: $showCart, cart: $cart })
+```
+
+```typescript title="components/Footer.ets"
+@Link
+cart: CartItem[]
+
+  // ...
+          Badge({
+          value: this.cart.reduce((p, c) => p + c.count, 0) + '',
+          })
+
+  // ...
+          Span(this.cart.reduce((p, c) => p + (c.count * c.price * 100) / 100, 0).toFixed(2))
+          .fontColor('#fff')
+          .fontSize(24)
+
+```
+
+
+5）添加购物车
+
+```typescript title="components/MenuWrapperItem.ets"
+          CalcBtn({ icon: $r('app.media.ic_public_add_filled') })
+            .onClick(() => {
+              addCart(this.food)
+              promptAction.showToast({ message: '添加购物车成功' })
+            })
+```
+
+
+
+### 7. 业务逻辑-购物车管理
+
+1）渲染购物车
+
+```typescript title="pages/Index.ets"
+      if (this.showCart) {
+        Cart({ cart: $cart })
+      }
+```
+
+```typescript title="components/Cart.ets"
+@Component
+export struct Cart {
+  @Link
+  cart: CartItem[]
+
+  // ...
+
+          List({ space: 30 }) {
+          ForEach(this.cart, (item:CartItem) => {
+            ListItem() {
+              CartItemComp({ item })
+            }
+          })
+        }
+```
+
+```typescript title="components/CartItem.ets"
+import { CartItem } from '../models'
+import { CalcBtn } from './CalcBtn'
+
+@Component
+export struct CartItemComp {
+
+  @ObjectLink
+  item: CartItem
+
+  build() {
+    Row() {
+      Image(this.item.picture)
+        .width(60)
+        .aspectRatio(1)
+        .borderRadius(8)
+      Column({ space: 5 }) {
+        Text(this.item.name)
+          .fontSize(14)
+          .textOverflow({
+            overflow: TextOverflow.Ellipsis
+          })
+          .maxLines(2)
+        Row() {
+          Text() {
+            Span('¥ ')
+              .fontColor('#ff8000')
+              .fontSize(10)
+            Span(this.item.price.toFixed(2))
+              .fontColor('#ff8000')
+              .fontWeight(FontWeight.Bold)
+          }
+
+          Row() {
+            CalcBtn({ icon: $r('app.media.ic_screenshot_line'), plain: true })
+            Text(this.item.count+'')
+              .padding(10)
+              .fontSize(12)
+            CalcBtn({ icon: $r('app.media.ic_public_add_filled') })
+          }
+        }
+        .justifyContent(FlexAlign.SpaceBetween)
+        .width('100%')
+      }
+      .layoutWeight(1)
+      .alignItems(HorizontalAlign.Start)
+      .padding({ left: 10, right: 10 })
+    }
+    .alignItems(VerticalAlign.Top)
+  }
+}
+```
+
+
+2）购物车数量修改
+
+```typescript title="utils/index.ets"
+export const addCart = (food: FoodItem | CartItem) => { ... }
+
+export const delCart = (id: number) => {
+  const cart = getCart()
+  const f = cart.find(f => f.id === id)
+  if (f && f.count > 0) {
+    f.count--
+  }
+  AppStorage.Set(CART_KEY, JSON.stringify(cart))
+}
+```
+
+```typescript title="components/CartItem.ets"
+            CalcBtn({ icon: $r('app.media.ic_screenshot_line'), plain: true })
+              .onClick(() => {
+                delCart(this.item.id)
+              })
+            Text(this.item.count+'')
+              .padding(10)
+              .fontSize(12)
+            CalcBtn({ icon: $r('app.media.ic_public_add_filled') })
+              .onClick(()=>{
+                addCart(this.item)
+              })
+```
+
+
+3）清空购物车
+
+
+```typescript title="utils/index.ets"
+export const clearCart  = () => {
+  AppStorage.Set(CART_KEY, '[]')
+}
+```
+
+```typescript title="components/Cart.ets"
+          Text('清空购物车')
+            .fontSize(12)
+            .fontColor('#999')
+            .onClick(() => {
+              clearCart()
+            })
+```
+
