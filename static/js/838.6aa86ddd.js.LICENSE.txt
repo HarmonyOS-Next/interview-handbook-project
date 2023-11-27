@@ -7,6 +7,8 @@
  * @public
  */
 
+/*! medium-zoom 1.0.8 | MIT License | https://github.com/francoischalifour/medium-zoom */
+
 /*! Bundled license information:
 
 lodash-es/lodash.js:
@@ -20,5 +22,3 @@ lodash-es/lodash.js:
    * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
    *)
 */
-
-/*! medium-zoom 1.0.8 | MIT License | https://github.com/francoischalifour/medium-zoom */
