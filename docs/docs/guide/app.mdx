@@ -4,25 +4,169 @@ title: HM - 鸿蒙-应用程序开发
 
 # 鸿蒙-应用程序开发
 
-## 页面路由
+## 路由与生命周期
 
-### 1. 常用API
+### 1. 路由-常用API
+
+> 如何新建页面，如何跳转和回退操作
+
+1）新建页面
+
+```typescript title="pages/DetailPage.ets"
+@Entry
+@Component
+struct DetailPage {
+  build() {
+    Column({ space: 15 }) {
+      Text('Detail Page')
+        .fontSize(40)
+      Button('Back')
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+```diff title="src/main/resources/base/profile/main_pages.json"
+{
+  "src": [
+    "pages/Index",
++    "pages/DetailPage"
+  ]
+}
+```
+
+::: tip
+- 手动新建一个页面（ets）文件，需要在 `main_pages.json` 中手动配置
+- 可以自动创建
+    <img src="./images/36.png" width="300" />
+:::
+
+2）跳转与后退 API 
+
+- 跳转 `router.pushUrl()`
+- 后退 `router.back()`
+- 替换跳转 `router.replaceUrl()`
+
+```typescript
+import router from '@ohos.router'
+@Entry
+@Component
+struct Index {
+  build() {
+    Column({ space: 15 }) {
+      Text('Index Page')
+        .fontSize(40)
+      Button('Jump To Detail Page')
+        .onClick(() => {
+          // 1. 跳转，压入页面栈顶部
+          // router.pushUrl({
+          //   url: 'pages/DetailPage'
+          // })
+
+          // 2. 跳转，替换当前页面栈
+          // router.replaceUrl({
+          //   url: 'pages/DetailPage'
+          // })
+
+          // 3. 返回
+          // router.back()
+        })
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+::: tip
+- 页面栈的最大容量为32个页面。如果超过这个限制，可以调用 `router.clear()` 方法清空历史页面栈，释放内存空间。
+
+:::
+
+### 2. 路由-参数传递
+
+> 页面参数传递和获取
+
+1）传参
+
+```typescript {26} title="pages/Index.ets"
+import router from '@ohos.router'
+
+class User {
+  name: string
+  age: number
+}
+
+@Entry
+@Component
+struct Index {
+
+  @State
+  user: User = {
+    name: 'jack',
+    age: 18
+  }
+
+  build() {
+    Column({ space: 15 }) {
+      Text('Index Page')
+        .fontSize(40)
+      Button('Jump To Detail Page')
+        .onClick(() => {
+          router.pushUrl({
+            url: 'pages/DetailPage',
+            params: this.user
+          })
+        })
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+2）获取
+
+```typescript {7-10} title="pages/DetailPage.ets"
+import router from '@ohos.router'
+import promptAction from '@ohos.promptAction'
+@Entry
+@Component
+struct DetailPage {
+
+  aboutToAppear() {
+    const params = router.getParams()
+    promptAction.showToast({ message: params['name'] + params['age'] })
+  }
+
+  build() {
+    Column({ space: 15 }) {
+      Text('Detail Page')
+        .fontSize(40)
+      Button('Back')
+        .onClick(() => {
+          router.back()
+        })
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+### 3. UIAbility-生命周期
 
 
+### 4. 组件-生命周期
 
 
-### 3. 路由参数
-
-### 3. 路由模式
-
-
-## 生命周期
-
-### 1. 组件-生命周期
-
-### 2. UIAbility-生命周期
-
-### 3. Ability跳转
+### 5. Ability跳转
 
 
 ## 使用动画

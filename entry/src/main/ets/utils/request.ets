@@ -52,8 +52,11 @@ const request = <T = unknown>(url: string = '', method: http.RequestMethod = htt
         if (router.getState().path !== PAGE_MAP.login) {
           AppStorage.Set('user', '{}')
           router.pushUrl({
-            url: PAGE_MAP.login
-          })
+            url: PAGE_MAP.login,
+            params: {
+              from: router.getState().path
+            }
+          },router.RouterMode.Single)
         }
       }
     }

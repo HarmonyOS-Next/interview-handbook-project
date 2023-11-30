@@ -49,7 +49,9 @@ struct LoginPage {
           params
         })
       } else {
-        router.back()
+        router.back({
+          url: params.from
+        })
       }
 
       this.loading = false
