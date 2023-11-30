@@ -559,67 +559,64 @@ struct Index {
 @Component
 struct Index {
   build() {
-    Column() {
-      // nav
-      Row() {
-        Row() {
+    Column(){
+      // 导航
+      Row(){
+        Row(){
           Image($r('app.media.ic_public_arrow_left'))
-            .width(12)
+            .width(16)
             .aspectRatio(1)
-            .fillColor('#848484')
+            // svg 图标可以使用填充颜色
+            // .fillColor('red')
         }
         .width(24)
-        .height(24)
-        .borderRadius(12)
+        .aspectRatio(1)
         .backgroundColor('#f5f5f5')
+        .borderRadius(12)
         .justifyContent(FlexAlign.Center)
-        .margin({ left: 13 })
+        .margin({ left: 16 })
 
         Text('评论回复')
-          .padding({ right: 50 })
-          .textAlign(TextAlign.Center)
-          .fontSize(18)
           .layoutWeight(1)
+          .textAlign(TextAlign.Center)
+          .padding({ right: 40 })
       }
-      .height(50)
-      // comment
-      Row() {
+      .height(40)
+      .border({ width: { bottom: 0.5 }, color: '#e4e4e4' })
+      // 评论
+      Row(){
         Image($r('app.media.avatar'))
           .width(32)
           .aspectRatio(1)
           .borderRadius(16)
-        Column() {
+        Column({ space: 5 }){
           Text('周杰伦')
-            .fontSize(15)
+            .width('100%')
             .fontWeight(FontWeight.Bold)
-            .margin({ bottom: 5 })
+            .fontSize(15)
           Text('大理石能雕刻出肌肉和皮肤的质感，那个年代的工匠好牛啊')
-            .margin({ bottom: 5 })
-            .fontColor('#565656')
-            .lineHeight(20)
-          Row() {
-            Text('10-21•IP 属地辽宁')
-              .layoutWeight(1)
-              .fontSize(14)
+            .width('100%')
+          Row(){
+            Text('10-21 · IP属地北京')
+              .fontSize(12)
               .fontColor('#c3c4c5')
-            Row() {
-              Image($r('app.media.heart'))
+            Row({ space: 4 }){
+              Image($r('app.media.ic_public_heart'))
                 .width(14)
                 .aspectRatio(1)
                 .fillColor('#c3c4c5')
-                .margin({ right: 4 })
               Text('100')
-                .fontSize(14)
+                .fontSize(12)
                 .fontColor('#c3c4c5')
             }
           }
+          .width('100%')
+          .justifyContent(FlexAlign.SpaceBetween)
         }
         .layoutWeight(1)
         .padding({ left: 10 })
-        .alignItems(HorizontalAlign.Start)
       }
-      .width('100%')
-      .padding({ left: 15, right: 15, bottom: 15 })
+      .padding(15)
       .alignItems(VerticalAlign.Top)
     }
   }
