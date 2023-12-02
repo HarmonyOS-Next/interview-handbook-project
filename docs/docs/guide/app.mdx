@@ -249,9 +249,157 @@ Button('Back')
 
 ### 1. 属性动画
 
+> 组件的某些通用属性变化时，可以通过属性动画实现渐变过渡效果，提升用户体验。
+
+- 支持的属性包括width、height、backgroundColor、opacity、scale、rotate、translate等。
+
+```typescript
+@Entry
+@Component
+struct Index {
+  @State
+  widthSize: number = 100
+  @State
+  heightSize: number = 40
+
+  build() {
+    Column({ space: 15 }) {
+      Button('元素动画')
+        .width(this.widthSize)
+        .height(this.heightSize)
+        .onClick(() => {
+          this.widthSize = 200
+          this.heightSize = 100
+        })
+        .animation({
+          // 动画时间
+          duration: 1000,
+          // 执行次数
+          iterations: -1,
+          // 动画曲线
+          curve: Curve.Ease,
+          // 延时时间
+          delay: 1000,
+          // 播放模式
+          playMode: PlayMode.Alternate
+        })
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
 ### 2. 显示动画
 
+> 提供全局animateTo显式动画接口来指定由于闭包代码导致的状态变化插入过渡动效。
+
+```typescript
+import promptAction from '@ohos.promptAction'
+@Entry
+@Component
+struct Index {
+  @State
+  show: boolean = true
+
+  build() {
+    Column({ space: 15 }) {
+      Column() {
+        Row() {
+          Text('一级菜单')
+            .fontColor('#fff')
+            .height(50)
+        }
+        .onClick(() => {
+          animateTo({
+            duration: 200,
+            onFinish: () => {
+              // 动画结束
+              promptAction.showToast({ message: 'finish' })
+            }
+          },() => {
+            this.show = !this.show
+          })
+        })
+
+        if (this.show) {
+          Column() {
+            Text('二级菜单')
+              .fontColor('#fff')
+              .height(50)
+            Text('二级菜单')
+              .fontColor('#fff')
+              .height(50)
+          }
+        }
+      }
+      .width(100)
+      .backgroundColor('#069')
+    }
+    .height('100%')
+    .width('100%')
+  }
+}
+```
+
+
 ### 3. 元素共享转场
+
+> 当路由进行切换时，可以通过设置组件的 `sharedTransition` 属性将该元素标记为共享元素并设置对应的共享元素转场动效。
+
+<img src="./images/38.gif" width="300" />
+
+```typescript title="Index.ets"
+import router from '@ohos.router'
+@Entry
+@Component
+struct Index {
+  build() {
+    Row({ space: 15 }) {
+      Column({ space: 10 }){
+        Image($rawfile('apple.png'))
+          .width('100%')
+          .aspectRatio(1)
+          .sharedTransition('apple', { duration: 500 })
+        Text('鸣春谷 正宗甘肃特产花牛水果苹果 【天水直发】 4.5-5斤中果A(约13-16个)')
+          .sharedTransition('text', { duration: 500 })
+      }
+      .padding(15)
+      .width('50%')
+      .onClick(() => {
+        router.pushUrl({
+          url: 'pages/DetailPage'
+        })
+      })
+    }
+    .width('100%')
+  }
+}
+```
+
+```typescript title="DetailPage.ets"
+@Entry
+@Component
+struct DetailPage {
+  build() {
+    Column({ space: 15 }) {
+      Column({ space: 10 }){
+        Image($rawfile('apple.png'))
+          .width('100%')
+          .aspectRatio(1)
+          .sharedTransition('apple', { duration: 500 })
+        Text('鸣春谷 正宗甘肃特产花牛水果苹果 【天水直发】 4.5-5斤中果A(约13-16个)')
+          .fontSize(18)
+          .sharedTransition('text', { duration: 500 })
+      }
+      .padding(15)
+    }
+    .height('100%')
+    .width('100%')
+  }
+}
+```
 
 ### 4. 拖动手势-阻尼和磁吸
 
