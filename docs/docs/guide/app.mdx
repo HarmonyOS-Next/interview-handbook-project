@@ -468,20 +468,20 @@ struct Index {
             if (this.translateY > 100) {
               this.loading = true
               this.text = '正在刷新中...'
-              animateTo({ duration: 500 }, () => {
+              animateTo({ duration: 300 }, () => {
                 this.translateY = 100
               })
               // 加载数据
               setTimeout(() => {
                 this.loading = false
                 this.text = ''
-                animateTo({ duration: 200, onFinish: () => this.text = '下拉即可刷新' }, () => {
+                animateTo({ duration: 300, onFinish: () => this.text = '下拉即可刷新' }, () => {
                   this.translateY = 0
                 })
                 promptAction.showToast({ message: '刷新成功' })
               }, 2000)
             } else {
-              animateTo({ duration: 500 }, () => {
+              animateTo({ duration: 300 }, () => {
                 this.translateY = 0
               })
             }
@@ -499,13 +499,207 @@ struct Index {
 
 ### 1. 数据管理-用户首选项
 
-### 2. 安全-程序访问控制
+> 用户首选项为应用提供 `Key-Value` 键值型的数据处理能力，支持应用持久化轻量级数据，并对其修改和查询。
 
-### 3. 绘画能力-画布组件
+- `Key` 键为 string 类型，要求非空且长度不超过 80 个字节。
+- 如果 `Value` 值为 string 类型，可以为空，不为空时长度不超过 8192 个字节。
+- 内存会随着存储数据量的增大而增大，所以存储的数据量应该是轻量级的，建议存储的数据不超过一万条，否则会在内存方面产生较大的开销。
 
-### 4. 公共事件与通知-通知管理
+1）知晓 API 用法
 
-### 5. 后台任务-后台代理提醒
+```text
+// 获取首选项实例
+getPreferences(context: Context, name: string): Promise<Preferences>
+
+// 首选项实→获取数据
+get(key: string, defValue: ValueType): Promise<ValueType>
+// 首选项实→设置|修改数据
+put(key: string, value: ValueType): Promise<void>
+// 首选项实→删除数据
+delete(key: string): Promise<void>
+
+```
+
+2）写一个存储用户的工具
+
+```typescript title="utils/userStore.ets"
+import preferences from '@ohos.data.preferences'
+
+export class User {
+  name?: string
+  age?: number
+}
+
+export class UserStore {
+  KEY = 'user-store'
+
+  getStore() {
+    return preferences.getPreferences(getContext(this), 'userStore')
+  }
+
+  async setData(data: User) {
+    const store = await this.getStore()
+    await store.put(this.KEY, JSON.stringify(data))
+    await store.flush()
+  }
+
+  async getData() {
+    const store = await this.getStore()
+    const data = await store.get(this.KEY, '{}') as string
+    return JSON.parse(data) as User
+  }
+
+  async delData() {
+    const store = await this.getStore()
+    await store.delete(this.KEY)
+    await store.flush()
+  }
+
+}
+```
+
+```typescript title="pages/Index.ets"
+import router from '@ohos.router'
+import { User, UserStore } from '../utils/userStore'
+
+@Entry
+@Component
+struct Index {
+  userStore: UserStore
+  @State
+  user: User = {}
+
+  aboutToAppear() {
+    this.userStore = new UserStore()
+    this.getUser()
+  }
+
+  async getUser () {
+    const user = await this.userStore.getData()
+    this.user = user
+  }
+
+  build() {
+    Column({ space: 15 }) {
+
+      if ( this.user?.name && this.user?.age ) {
+        Text(`${ this.user.name } 今年 ${ this.user.age } 岁`)
+      }
+
+      Button('设置 User')
+        .onClick(async () => {
+          await this.userStore.setData({ name: 'jack', age: 18 })
+          await this.getUser()
+        })
+
+      Button('修改 User')
+        .onClick(async () => {
+          await this.userStore.setData({ name: 'tom', age: 17 })
+          await this.getUser()
+        })
+
+      Button('删除 User')
+        .onClick(async () => {
+          await this.userStore.delData()
+          await this.getUser()
+        })
+
+      Button('换一页')
+        .onClick(() => {
+          router.pushUrl({
+            url: 'pages/DetailPage'
+          })
+        })
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+
+### 2. 绘画能力-画布组件
+
+
+1）了解 画布 基本用法
+
+```typescript
+@Entry
+@Component
+struct Index{
+
+  // 抗锯齿设置
+  private settings: RenderingContextSettings = new RenderingContextSettings(true)
+  // 画布实例
+  private context: CanvasRenderingContext2D = new CanvasRenderingContext2D(this.settings)
+
+  build() {
+    Column({ space: 15 }) {
+      // 画布组件
+      Canvas(this.context)
+        .width(252)
+        .aspectRatio(1)
+        .backgroundColor('#ccc')
+        .onReady(() => {
+          // 绘制边框盒子
+          this.context.strokeRect(100, 100, 50, 50)
+          // 绘制填充盒子
+          this.context.fillRect(150, 150, 50, 50)
+        })
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+2）绘制表盘和秒针
+
+<img src="./images/39.png" width="300" />
+
+前置知识：
+- `drawImage(img: ImageBitmap, x, y, w, h)` 图片需要 `ImageBitmap` 格式
+- `rotate(angle: number)` angle 是弧度，`1° = Math.PI / 180`，围绕 `0 0` 中心旋转
+
+```typescript
+@Entry
+@Component
+struct Index{
+
+  private settings: RenderingContextSettings = new RenderingContextSettings(true)
+  private context: CanvasRenderingContext2D = new CanvasRenderingContext2D(this.settings)
+  private panImg: ImageBitmap = new ImageBitmap('/images/ic_clock_pan.png')
+  private secondImg: ImageBitmap = new ImageBitmap('/images/ic_second_pointer.png')
+
+
+  build() {
+    Column({ space: 15 }) {
+      Canvas(this.context)
+        .width(252)
+        .aspectRatio(1)
+        .onReady(() => {
+          this.context.drawImage(this.panImg, 0 ,0 , 252, 252)
+
+          this.context.translate(126, 126)
+          this.context.rotate(Math.PI / 180 * 180)
+          this.context.translate(-126, -126)
+          this.context.drawImage(this.secondImg, 122, 0, 8, 252)
+        })
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+
+### 3. 公共事件与通知-通知管理
+
+
+### 4. 后台任务-后台代理提醒
 
 
 ## 今日案例-华为闹钟
