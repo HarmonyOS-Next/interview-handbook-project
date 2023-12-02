@@ -403,6 +403,97 @@ struct DetailPage {
 
 ### 4. 拖动手势-阻尼和磁吸
 
+> 拖动手势（PanGesture）
+
+- 拖动手势用于触发拖动手势事件，滑动达到最小滑动距离（默认值为5vp）时拖动手势识别成功。
+
+实现下拉刷新效果：
+
+1. 使用 `Stack` 堆叠下拉刷新容器和列表容器
+2. 使用手势事件 `PanGesture` 实现拖动列表容器
+3. 使用 `animateTo` 实现磁吸动画效果
+4. 拖动距离超出阀值，模拟开启加载效果，控制文字显示和动画
+
+```typescript
+import promptAction from '@ohos.promptAction'
+@Entry
+@Component
+struct Index {
+  @State
+  translateY: number = 0
+  @State
+  text: string = '下拉即可刷新'
+  @State
+  loading: boolean = false
+
+  ease (originValue: number = 0) {
+    const space = 60
+    const damp = 0.3
+    if ( originValue > space ) {
+      return space + ( originValue - space ) * damp
+    }
+    return originValue
+  }
+
+  build() {
+    Stack({ alignContent: Alignment.Top }) {
+      Row() {
+        if (this.loading) {
+          LoadingProgress()
+            .width(32)
+            .aspectRatio(1)
+        }
+        Text(this.text)
+          .fontColor('#999')
+          .width(100)
+      }
+      .height(100)
+
+      List() {
+
+      }
+      .backgroundColor('#fff')
+      .height('100%')
+      .width('100%')
+      .translate({ y: this.translateY })
+      .gesture(
+        PanGesture()
+          .onActionUpdate((event: GestureEvent) => {
+            this.translateY = this.ease(event.offsetY)
+            if ( this.translateY > 100 ) {
+              this.text = '释放立即刷新'
+            }
+          })
+          .onActionEnd((event: GestureEvent) => {
+            if (this.translateY > 100) {
+              this.loading = true
+              this.text = '正在刷新中...'
+              animateTo({ duration: 500 }, () => {
+                this.translateY = 100
+              })
+              // 加载数据
+              setTimeout(() => {
+                this.loading = false
+                this.text = ''
+                animateTo({ duration: 200, onFinish: () => this.text = '下拉即可刷新' }, () => {
+                  this.translateY = 0
+                })
+                promptAction.showToast({ message: '刷新成功' })
+              }, 2000)
+            } else {
+              animateTo({ duration: 500 }, () => {
+                this.translateY = 0
+              })
+            }
+          })
+      )
+    }
+    .height('100%')
+    .width('100%')
+    .backgroundColor('#f3f4f5')
+  }
+}
+```
 
 ## 原生能力
 
