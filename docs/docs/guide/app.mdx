@@ -779,6 +779,78 @@ const request: notificationManager.NotificationRequest = {
 
 ### 4. 后台任务-后台代理提醒
 
+> 应用退到后台或进程终止后，仍然有一些提醒用户的定时类任务，  
+> 例如购物类应用抢购提醒等，为满足此类功能场景，系统提供了代理提醒（reminderAgentManager）的能力。
+
+参考文档 [链接](https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/agent-powered-reminder-0000001663585481-V3)
+
+- 倒计时类：基于倒计时的提醒功能
+- 日历类：基于日历的提醒功能
+- 闹钟类：基于时钟的提醒功能
+
+需要开启 `ohos.permission.PUBLISH_AGENT_REMINDER` 权限
+
+
+1）闹铃
+
+```typescript
+import reminderAgentManager from '@ohos.reminderAgentManager'
+import promptAction from '@ohos.promptAction'
+
+@Entry
+@Component
+struct Index {
+  reminderId = null
+
+  build() {
+    Column({ space: 15 }) {
+      Button('添加闹铃')
+        .onClick(async () => {
+          let targetReminderAgent: reminderAgentManager.ReminderRequestAlarm = {
+            // 提醒类型为闹钟类型
+            reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_ALARM, 
+            // 指明提醒的目标时刻
+            hour: 19, 
+            // 指明提醒的目标分钟
+            minute: 57, 
+            // 指明每周哪几天需要重复提醒
+            daysOfWeek: [], 
+            // 设置弹出的提醒通知信息上显示的按钮类型和标题
+            actionButton: [ 
+              {
+                title: '停止',
+                type: reminderAgentManager.ActionButtonType.ACTION_BUTTON_TYPE_CLOSE
+              },
+            ],
+            // 响铃时长秒
+            ringDuration: 60, 
+            // 点击通知跳转的 want
+            wantAgent: {
+              pkgName: 'com.itcast.myapplication',
+              abilityName: 'EntryAbility',
+            },
+          }
+          // 记录id 清理使用
+          this.reminderId = await reminderAgentManager.publishReminder(targetReminderAgent)
+          promptAction.showToast({ message: '添加闹铃成功' })
+        })
+      Button('取消闹铃')
+        .onClick(async () => {
+          // 不能退出应用，否则 this.reminderId 是 null，开发的时候可以持久化
+          await reminderAgentManager.cancelReminder(this.reminderId)
+          promptAction.showToast({ message: '取消闹铃成功' })
+        })
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+
+
+
 
 ## 今日案例-华为闹钟
 
