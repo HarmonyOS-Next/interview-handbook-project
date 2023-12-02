@@ -495,7 +495,7 @@ struct Index {
 }
 ```
 
-## 原生能力
+## 系统能力
 
 ### 1. 数据管理-用户首选项
 
@@ -698,6 +698,84 @@ struct Index{
 
 ### 3. 公共事件与通知-通知管理
 
+> 本模块提供通知管理的能力，包括发布、取消发布通知，创建、获取、移除通知通道，获取通知的使能状态、角标使能状态，获取通知的相关信息等。
+
+参考文档 [链接](https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/text-notification-0000001478340981-V3)
+
+1）发送通知和取消通知
+
+```typescript
+import notificationManager from '@ohos.notificationManager'
+
+@Entry
+@Component
+struct Index {
+  notifyId = 100
+
+  build() {
+    Column({ space: 15 }) {
+      Button('添加通知')
+        .onClick(async () => {
+          const request: notificationManager.NotificationRequest = {
+            id: this.notifyId,
+            content: {
+              contentType: notificationManager.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
+              normal: {
+                title: "温馨提示",
+                text: "您的京东快递 100321120341233 快递已经达到北京！",
+                additionalText: "物流提醒"
+              }
+            },
+            // 跳转应用
+            wantAgent: want
+          }
+          notificationManager.publish(request)
+        })
+      Button('取消通知')
+        .onClick(() => {
+          notificationManager.cancel(this.notifyId)
+        })
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+2）通知点击唤起应用
+
+```typescript
+import wantAgent from '@ohos.app.ability.wantAgent'
+```
+```typescript
+// 获取 wantAgent
+const want = await wantAgent.getWantAgent({
+  wants: [
+    {
+      bundleName: 'com.itcast.myapplication',
+      abilityName: 'EntryAbility'
+    }
+  ],
+  operationType: wantAgent.OperationType.START_ABILITY,
+  requestCode: 0
+})
+```
+```diff
+const request: notificationManager.NotificationRequest = {
+  id: this.notifyId,
+  content: {
+    contentType: notificationManager.ContentType.NOTIFICATION_CONTENT_BASIC_TEXT,
+    normal: {
+      title: "温馨提示",
+      text: "您的京东快递 100321120341233 快递已经达到北京！",
+      additionalText: "物流提醒"
+    }
+  },
+  // 跳转应用
++  wantAgent: want
+}
+```
 
 ### 4. 后台任务-后台代理提醒
 
