@@ -162,11 +162,87 @@ struct DetailPage {
 
 ### 3. UIAbility-生命周期
 
+> 当用户打开、切换和返回到对应应用时，应用中的UIAbility实例会在其生命周期的不同状态之间转换。
+
+<img src="./images/37.png" width="600"  />
+
+1. UIAbility实例创建完成时触发，系统会调用 `onCreate()` 回调。
+    - 可以在该回调中进行应用初始化操作，例如变量定义资源加载等，用于后续的UI界面展示。
+  
+2. `onForeground()` 回调，在 UIAbility 的UI界面可见之前，如 UIAbility 切换至前台时触发。
+    - 可以在 onForeground() 回调中申请系统需要的资源，或者重新申请在 onBackground() 中释放的资源。
+
+3. `onBackground()` 回调，在 UIAbility 的UI界面完全不可见之后，如 UIAbility 切换至后台时候触发。
+    - 可以在 onBackground() 回调中释放UI界面不可见时无用的资源，或者在此回调中执行较为耗时的操作，例如状态保存等
+
+4. Destroy 状态在 UIAbility 实例销毁时触发，系统会调用 `onDestroy()` 回调。
+    - 可以在该回调中进行系统资源的释放、数据的保存等操作。
+
 
 ### 4. 组件-生命周期
 
 
-### 5. Ability跳转
+1）任何组件
+
+`aboutToAppear`
+
+- aboutToAppear 函数在创建自定义组件的新实例后，在执行其 build 函数之前执行。
+- 允许在 aboutToAppear 函数中改变状态变量，更改将在后续执行 build 函数中生效。
+
+`aboutToDisappear`
+
+- aboutToDisappear 函数在自定义组件析构销毁之前执行。
+- 不允许在 aboutToDisappear 函数中改变状态变量，特别是 @Link 变量的修改可能会导致应用程序行为不稳定。
+
+
+2）仅页面 `@Entry` 组件 
+
+`onPageShow`
+
+- 页面每次显示时触发一次，包括路由过程、应用进入前后台等场景，仅 @Entry 修饰的自定义组件生效。
+
+`onPageHide`
+
+- 页面每次隐藏时触发一次，包括路由过程、应用进入前后台等场景，仅 @Entry 修饰的自定义组件生效。
+
+`onBackPress`
+
+- 当用户点击返回按钮时触发，仅 @Entry 修饰的自定义组件生效。
+
+
+### 5. UIAbility跳转
+
+> UIAbility组件是一种包含UI界面的应用组件，主要用于和用户交互
+
+- UIAbility组件是系统调度的基本单元，为应用提供绘制界面的窗口；
+- 一个UIAbility组件中可以通过多个页面来实现一个功能模块；
+- 每一个UIAbility组件实例，都对应于一个最近任务列表中的任务。
+
+```typescript title="OtherAbility"
+Button('Jump To PayAbility Page')
+  .onClick(() => {
+    const context = getContext(this) as common.UIAbilityContext
+    const want: Want = {
+      bundleName: 'com.itcast.myapplication',
+      abilityName: 'PayAbility'
+    }
+    context.startAbility(want)
+  })
+```
+
+
+```typescript title="EntryAbility"
+Button('Back')
+  .onClick(() => {
+    router.back()
+  })
+```
+
+::: tip
+
+- 后续消息通知跳转到应用也需要跳转到对应的 UIAbility 方式类似
+
+:::
 
 
 ## 使用动画
