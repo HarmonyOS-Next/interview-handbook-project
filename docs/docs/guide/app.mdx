@@ -856,9 +856,132 @@ struct Index {
 
 ### 1. 页面结构-首页结构
 
+```typescript title="pages/Index.ets"
+import { CanvasComp } from '../components/CanvasComp'
+import { ClockItemComp } from '../components/ClockItemComp'
+
+@Entry
+@Component
+struct Index {
+  build() {
+    Stack({ alignContent: Alignment.Bottom }){
+      Column({ space: 15 }) {
+        Text('闹钟')
+          .fontSize('24')
+          .width('100%')
+
+        CanvasComp()
+
+        ForEach([1, 2, 3], () => {
+          ClockItemComp()
+        })
+      }
+      .padding(15)
+      .height('100%')
+      .width('100%')
+      .backgroundColor('#f5f5f5')
+      // 添加
+      Text('+')
+        .width(50)
+        .aspectRatio(1)
+        .backgroundColor('#06f')
+        .fontSize(40)
+        .fontWeight(100)
+        .fontColor('#fff')
+        .borderRadius(25)
+        .textAlign(TextAlign.Center)
+        .margin({ bottom: 50 })
+    }
+  }
+}
+```
+
+```typescript title="components/CanvasComp.ets"
+@Component
+export struct CanvasComp {
+  build() {
+    
+  }
+}
+```
+
+```typescript title="components/ClockItemComp.ets"
+@Component
+export struct ClockItemComp {
+  build() {
+    
+  }
+}
+```
 
 ### 2. 页面结构-绘制闹钟
 
+1. 绘制表盘
+2. 绘制 时分秒 指针
+3. 走起来
+
+``` typescript
+@Component
+export struct CanvasComp {
+  private settings = new RenderingContextSettings(true)
+  private context = new CanvasRenderingContext2D(this.settings)
+  private panImg = new ImageBitmap('/images/ic_clock_pan.png')
+  private hourImg = new ImageBitmap('/images/ic_hour_pointer.png')
+  private minuteImg = new ImageBitmap('/images/ic_minute_pointer.png')
+  private secondImg = new ImageBitmap('/images/ic_second_pointer.png')
+
+  // 画布尺寸
+  canvasSize = 252
+  // 指针尺寸
+  pointerWidth = 8
+
+  startDraw() {
+    this.drawClock()
+    setInterval(() => {
+      this.drawClock()
+    }, 1000)
+  }
+
+  /**
+   * 绘制闹钟
+   */
+  drawClock() {
+    this.context.clearRect(0, 0, this.canvasSize, this.canvasSize)
+    this.context.drawImage(this.panImg, 0, 0, this.canvasSize, this.canvasSize)
+    // 根据时间绘制指针
+    const date = new Date()
+    const hour = date.getHours()
+    const minute = date.getMinutes()
+    const second = date.getSeconds()
+    this.drawPointer(this.hourImg, hour / 24 * 360)
+    this.drawPointer(this.minuteImg, minute / 60 * 360)
+    this.drawPointer(this.secondImg, second / 60 * 360)
+  }
+
+  /**
+   * 绘制指针
+   * @param img - 指针图片
+   * @param angle - 旋转角度，起点是 Y 轴上方向
+   */
+  drawPointer(img: ImageBitmap, angle: number) {
+    this.context.save()
+    this.context.translate(this.canvasSize / 2, this.canvasSize / 2)
+    this.context.rotate((angle + 180) * Math.PI / 180)
+    this.context.translate(-this.canvasSize / 2, -this.canvasSize / 2)
+    this.context.drawImage(img, this.canvasSize / 2 - this.pointerWidth / 2, 0, this.pointerWidth, this.canvasSize)
+    this.context.restore()
+  }
+
+  build() {
+    Canvas(this.context)
+      .width(this.canvasSize)
+      .aspectRatio(1)
+      .onReady(() => {
+        this.startDraw()
+      })
+  }
+}
+```
 
 ### 3. 页面结构-绘制闹钟任务列表
 
