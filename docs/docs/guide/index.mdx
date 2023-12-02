@@ -1144,7 +1144,7 @@ struct Index {
 
 
 - 条件渲染，是根据状态数据进行判断展示不同UI
-- 添加渲染，是会销毁和创建组件，组件状态将不会保留
+- 条件渲染，是会销毁和创建组件，组件状态将不会保留
 
 1）使用 `if` `else` 实现 loading 效果 
 
@@ -1307,7 +1307,7 @@ struct Index {
 ### 1. 底部输入区域
 
 - 抽离 `Nav` `Comment` 组件
-- 使用 `Stack` 组件吧底部输入框固定下下方
+- 使用 `Stack` 组件底部输入框固定在下方
 - 加上 `Scroll` 将来页面内容可以滚动
 
 ```typescript
@@ -1480,7 +1480,7 @@ Column() {
 - 初始化一些模拟数据
 - 完成页面渲染
 
-```typescript title="models/Index.ets"
+```typescript title="models/index.ets"
 export class ReplyItem {
   id: number
   avatar: string
@@ -1552,7 +1552,6 @@ export const replyList: ReplyItem[] = [
 
 ```typescript title="pages/Index.ets"
 import { ReplyItem, replyList } from '../models'
-
 @Entry
 @Component
 struct Index {
@@ -1561,84 +1560,94 @@ struct Index {
   replyList: ReplyItem[] = replyList
 
   build() {
-    Stack() {
-      Scroll() {
-        Column() {
-          NavComp()
-          CommentComp()
-          // space
-          Divider()
-            .strokeWidth(8)
-            .color('#f5f5f5')
-          // reply
+    Stack({ alignContent: Alignment.Bottom }) {
+      Column() {
+        Scroll() {
           Column() {
-            Text('回复 '+this.replyList.length)
-              .width('100%')
-              .margin({ bottom: 15 })
-              .fontWeight(500)
-            ForEach(this.replyList, (item: ReplyItem) => {
-              Row() {
-                Image(item.avatar)
-                  .width(32)
-                  .height(32)
-                  .borderRadius(16)
-                Column() {
-                  Text(item.author)
-                    .fontSize(15)
-                    .fontWeight(FontWeight.Bold)
-                    .margin({ bottom: 5 })
-                  Text(item.content)
-                    .margin({ bottom: 5 })
-                    .fontColor('#565656')
-                    .lineHeight(20)
+            // 导航
+            NavComp()
+            // 评论
+            CommentComp()
+            // 分割线
+            Divider()
+              .strokeWidth(8)
+              .color('#f5f5f5')
+            // 回复列表
+            Column() {
+              Text('回复 100')
+                .width('100%')
+                .fontWeight(600)
+              ForEach(
+                this.replyList, 
+                (item: ReplyItem) => {
                   Row() {
-                    Text(`${item.time}•IP 属地${item.area}`)
-                      .layoutWeight(1)
-                      .fontSize(14)
-                      .fontColor('#c3c4c5')
-                    Row() {
-                      Image($r('app.media.heart'))
-                        .width(14)
-                        .height(14)
-                        .fillColor('#c3c4c5')
-                        .margin({ right: 4 })
-                      Text(item.likeNum.toString())
-                        .fontSize(14)
-                        .fontColor('#c3c4c5')
+                    Image(item.avatar)
+                      .width(32)
+                      .aspectRatio(1)
+                      .borderRadius(16)
+                    Column({ space: 5 }) {
+                      Text(item.author)
+                        .width('100%')
+                        .fontWeight(FontWeight.Bold)
+                        .fontSize(15)
+                      Text(item.content)
+                        .width('100%')
+                      Row() {
+                        Text(`${item.time} · IP属地${item.area}`)
+                          .fontSize(12)
+                          .fontColor('#c3c4c5')
+                        Row({ space: 4 }) {
+                          Image($r('app.media.ic_public_heart'))
+                            .width(14)
+                            .aspectRatio(1)
+                            .fillColor('#c3c4c5')
+                          Text(item.likeNum.toString())
+                            .fontSize(12)
+                            .fontColor('#c3c4c5')
+                        }
+                      }
+                      .width('100%')
+                      .justifyContent(FlexAlign.SpaceBetween)
                     }
+                    .layoutWeight(1)
+                    .padding({ left: 10 })
                   }
-                }
-                .layoutWeight(1)
-                .padding({ left: 10 })
-                .alignItems(HorizontalAlign.Start)
-              }
-              .width('100%')
-              .padding({ bottom: 15 })
-              .alignItems(VerticalAlign.Top)
-            })
+                  .padding({ top: 15, bottom: 15 })
+                  .alignItems(VerticalAlign.Top)
+                },
+                // key 有默认你规则
+                // key 为了元素复用
+                // 如果没有写，会自动生成一个key，index_ + JSON.stringify(item)，不建议不写
+                // (item: ReplyItem) => item.id.toString() 写一个ID做唯一标识，需要key也更新才能更新对应UI
+                // item => id + likeNum + likeFlag 把需要更新的字段合在一起当做key
+                // ({ id, likeNum, likeFlag }) => JSON.stringify({ id, likeNum, likeFlag })
+
+                // 学习了 @Observed @ObjectLink 这样也可以更新~
+                // (item: ReplyItem) => item.id.toString()
+              )
+
+            }
+            .padding(15)
           }
-          .padding({ left: 15, right: 15, top: 15 })
+          .padding({ bottom: 50 })
         }
       }
-      .padding({ bottom: 50 })
+      .width('100%')
+      .height('100%')
 
-      Row() {
+      Row({ space: 15 }){
         TextInput({ placeholder: '回复~' })
-          .placeholderColor('#c3c4c5')
           .layoutWeight(1)
         Text('发布')
-          .fontSize(14)
-          .fontColor('#09f')
-          .margin({ left: 15 })
+          .fontColor('#069')
       }
+      .padding({ left: 15, right: 15 })
       .width('100%')
       .height(50)
-      .padding({ left: 15, right: 15 })
-      .position({ y: '100%' })
-      .translate({ y: -50 })
       .backgroundColor('#fff')
       .border({ width: { top: 0.5 }, color: '#e4e4e4' })
     }
+
   }
 }
 ```
@@ -1667,7 +1676,7 @@ onLike(item: ReplyItem) {
 ```
 
 ```typescript
-Row() {
+Row({ space: 4 }) {
   Image($r('app.media.heart'))
     .width(14)
     .height(14)
@@ -1721,7 +1730,7 @@ onReply () {
 ```
 
 ```typescript title="pages/Index.ets"
-Row() {
+Row({ spcae: 15 }) {
   TextInput({ placeholder: '回复~', text: this.content })
     .placeholderColor('#c3c4c5')
     .layoutWeight(1)
@@ -1731,7 +1740,6 @@ Row() {
   Text('发布')
     .fontSize(14)
     .fontColor('#09f')
-    .margin({ left: 15 })
     .onClick(()=>{
       this.onReply()
     })
