@@ -1651,6 +1651,7 @@ struct Index{
 
 ### 2. HTTP请求
 
+> 请求服务器需要使用 IP 地址，或者域名。不可使用 `localhost` 或 `127.0.0.1`
 
 1）启动 `json-server` 服务，`npm i json-server -g` 全局安装。
 
@@ -1819,12 +1820,14 @@ json-server data.json --host 192.168.0.1
 
 
 ```typescript
-const req = http.createHttp()
+import http from '@ohos.net.http'
 
-req.request('http://192.168.0.1:3000/takeaway')
+const req = http.createHttp()
+req.request('https://zhoushugang.gitee.io/fe2022/takeaway.json')
   .then(res => {
+    console.log('MEITUAN', res.result.toString().replace(/\n/g, '').substr(0, 250))  // === 3  注意：字符长度大于1024字节，控制台不可见。
     const data = JSON.parse(res.result as string)
-    console.log(data.length)  // === 3  注意：字符长度大于1024字节，控制台不可见。
+    console.log('MEITUAN', data.length)
   })
   .catch(err => {
     console.error('MEITUAN', err.message)
