@@ -2107,137 +2107,7 @@ export struct MenuWrapperItem {
 }
 ```
 
-```typescript title="components/CalcBtn.ets"
-@Component
-export struct CalcBtn {
-
-  icon: Resource
-
-  plain?: boolean
-
-  build() {
-    Row() {
-      Image(this.icon)
-        .width(10)
-        .aspectRatio(1)
-    }
-    .width(16)
-    .aspectRatio(1)
-    .backgroundColor(this.plain ? '#fff' : '#f8c74e')
-    .border(this.plain ? { width: 0.5 , color: '#f8c74e'}: {})
-    .borderRadius(4)
-    .justifyContent(FlexAlign.Center)
-  }
-}
-```
-
-
-### 5. 页面结构-购物车
-
-```typescript title="components/Cart.ets"
-import { CartItemComp } from './CartItemComp'
-
-@Component
-export struct Cart {
-  build() {
-    Column() {
-      Column() {
-        Row() {
-          Text('购物车')
-            .fontSize(12)
-            .fontWeight(600)
-          Text('清空购物车')
-            .fontSize(12)
-            .fontColor('#999')
-        }
-        .width('100%')
-        .height(40)
-        .justifyContent(FlexAlign.SpaceBetween)
-        .border({ width: { bottom: 0.5 }, color: '#f5f5f5' })
-        .margin({ bottom: 10 })
-        .padding({ left: 15, right: 15 })
-
-        List({ space: 30 }) {
-          ListItem() {
-            CartItemComp()
-          }
-
-          ListItem() {
-            CartItemComp()
-          }
-
-          ListItem() {
-            CartItemComp()
-          }
-        }
-        .divider({
-          strokeWidth: 0.5,
-          color: '#f5f5f5'
-        })
-        .padding({ left: 15, right: 15, bottom: 100 })
-      }
-      .backgroundColor('#fff')
-      .borderRadius({
-        topLeft: 16,
-        topRight: 16
-      })
-    }
-    .justifyContent(FlexAlign.End)
-    .height('100%')
-    .backgroundColor('rgba(0,0,0,0.5)')
-  }
-}
-```
-
-```typescript title="components/CartItem.ets"
-import { CalcBtn } from './CalcBtn'
-
-@Component
-export struct CartItemComp {
-  build() {
-    Row() {
-      Image('https://zqran.gitee.io/images/waimai/7384994864.jpg')
-        .width(60)
-        .aspectRatio(1)
-        .borderRadius(8)
-      Column({ space: 5 }) {
-        Text('小份酸汤莜面鱼鱼+肉夹馍套餐')
-          .fontSize(14)
-          .textOverflow({
-            overflow: TextOverflow.Ellipsis
-          })
-          .maxLines(2)
-        Row() {
-          Text() {
-            Span('¥ ')
-              .fontColor('#ff8000')
-              .fontSize(10)
-            Span('34.23')
-              .fontColor('#ff8000')
-              .fontWeight(FontWeight.Bold)
-          }
-
-          Row() {
-            CalcBtn({ icon: $r('app.media.ic_screenshot_line'), plain: true })
-            Text('0')
-              .padding(10)
-              .fontSize(12)
-            CalcBtn({ icon: $r('app.media.ic_public_add_filled') })
-          }
-        }
-        .justifyContent(FlexAlign.SpaceBetween)
-        .width('100%')
-      }
-      .layoutWeight(1)
-      .alignItems(HorizontalAlign.Start)
-      .padding({ left: 10, right: 10 })
-    }
-    .alignItems(VerticalAlign.Top)
-  }
-}
-```
-
-### 6. 业务逻辑-渲染商品菜单和列表
+### 5. 业务逻辑-渲染商品菜单和列表
 
 
 
@@ -2318,7 +2188,7 @@ struct Index {
 
 3）传入列表数据给，商品菜单组件，进行渲染
 
-```typescript {1,6,7,24-34,39-43} title="components/MenuWrapper.ets"
+```typescript {1,6,7,14-15,29-33} title="components/MenuWrapper.ets"
 import { Category, FoodItem } from '../models'
 import { MenuWrapperItem } from './MenuWrapperItem'
 
@@ -2430,6 +2300,140 @@ export struct MenuWrapperItem {
       .padding({ left: 10, right: 10 })
     }
     .padding(10)
+    .alignItems(VerticalAlign.Top)
+  }
+}
+```
+
+
+
+### 6. 页面结构-购物车
+
+- 抽取计算案例组件
+- 搭建购物车页面
+
+```typescript title="components/CalcBtn.ets"
+@Component
+export struct CalcBtn {
+
+  icon: Resource
+
+  plain?: boolean
+
+  build() {
+    Row() {
+      Image(this.icon)
+        .width(10)
+        .aspectRatio(1)
+    }
+    .width(16)
+    .aspectRatio(1)
+    .backgroundColor(this.plain ? '#fff' : '#f8c74e')
+    .border(this.plain ? { width: 0.5 , color: '#f8c74e'}: {})
+    .borderRadius(4)
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+```typescript title="components/Cart.ets"
+import { CartItemComp } from './CartItemComp'
+
+@Component
+export struct Cart {
+  build() {
+    Column() {
+      Column() {
+        Row() {
+          Text('购物车')
+            .fontSize(12)
+            .fontWeight(600)
+          Text('清空购物车')
+            .fontSize(12)
+            .fontColor('#999')
+        }
+        .width('100%')
+        .height(40)
+        .justifyContent(FlexAlign.SpaceBetween)
+        .border({ width: { bottom: 0.5 }, color: '#f5f5f5' })
+        .margin({ bottom: 10 })
+        .padding({ left: 15, right: 15 })
+
+        List({ space: 30 }) {
+          ListItem() {
+            CartItemComp()
+          }
+
+          ListItem() {
+            CartItemComp()
+          }
+
+          ListItem() {
+            CartItemComp()
+          }
+        }
+        .divider({
+          strokeWidth: 0.5,
+          color: '#f5f5f5'
+        })
+        .padding({ left: 15, right: 15, bottom: 100 })
+      }
+      .backgroundColor('#fff')
+      .borderRadius({
+        topLeft: 16,
+        topRight: 16
+      })
+    }
+    .justifyContent(FlexAlign.End)
+    .height('100%')
+    .backgroundColor('rgba(0,0,0,0.5)')
+  }
+}
+```
+
+```typescript title="components/CartItem.ets"
+import { CalcBtn } from './CalcBtn'
+
+@Component
+export struct CartItemComp {
+  build() {
+    Row() {
+      Image('https://zqran.gitee.io/images/waimai/7384994864.jpg')
+        .width(60)
+        .aspectRatio(1)
+        .borderRadius(8)
+      Column({ space: 5 }) {
+        Text('小份酸汤莜面鱼鱼+肉夹馍套餐')
+          .fontSize(14)
+          .textOverflow({
+            overflow: TextOverflow.Ellipsis
+          })
+          .maxLines(2)
+        Row() {
+          Text() {
+            Span('¥ ')
+              .fontColor('#ff8000')
+              .fontSize(10)
+            Span('34.23')
+              .fontColor('#ff8000')
+              .fontWeight(FontWeight.Bold)
+          }
+
+          Row() {
+            CalcBtn({ icon: $r('app.media.ic_screenshot_line'), plain: true })
+            Text('0')
+              .padding(10)
+              .fontSize(12)
+            CalcBtn({ icon: $r('app.media.ic_public_add_filled') })
+          }
+        }
+        .justifyContent(FlexAlign.SpaceBetween)
+        .width('100%')
+      }
+      .layoutWeight(1)
+      .alignItems(HorizontalAlign.Start)
+      .padding({ left: 10, right: 10 })
+    }
     .alignItems(VerticalAlign.Top)
   }
 }

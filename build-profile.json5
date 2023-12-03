@@ -6,9 +6,9 @@
         "type": "HarmonyOS",
         "material": {
           "certpath": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.cer",
-          "storePassword": "000000197208AD4A907DCEEB963B5CC583312D78CEBC095F6826140CD73265707AA17284AFD6AE5D18",
+          "storePassword": "00000019CD5D7EFE6D1A4E69FABA992B8B2FCC65B6E81D7BB4E6F29C9630F271B162E18294A1F800BA",
           "keyAlias": "debugKey",
-          "keyPassword": "000000196A3E65D708FB7F98DCC89D23E006CF8F452BA07CD585AD4370CE23A442E2EE855CB1665C7B",
+          "keyPassword": "00000019E532572A4917615B58A1CFA47F5D3787FAADC0FD7C9B1A700ACEC19F88FD6DC9AD0A329290",
           "profile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p12"
@@ -19,9 +19,9 @@
         "type": "HarmonyOS",
         "material": {
           "certpath": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.cer",
-          "storePassword": "0000001A03113A0221B87106BBEC76CDC0F261825AD275393F8776D355735E4F0F397351D596FA18E6A3",
+          "storePassword": "0000001A3338AE37C6657C3F9EECD352B4B18B370179A51027FA9AC697239DE73DBF27F32369C43E2842",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001A7C9AA96EE9A72329054D8B4CCB7B2F65A2F2C4397F4E123DA9919DBE17DEC22F18839A7F9A38",
+          "keyPassword": "0000001A868FDC9038AAE21B3D3D4BEFD138BFA8557A792BCDA76DAA1781D64AB2C9390E157EDEA69D56",
           "profile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p12"

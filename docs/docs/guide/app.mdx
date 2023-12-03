@@ -880,6 +880,11 @@ struct Index {
 
         ForEach([1, 2, 3], () => {
           ClockItemComp()
+            .onClick(() => {
+              router.pushUrl({
+                url: 'pages/DetailPage',
+              })
+            })
         })
       }
       .padding(15)
@@ -897,6 +902,11 @@ struct Index {
         .borderRadius(25)
         .textAlign(TextAlign.Center)
         .margin({ bottom: 50 })
+        .onClick(() => {
+          router.pushUrl({
+            url: 'pages/DetailPage',
+          })
+        })
     }
   }
 }
@@ -1093,17 +1103,159 @@ struct DetailPage {
 }
 ```
 
-
-### 5. 业务逻辑-添加闹钟任务
-
-
-### 6. 业务逻辑-渲染闹钟任务列表
+### 5. 业务逻辑-首选项存储工具
 
 
-### 7. 业务逻辑-修改闹铃任务
+```typescript
+import preferences from '@ohos.data.preferences'
+
+export class ClockItem {
+  hour?: number
+  minute?: number
+  id?: string
+  reminderId?: number
+  enabled?: boolean
+}
+
+export class ClockStore {
+
+  getStore() {
+    return preferences.getPreferences(getContext(this), 'clockStore')
+  }
+
+  async addClock(clockItem: ClockItem) {
+    const store = await this.getStore()
+    await store.put(clockItem.id, JSON.stringify(clockItem))
+    await store.flush()
+  }
+
+  async delClock(id: string) {
+    const store = await this.getStore()
+    await store.delete(id)
+    await store.flush()
+  }
+
+  async getAllClock() {
+    const store = await this.getStore()
+    const data = await store.getAll()
+    const list = Object.keys(data).map<ClockItem>(key => {
+      return JSON.parse(data[key])
+    })
+    return list
+  }
+}
+```
+
+### 6. 业务逻辑-添加闹钟任务
+
+```typescript
+  @State
+  clockItem: ClockItem = {}
+
+  // Date 不能直接使用 @State 装饰器
+  @State
+  state: { now: Date } = { now: new Date() }
+  clockStore = new ClockStore()
+
+  async submit() {
+
+    // 1. 开启提醒
+    const hour = this.state.now.getHours()
+    const minute = this.state.now.getMinutes()
+    const request: reminderAgentManager.ReminderRequestAlarm = {
+      reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_ALARM,
+      hour,
+      minute,
+      title: '闹钟',
+      ringDuration: 60
+    }
+    const reminderId = await reminderAgentManager.publishReminder(request)
+    // 2. 记录数据
+    this.clockItem = {
+      hour,
+      minute,
+      id: util.generateRandomUUID(),
+      reminderId,
+      enabled: true
+    }
+    await this.clockStore.addClock(this.clockItem)
+    promptAction.showToast({ message: '添加闹钟成功' })
+    router.back()
+  } 
+```
+
+```typescript
+        TimePicker({
+          selected: this.state.now
+        })
+          .borderRadius(16)
+          .clip(true)
+```
+
+### 7. 业务逻辑-渲染闹钟任务列表
+
+1. 获取首选项闹钟数据
+2. 遍历数组
+3. 去闹钟项组件渲染
+
+- 获取首选项闹钟数据
+```typescript
+  @State
+  clockList: ClockItem[] = []
+
+  clockStore = new ClockStore()
+
+  aboutToAppear() {
+    this.initData()
+  }
+  onPageShow() {
+    this.initData()
+  }
+  async initData() {
+    this.clockList = await this.clockStore.getAllClock()
+  }
+```
+
+- 遍历数组
+
+```typescript
+        ForEach(this.clockList, (item: ClockItem) => {
+          ClockItemComp({ item })
+            .onClick(() => {
+              router.pushUrl({
+                url: 'pages/DetailPage',
+                params: item
+              })
+            })
+        })
+```
+
+- 去闹钟项组件渲染
+
+```typescript
+  @State
+  item: ClockItem = {}
+
+  padZero(val: number = 0) {
+    return val.toString().padStart(2, '0')
+  }
+```
+
+```typescript
+        Row({ space: 5 }) {
+          Text(this.item.hour > 12 ? '下午' : '上午')
+            .fontColor('#666')
+          Text(`${this.padZero(this.item.hour > 12 ? this.item.hour - 12 : this.item.hour)}:${this.padZero(this.item.minute)}`)
+            .fontWeight(600)
+            .fontSize(18)
+        }
+```
 
 
-### 8. 业务逻辑-删除闹钟任务
+### 8. 业务逻辑-修改闹铃任务
+
+
+### 9. 业务逻辑-删除闹钟任务
 
 
 ### 10. 业务逻辑-停止和开启闹钟任务

@@ -359,8 +359,8 @@
                                                         "width": "100%",
                                                         "height": "40vp",
                                                         "label": "立即登录",
-                                                        "background-color": "#ffaa00",
-                                                        "onClick": "this.login"
+                                                        "onClick": "this.login",
+                                                        "background-color": "#ffaa00"
                                                     }
                                                 },
                                                 "dynamicProperty": {
