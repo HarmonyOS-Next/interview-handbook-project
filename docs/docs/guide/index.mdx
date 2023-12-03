@@ -1715,7 +1715,7 @@ export class ReplyItem {
 ```typescript title="pages/Index.ets"
 onReply () {
   const reply: ReplyItem = {
-    id: this.replyList[this.replyList.length-1].id + 1,
+    id: Math.random(),
     content: this.content,
     author: 'Zhousg',
     avatar: $r('app.media.avatar'),

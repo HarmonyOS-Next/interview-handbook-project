@@ -977,7 +977,7 @@ struct Index {
 
   onReply() {
     const reply: ReplyItem = new ReplyItem({
-      id: this.replyList[this.replyList.length-1].id + 1,
+      id: Math.random(),
       content: this.content,
       author: 'Zhousg',
       avatar: $r('app.media.avatar'),
@@ -1350,6 +1350,7 @@ struct OtherPage {
 
 ::: tip
 
+- 页面间共享需要要模拟器测试
 - 应用逻辑中使用参考 [链接](https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/arkts-localstorage-0000001524537149-V3#section614118685518)
 
 :::
@@ -2001,16 +2002,6 @@ export struct MenuWrapper {
   @State
   activeIndex: number = 0
 
-  @Builder
-  TabBarItem(text: string, index: number) {
-    Text(text)
-      .height(50)
-      .width('100%')
-      .textAlign(TextAlign.Center)
-      .fontSize(14)
-      .backgroundColor('#fff')
-  }
-
   build() {
     Row() {
       Column() {
@@ -2328,16 +2319,6 @@ export struct MenuWrapper {
   categoryList: Category[]
   @State
   activeIndex: number = 0
-
-  @Builder
-  TabBarItem(text: string, index: number) {
-    Text(text)
-      .height(50)
-      .width('100%')
-      .textAlign(TextAlign.Center)
-      .fontSize(14)
-      .backgroundColor('#fff')
-  }
 
   build() {
     Row() {
