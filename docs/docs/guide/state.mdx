@@ -1189,6 +1189,12 @@ struct CommentComp {
 
 ## 应用状态
 
+::: tip
+
+关于应用状态相关的内容需要使用模拟器或真机调试
+
+:::
+
 ### 1. UIAbility内状态-LocalStorage
 
 > `LocalStorage` 是页面级的UI状态存储，通过 `@Entry` 装饰器接收的参数可以在页面内共享同一个 `LocalStorage` 实例。 `LocalStorage` 也可以在 `UIAbility` 内，页面间共享状态。
@@ -1518,7 +1524,7 @@ struct Index {
 }
 ```
 
-2）复杂数据类型的吃就好，和获取和修改
+2）复杂数据类型的持久化，和获取和修改
 
 ```typescript
 import promptAction from '@ohos.promptAction'
@@ -1602,12 +1608,6 @@ struct Index{
   }
 }
 ```
-
-::: tip
-
-- 测试：需要在真机或模拟器调试
-
-:::
 
 ## 网络管理
 
