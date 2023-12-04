@@ -296,49 +296,31 @@ struct Index {
 > 提供全局animateTo显式动画接口来指定由于闭包代码导致的状态变化插入过渡动效。
 
 ```typescript
-import promptAction from '@ohos.promptAction'
 @Entry
 @Component
 struct Index {
   @State
-  show: boolean = true
+  heightSize: number = 40
 
   build() {
-    Column({ space: 15 }) {
-      Column() {
-        Row() {
-          Text('一级菜单')
-            .fontColor('#fff')
-            .height(50)
-        }
+    Column() {
+      Text('一级菜单')
+        .height(40)
         .onClick(() => {
           animateTo({
-            duration: 200,
-            onFinish: () => {
-              // 动画结束
-              promptAction.showToast({ message: 'finish' })
-            }
-          },() => {
-            this.show = !this.show
+            duration: 200
+          }, () => {
+            this.heightSize = this.heightSize === 40 ? 0 : 40
           })
         })
-
-        if (this.show) {
-          Column() {
-            Text('二级菜单')
-              .fontColor('#fff')
-              .height(50)
-            Text('二级菜单')
-              .fontColor('#fff')
-              .height(50)
-          }
-        }
+      Column() {
+        Text('一级菜单')
+          .height(this.heightSize)
+        Text('一级菜单')
+          .height(this.heightSize)
       }
-      .width(100)
-      .backgroundColor('#069')
     }
-    .height('100%')
-    .width('100%')
+    .backgroundColor('#069')
   }
 }
 ```
