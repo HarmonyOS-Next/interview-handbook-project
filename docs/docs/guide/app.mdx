@@ -218,7 +218,7 @@ struct DetailPage {
 - 一个UIAbility组件中可以通过多个页面来实现一个功能模块；
 - 每一个UIAbility组件实例，都对应于一个最近任务列表中的任务。
 
-```typescript title="OtherAbility"
+```typescript title="PayAbility"
 Button('Jump To PayAbility Page')
   .onClick(() => {
     const context = getContext(this) as common.UIAbilityContext
@@ -231,7 +231,7 @@ Button('Jump To PayAbility Page')
 ```
 
 
-```typescript title="EntryAbility"
+```typescript title="PayAbility"
 Button('Back')
   .onClick(() => {
     router.back()

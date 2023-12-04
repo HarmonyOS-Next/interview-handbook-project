@@ -2114,7 +2114,6 @@ export struct MenuWrapperItem {
 1）定义 model 数据模型
 
 ```typescript title="models/index.ets"
-@Observed
 export class FoodItem {
   id: number
   name: string
@@ -2127,7 +2126,6 @@ export class FoodItem {
   month_saled: number
 }
 
-@Observed
 export class Category {
   tag: string
   name: string
@@ -2337,103 +2335,98 @@ export struct CalcBtn {
 ```
 
 ```typescript title="components/Cart.ets"
-import { CartItemComp } from './CartItemComp'
-
+import { CartItem } from './CartItem'
 @Component
 export struct Cart {
   build() {
-    Column() {
-      Column() {
-        Row() {
+    Column(){
+      Column(){
+        Row(){
           Text('购物车')
-            .fontSize(12)
-            .fontWeight(600)
+            .fontSize(14)
           Text('清空购物车')
-            .fontSize(12)
+            .fontSize(14)
             .fontColor('#999')
         }
         .width('100%')
         .height(40)
         .justifyContent(FlexAlign.SpaceBetween)
-        .border({ width: { bottom: 0.5 }, color: '#f5f5f5' })
-        .margin({ bottom: 10 })
         .padding({ left: 15, right: 15 })
-
-        List({ space: 30 }) {
-          ListItem() {
-            CartItemComp()
+        .border({ width: { bottom: 0.5 }, color: '#e4e4e4' })
+        // 购物车列表
+        List(){
+          ListItem(){
+            CartItem()
           }
-
-          ListItem() {
-            CartItemComp()
+          ListItem(){
+            CartItem()
           }
-
-          ListItem() {
-            CartItemComp()
+          ListItem(){
+            CartItem()
           }
         }
         .divider({
           strokeWidth: 0.5,
-          color: '#f5f5f5'
+          color: '#e4e4e4'
         })
-        .padding({ left: 15, right: 15, bottom: 100 })
+        .padding({ left: 15, right: 15 })
       }
+      .width('100%')
+      .padding({ bottom: 100 })
       .backgroundColor('#fff')
       .borderRadius({
         topLeft: 16,
         topRight: 16
       })
     }
-    .justifyContent(FlexAlign.End)
     .height('100%')
+    .width('100%')
     .backgroundColor('rgba(0,0,0,0.5)')
+    .justifyContent(FlexAlign.End)
   }
 }
 ```
 
 ```typescript title="components/CartItem.ets"
 import { CalcBtn } from './CalcBtn'
-
 @Component
-export struct CartItemComp {
+export struct CartItem {
   build() {
-    Row() {
+    Row(){
       Image('https://zqran.gitee.io/images/waimai/7384994864.jpg')
         .width(60)
         .aspectRatio(1)
-        .borderRadius(8)
-      Column({ space: 5 }) {
+      Column({ space: 10 }){
         Text('小份酸汤莜面鱼鱼+肉夹馍套餐')
-          .fontSize(14)
           .textOverflow({
             overflow: TextOverflow.Ellipsis
           })
           .maxLines(2)
-        Row() {
-          Text() {
+        Row(){
+          Text(){
             Span('¥ ')
-              .fontColor('#ff8000')
               .fontSize(10)
-            Span('34.23')
               .fontColor('#ff8000')
-              .fontWeight(FontWeight.Bold)
+            Span('23.23')
+              .fontWeight(600)
+              .fontColor('#ff8000')
           }
 
-          Row() {
+          Row({ space: 10 }){
             CalcBtn({ icon: $r('app.media.ic_screenshot_line'), plain: true })
             Text('0')
-              .padding(10)
-              .fontSize(12)
+              .fontSize(14)
             CalcBtn({ icon: $r('app.media.ic_public_add_filled') })
           }
         }
-        .justifyContent(FlexAlign.SpaceBetween)
         .width('100%')
+        .justifyContent(FlexAlign.SpaceBetween)
       }
       .layoutWeight(1)
       .alignItems(HorizontalAlign.Start)
-      .padding({ left: 10, right: 10 })
+      .padding({ left: 10 })
     }
+    .padding({ top: 15, bottom: 15 })
     .alignItems(VerticalAlign.Top)
   }
 }
@@ -2445,8 +2438,7 @@ export struct CartItemComp {
 1）购物车数据模型
 
 ```typescript title="models/index.ets"
-@Observed
-export class CartItem {
+export class CartItemModel {
   id: number
   name: string
   price: number
@@ -2458,12 +2450,12 @@ export class CartItem {
 2）购物车添加逻辑
 
 ```typescript title="utils/index.ets"
-import { CartItem, FoodItem } from '../models'
+import { CartItemModel, FoodItem } from '../models'
 
 export const CART_KEY = 'CART_KEY'
 
 export const getCart = () => {
-  return JSON.parse(AppStorage.Get(CART_KEY) || '[]') as CartItem[]
+  return JSON.parse(AppStorage.Get(CART_KEY) || '[]') as CartItemModel[]
 }
 
 export const addCart = (food: FoodItem) => {
@@ -2541,7 +2533,7 @@ cart: CartItem[]
 
 
 
-### 7. 业务逻辑-购物车管理
+### 8. 业务逻辑-购物车管理
 
 1）渲染购物车
 
@@ -2555,12 +2547,12 @@ cart: CartItem[]
 @Component
 export struct Cart {
   @Link
-  cart: CartItem[]
+  cart: CartItemModel[]
 
   // ...
 
           List({ space: 30 }) {
-          ForEach(this.cart, (item:CartItem) => {
+          ForEach(this.cart, (item:CartItemModel) => {
             ListItem() {
               CartItemComp({ item })
             }
@@ -2569,14 +2561,14 @@ export struct Cart {
 ```
 
 ```typescript title="components/CartItem.ets"
-import { CartItem } from '../models'
+import { CartItemModel } from '../models'
 import { CalcBtn } from './CalcBtn'
 
 @Component
-export struct CartItemComp {
+export struct CartItem {
 
   @ObjectLink
-  item: CartItem
+  item: CartItemModel
 
   build() {
     Row() {
@@ -2625,7 +2617,7 @@ export struct CartItemComp {
 2）购物车数量修改
 
 ```typescript title="utils/index.ets"
-export const addCart = (food: FoodItem | CartItem) => { ... }
+export const addCart = (food: FoodItem | CartItemModel) => { ... }
 
 export const delCart = (id: number) => {
   const cart = getCart()
