@@ -576,7 +576,9 @@ struct Index {
   }
 
   build() {
-    Tabs() {
+    Tabs({
+      index: this.activeIndex
+    }) {
       ForEach(this.toolBars, (item: ToolBarItem, index: number) => {
         TabContent() {
           Text(index.toString())
