@@ -1359,6 +1359,13 @@ export class ClockStore {
 
 ### 11. 业务逻辑-通知唤起应用和关闭延时
 
+- 抽取创建后台代理工具类
+- 加入唤起配置，加入延时和关闭配置
+- 进行复用
+
+
+1）抽取创建后台代理工具类
+
 ```typescript title="utils/alarmManager.ets"
 
 import reminderAgentManager from '@ohos.reminderAgentManager'
@@ -1371,6 +1378,16 @@ export class AlarmManager {
       minute,
       title: '闹钟',
       ringDuration: 60,
+    }
+    return reminderAgentManager.publishReminder(request)
+  }
+}
+
+```
+
+2）加入唤起配置，加入延时和关闭配置
+
+```typescript title="utils/alarmManager.ets"
       // 跳转
       wantAgent: {
         pkgName: 'com.itcast.myapplication',
@@ -1383,12 +1400,10 @@ export class AlarmManager {
       ],
       snoozeTimes: 1,
       timeInterval: 10 * 60
-    }
-    return reminderAgentManager.publishReminder(request)
-  }
-}
-
 ```
+
+
+3）进行复用
 
 ```diff title="pages/DetailPage.ets"
       // 1. 开启提醒
