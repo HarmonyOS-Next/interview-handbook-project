@@ -1088,6 +1088,11 @@ struct DetailPage {
 
 ### 5. 业务逻辑-首选项存储工具
 
+- 创建首选项存储工具类
+- 获取首选项实例
+- 设置和修改闹钟信息
+- 删除闹钟信息
+- 获取所有的闹钟信息
 
 ```typescript
 import preferences from '@ohos.data.preferences'
@@ -1130,6 +1135,10 @@ export class ClockStore {
 ```
 
 ### 6. 业务逻辑-添加闹钟任务
+
+- 绑定时间选择组件，回收选中后的时间数据
+- 开启提醒
+- 保存到首选项
 
 ```typescript
   @State
@@ -1177,11 +1186,11 @@ export class ClockStore {
 
 ### 7. 业务逻辑-渲染闹钟任务列表
 
-1. 获取首选项闹钟数据
-2. 遍历数组
-3. 去闹钟项组件渲染
-
 - 获取首选项闹钟数据
+- 遍历数组
+- 去闹钟项组件渲染
+
+1） 获取首选项闹钟数据
 ```typescript
   @State
   clockList: ClockItem[] = []
@@ -1199,7 +1208,7 @@ export class ClockStore {
   }
 ```
 
-- 遍历数组
+2） 遍历数组
 
 ```typescript
         ForEach(this.clockList, (item: ClockItem) => {
@@ -1213,7 +1222,7 @@ export class ClockStore {
         })
 ```
 
-- 去闹钟项组件渲染
+3） 去闹钟项组件渲染
 
 ```typescript
   @State
@@ -1295,6 +1304,8 @@ export class ClockStore {
 - 实现删除功能
 
 
+1）删除按钮在编辑条件下展示，绑定事件函数
+
 ```typescript title="DetailPage.ets"
         if ( this.clockItem.id ) {
           Text('删除闹铃')
@@ -1310,6 +1321,8 @@ export class ClockStore {
             })
         }
 ```
+
+2）实现删除功能
 
 ```typescript
   async remove () {
