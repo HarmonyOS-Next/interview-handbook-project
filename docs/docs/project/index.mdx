@@ -163,7 +163,7 @@ import router from '@ohos.router'
 import { UserModel } from '../../models/User'
 
 const USER_KEY = 'interview-user'
-const PASS_LIST = ['pages/Login']
+const PASS_LIST = ['pages/LoginPage']
 
 export class Auth {
   static initLocalUser() {
@@ -188,7 +188,7 @@ export class Auth {
     const user = this.getUser()
     if (!PASS_LIST.includes(options.url) && !user.token) {
       return router.pushUrl({
-        url: 'pages/Login',
+        url: 'pages/LoginPage',
         params: {
           ...options.params,
           return_url: options.url
@@ -537,5 +537,251 @@ export const vp2vp = (originSize: number) => {
       "value": "#EDF2FF"
     }
   ]
+}
+```
+
+### 4. 准备页面
+
+- 准备首页、项目、面经、我的四个 tabs 页面
+- 使用 页面组件
+
+
+1）准备组件
+
+```typescript title="views/Index/Home.ets"
+@Component
+export struct Home {
+  build() {
+    Column(){
+      Text('首页')
+    }
+    .width('100%')
+    .height('100%')
+  }
+}
+```
+
+```typescript title="views/Index/Project.ets"
+@Component
+export struct Project {
+  build() {
+    Column(){
+      Text('项目')
+    }
+    .width('100%')
+    .height('100%')
+  }
+}
+```
+
+```typescript title="views/Index/Interview.ets"
+@Component
+export struct Interview {
+  build() {
+    Column(){
+      Text('面经')
+    }
+    .width('100%')
+    .height('100%')
+  }
+}
+```
+
+```typescript title="views/Index/Mine.ets"
+@Component
+export struct Mine {
+  build() {
+    Column(){
+      Text('我的')
+    }
+    .width('100%')
+    .height('100%')
+  }
+}
+```
+
+2）使用组件
+
+```typescript title="pages/Index.ets"
+import { Home } from '../views/Index/Home'
+import { Project } from '../views/Index/Project'
+import { Interview } from '../views/Index/Interview'
+import { Mine } from '../views/Index/Mine'
+
+// ...
+
+        TabContent() {
+          if (index === 0) Home()
+          else if (index === 1) Project()
+          else if (index === 2) Interview()
+          else Mine()
+        }
+        .tabBar(this.TabBarBuilder(item, index))
+```
+
+
+### 5. 通用展示型组件
+
+<img src="./images/10.png" width="240" />
+
+- 搜索框组件
+- 打卡组件
+- 骨架屏组件
+
+
+1）搜索框组件
+
+```typescript tilte="common/components/IvSearch.ets"
+import { vp2vp } from '../utils/Basic'
+
+@Component
+export struct IvClock {
+
+  textAlign: FlexAlign = FlexAlign.Start
+
+  build() {
+    Row() {
+      Image($r('app.media.icon_public_search'))
+        .width(vp2vp(15))
+        .aspectRatio(1)
+        .fillColor($r('app.color.gray'))
+
+      Text('请输入关键词')
+        .fontSize(vp2vp(14))
+        .fontColor($r('app.color.gray'))
+        .margin({ left: vp2vp(3) })
+    }
+    .layoutWeight(1)
+    .height(vp2vp(28))
+    .backgroundColor($r('app.color.gray_bg'))
+    .borderRadius(vp2vp(14))
+    .padding({ left: vp2vp(10), right: vp2vp(10) })
+    .justifyContent(this.textAlign)
+  }
+}
+```
+
+2）打卡组件
+
+```typescript tilte="common/components/IvClock.ets"
+import { vp2vp } from '../utils/Basic'
+
+@Component
+export struct IvClock {
+  @Prop
+  clockCount: number = 0
+
+  build() {
+    Stack({ alignContent: Alignment.End }) {
+      Image(this.clockCount > 0 ? $r('app.media.clocked') : $r('app.media.unclock'))
+      if (this.clockCount > 0) {
+        Column() {
+          Text('已连续打卡')
+            .fontSize(8)
+          Text() {
+            Span(this.clockCount.toString())
+              .fontWeight(600)
+              .fontSize(12)
+            Span(' 天')
+              .fontSize(10)
+          }
+        }
+        .width('50')
+      } else {
+        Text('打卡')
+          .width('50')
+          .textAlign(TextAlign.Center)
+          .fontSize(vp2vp(18))
+          .fontWeight(500)
+          .fontColor('#333C4F')
+          .margin({ bottom: vp2vp(4) })
+      }
+    }
+    .width(vp2vp(74))
+    .height(vp2vp(28))
+  }
+}
+```
+
+```typescript title="views/Index/Home.ets"
+import { IvClock } from '../../common/components/IvClock'
+import { IvSearch } from '../../common/components/IvSearch'
+
+@Component
+export struct Home {
+  build() {
+    Column() {
+      Row({ space: 15 }) {
+        IvSearch()
+        IvClock()
+      }
+      .padding(15)
+
+      Text('首页')
+    }
+    .width('100%')
+    .height('100%')
+  }
+}
+```
+
+3）骨架屏组件
+
+- 背景渐变 linearGradient
+
+```typescript
+linearGradient({
+// 角度，默认 180
+angle?: number | string,
+// 颜色，比例
+colors: Array<[ResourceColor, number]>,
+})
+```
+
+- 组件结构
+
+```typescript tilte="common/components/IvSkeleton.ets"
+import { vp2vp } from '../utils/Basic'
+
+@Component
+export struct IvSkeleton {
+  widthValue: number | string = 100
+  heightValue: number | string = 20
+  @State
+  translateValue: string = '-100%'
+
+  build() {
+    Stack() {
+      Text()
+        .backgroundColor($r('app.color.gray_bg'))
+        .height('100%')
+        .width('100%')
+      Text()
+        .linearGradient({
+          angle: 90,
+          colors: [
+            ['rgba(255,255,255,0)', 0],
+            ['rgba(255,255,255,0.5)', 0.5],
+            ['rgba(255,255,255,0)', 1]
+          ]
+        })
+        .height('100%')
+        .width('100%')
+        .translate({
+          x: this.translateValue,
+        })
+        .animation({
+          duration: 1500,
+          iterations: -1
+        })
+    }
+    .height(this.heightValue)
+    .width(this.widthValue)
+    .borderRadius(vp2vp(4))
+    .clip(true)
+    .onAppear(() => {
+      this.translateValue = '100%'
+    })
+  }
 }
 ```
