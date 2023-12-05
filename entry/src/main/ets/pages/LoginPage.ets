@@ -49,7 +49,7 @@ struct LoginPage {
           params
         })
       } else {
-        router.replaceUrl({
+        router.back({
           url: 'pages/Index'
         })
       }

@@ -55,7 +55,7 @@ export default struct MiniCalendar {
     const prevMonthLastDate = prevMonth.date()
     const prevDays = prevMonth.day()
     if (prevDays < 6) {
-      for (let index = prevDays; index >= 0; index--) {
+      for (let index = 0; index <= prevDays; index++) {
         days.unshift({
           date: prevMonthLastDate - index,
           month: prevMonth.month() + 1,
