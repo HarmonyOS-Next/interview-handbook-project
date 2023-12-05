@@ -227,8 +227,8 @@ const request = <T = unknown>(
   }
 
   // 如果是对象数据拼接URL，如果是其他则携带在 extraData
-  const urlParams = Object.keys(params).map(key => `${key}=${params[key]}`)
   if (method === http.RequestMethod.GET) {
+    const urlParams = Object.keys(params).map(key => `${key}=${params[key]}`)
     fullUrl += `?${urlParams.join('&')}`
   } else {
     options.extraData = params
