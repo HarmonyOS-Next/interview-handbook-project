@@ -146,9 +146,21 @@ export default class EntryAbility extends UIAbility {
 
 1）用户信息持久化，获取用户，设置用户，删除用户以及用户访问页面控制
 
+```typescript title="models/UserModel.ts"
+export class UserModel {
+  id: string;
+  username: string;
+  avatar: string;
+  refreshToken: string;
+  token: string;
+  totalTime: number;
+  nickName: string;
+}
+```
+
 ```typescript title="common/utils/Auth.ts"
 import router from '@ohos.router'
-import { User } from '../../models/User'
+import { UserModel } from '../../models/User'
 
 const USER_KEY = 'interview-user'
 const PASS_LIST = ['pages/Login']
@@ -158,13 +170,13 @@ export class Auth {
     PersistentStorage.PersistProp(USER_KEY, '{}')
   }
 
-  static setUser(user: User) {
+  static setUser(user: UserModel) {
     AppStorage.Set(USER_KEY, JSON.stringify(user))
   }
 
   static getUser() {
     const str = AppStorage.Get<string>(USER_KEY) || '{}'
-    return JSON.parse(str) as User
+    return JSON.parse(str) as UserModel
   }
 
   static delUser() {
