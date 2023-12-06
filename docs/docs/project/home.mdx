@@ -8,4 +8,480 @@ title: HM - 面试宝典APP-首页模块
 ## 首页模块
 
 
-## 试题详情
+### 1. 静态结构
+
+1）轮播图
+```typescript
+Row() {
+  Swiper() {
+    Flex() {
+      Image('/common/images/banner_ai.png')
+        .objectFit(ImageFit.Fill)
+    }
+    .padding({ left: vp2vp(15), right: vp2vp(15) })
+
+    Flex() {
+      Image('/common/images/banner_pj.png')
+        .objectFit(ImageFit.Fill)
+    }
+    .padding({ left: vp2vp(15), right: vp2vp(15) })
+
+    Flex() {
+      Image('/common/images/banner_qa.png')
+        .objectFit(ImageFit.Fill)
+    }
+    .padding({ left: vp2vp(15), right: vp2vp(15) })
+  }
+  .autoPlay(true)
+  .indicator(false)
+}
+.aspectRatio(2.8)
+```
+
+2）骨架效果
+
+```typescript
+  @Builder
+  SkeletonBuilder() {
+    Column() {
+      Row({ space: vp2vp(15) }) {
+        IvSkeleton()
+        IvSkeleton({ widthValue: vp2vp(60) })
+        IvSkeleton({ widthValue: vp2vp(80) })
+      }
+      .width('100%')
+      .margin({ bottom: vp2vp(15) })
+
+      List({ space: vp2vp(15) }){
+        ForEach([1, 2, 3, 4, 5, 6, 7], () => {
+          ListItem(){
+            Column({ space: vp2vp(15) }){
+              Row({ space: vp2vp(15) }){
+                IvSkeleton({ widthValue: vp2vp(30) })
+                IvSkeleton({ widthValue: '100%' }).layoutWeight(1)
+              }
+              Row({ space: vp2vp(15) }){
+                IvSkeleton({ widthValue: vp2vp(50) })
+                IvSkeleton({ widthValue: vp2vp(50) })
+                IvSkeleton({ widthValue: vp2vp(50) })
+              }
+              .width('100%')
+            }
+            .padding({ top: vp2vp(10), bottom: vp2vp(10) })
+          }
+        })
+      }
+      .divider({ strokeWidth: 0.5, color: $r('app.color.gray_bg') })
+    }
+    .width('100%')
+    .padding(vp2vp(15))
+    .layoutWeight(1)
+  }
+```
+
+
+```typescript
+  @State
+  loading: boolean = false
+```
+
+```typescript
+  if (this.loading) {
+    this.SkeletonBuilder()
+  } else {
+    // Tabs
+  }
+```
+
+
+### 2. 分类 Tabs 动态展示
+
+1）数据类型
+
+```typescript title="models/QuestionTypeModel.ets"
+export class TagModel {
+  tagName: string
+  nameColor: string
+  borderColor: string
+}
+
+export class QuestionTypeModel {
+  public id: number
+  public name: string
+  public icon?: string
+  public describeInfo?: string
+  public displayNewestFlag?: 0 | 1
+  public tags?: TagModel[]
+}
+```
+
+3） 获取数据
+
+```typescript
+  @State
+  questionTypeList: QuestionTypeModel[] = []
+  @State
+  activeIndex: number = 0
+
+  aboutToAppear() {
+    this.loading = true
+    Request.get<QuestionTypeModel[]>('question/type')
+      .then(res => {
+        this.questionTypeList = res.data
+      })
+      .finally(() => {
+        this.loading = false
+      })
+  }
+```
+
+4）渲染 tabs 
+
+```typescript
+    if (this.loading) {
+        this.SkeletonBuilder()
+      } else {
+        Tabs() {
+          ForEach(this.questionTypeList, (item: QuestionTypeModel, index) => {
+            TabContent() {
+              // 列表组件
+            }
+            .tabBar(this.TabItemBuilder(item, index))
+            .height('100%')
+          })
+        }
+        .layoutWeight(1)
+        .barMode(BarMode.Scrollable)
+        .onChange(i => this.activeIndex = i)
+      }
+```
+
+5）自定义构建函数
+
+```typescript
+
+  @Builder
+  TabItemBuilder(q: QuestionTypeModel, index: number) {
+    Row() {
+      Stack({ alignContent: Alignment.Bottom }) {
+        Text(q.name)
+          .fontSize(vp2vp(15))
+          .height(vp2vp(44))
+          .fontColor(this.activeIndex === index ? $r('app.color.black') : $r('app.color.gray'))
+        Text()
+          .width(this.activeIndex === index ? vp2vp(20) : 0)
+          .height(vp2vp(2))
+          .backgroundColor($r('app.color.black'))
+          .animation({ duration: this.activeIndex === index ? 300 : 0 })
+      }
+      .padding({ left: vp2vp(index === 0 ? 15 : 0) })
+
+      if (q.displayNewestFlag === 1) {
+        Image($r('app.media.new'))
+          .width(vp2vp(34))
+          .height(vp2vp(14))
+          .padding({ left: vp2vp(5) })
+      }
+    }
+    .padding({ right: vp2vp(15) })
+  }
+```
+
+### 3. 试题列表组件抽取
+
+
+1）标签组件
+
+```typescript title="common/components/IvTag.ets"
+import { vp2vp } from '../utils/Basic'
+
+@Component
+export struct IvTag {
+  text: string
+  difficulty: number = 1
+
+  getTag() {
+    if (this.difficulty === 3 || this.difficulty === 4) {
+      return { text: '一般', color: $r('app.color.blue') }
+    } else if (this.difficulty === 5) {
+      return { text: '困难', color: $r('app.color.orange') }
+    }
+    return { text: this.text ? this.text : '简单', color: $r('app.color.green') }
+  }
+
+  build() {
+    Text(this.getTag().text)
+      .fontColor(this.getTag().color)
+      .fontSize(vp2vp(10))
+      .width(vp2vp(34))
+      .height(vp2vp(18))
+      .backgroundColor($r('app.color.gray_bg'))
+      .borderRadius(vp2vp(2))
+      .textAlign(TextAlign.Center)
+      .margin({ right: vp2vp(7) })
+  }
+}
+```
+
+2）试题项组件
+
+```typescript title="common/components/IvQuestionItem.ets"
+import { Auth } from '../utils/Auth'
+import { vp2vp } from '../utils/Basic'
+import { IvTag } from './IvTag'
+
+@Component
+export struct IvQuestionItem {
+  @Builder
+  SplitBuilder() {
+    Text('|')
+      .width(vp2vp(30))
+      .textAlign(TextAlign.Center)
+      .fontColor('#C3C3C5')
+      .fontSize(vp2vp(12))
+  }
+
+  @Builder
+  TextBuilder(text: string) {
+    Text(text)
+      .fontColor('#C3C3C5')
+      .fontSize(vp2vp(13))
+  }
+
+  build() {
+    Column() {
+      Row() {
+        IvTag({ difficulty: 4 })
+        Text('闭包你是怎么理解的？')
+          .fontSize(vp2vp(16))
+          .layoutWeight(1)
+          .textOverflow({ overflow: TextOverflow.Ellipsis })
+          .maxLines(1)
+      }.width('100%')
+
+      Row() {
+        this.TextBuilder(`点赞 100`)
+        this.SplitBuilder()
+        this.TextBuilder(`浏览 200`)
+        this.SplitBuilder()
+        this.TextBuilder(`已看过`)
+      }
+      .width('100%')
+      .margin({ top: vp2vp(10) })
+    }
+    .height(vp2vp(80))
+    .justifyContent(FlexAlign.Center)
+    .width('100%')
+    .onClick(() => {
+      Auth.pushUrl({
+        url: 'pages/QuestionDetail',
+      })
+    })
+  }
+}
+```
+
+3）试题列表组件
+
+```typescript title="common/components/IvQuestionList.ets"
+import { vp2vp } from '../utils/Basic'
+import { IvQuestionItem } from './IvQuestionItem'
+
+@Component
+export struct IvQuestionList {
+  build() {
+    List() {
+      ForEach([1, 2, 3, 4, 5, 6, 7, 8], () => {
+        ListItem() {
+          IvQuestionItem()
+        }
+      })
+    }
+    .divider({
+      strokeWidth: 0.5,
+      color: $r('app.color.gray_bg')
+    })
+    .padding({ left: vp2vp(15), right: vp2vp(15) })
+    .height('100%')
+    .width('100%')
+  }
+}
+```
+
+4）首页使用组件
+
+```typescript {4} tilte="views/Index/Home.ets"
+          ForEach(this.questionTypeList, (item: QuestionTypeModel, index) => {
+            TabContent() {
+              // 列表组件
+              IvQuestionList()
+            }
+            .tabBar(this.TabItemBuilder(item, index))
+            .height('100%')
+          })
+```
+
+
+### 4. 试题列表加载
+
+1）请求参数类型
+
+```typescript tilte="models/QuestionItemModel.ets"
+export class QueryQuestionListParams {
+  type: number
+  page: number
+  questionBankType: number
+  sort?: number
+  keyword?: string
+}
+
+@Observed
+export class QuestionItemModel {
+  public id: string
+  public stem: string
+  public difficulty: number
+  public likeCount: number
+  public views: number
+  public readFlag?: 0 | 1
+}
+```
+
+2）试题列表组件
+
+```typescript title="common/components/IvQuestionList.ets"
+import promptAction from '@ohos.promptAction'
+import { QueryQuestionListParams, QuestionItemModel } from '../../models/QuestionItemModel'
+import { vp2vp } from '../utils/Basic'
+import { Request } from '../utils/Request'
+import { IvQuestionItem } from './IvQuestionItem'
+
+@Component
+export struct IvQuestionList {
+  @Prop
+  questionType: number
+  @Prop
+  @Watch('initQuestionList')
+  activeIndex: number
+  @Prop
+  selfIndex: number
+
+  params: QueryQuestionListParams = {
+    questionBankType: 10,
+    type: this.questionType,
+    page: 1,
+    sort: 0,
+  }
+  @State
+  questionList: QuestionItemModel[] = []
+
+  aboutToAppear() {
+    this.initQuestionList()
+  }
+
+  initQuestionList () {
+    if (this.activeIndex === this.selfIndex) {
+      this.getQuestionList(this.params)
+    }
+  }
+
+  getQuestionList(params: QueryQuestionListParams) {
+    return Request.get<{
+      total: number,
+      pageTotal: number,
+      rows: QuestionItemModel[]
+    }>('question/list', params)
+      .then(res => {
+        this.questionList = res.data.rows
+      })
+      .catch(e => {
+        promptAction.showToast({ message: JSON.stringify(e) })
+      })
+  }
+
+  build() {
+    List() {
+      ForEach(this.questionList, (item: QuestionItemModel) => {
+        ListItem() {
+          IvQuestionItem({ item })
+        }
+      },
+        ({id, likeCount, readFlag, views}: QuestionItemModel) => {
+          return JSON.stringify({ id, likeCount, readFlag, views })
+        }
+      )
+    }
+    .divider({
+      strokeWidth: 0.5,
+      color: $r('app.color.gray_bg')
+    })
+    .padding({ left: vp2vp(15), right: vp2vp(15) })
+    .height('100%')
+    .width('100%')
+  }
+}
+```
+
+3）试题选项组件
+
+```typescript title="common/components/IvQuestionList.ets"
+import { QuestionItemModel } from '../../models/QuestionItemModel'
+import { Auth } from '../utils/Auth'
+import { vp2vp } from '../utils/Basic'
+import { IvTag } from './IvTag'
+
+@Component
+export struct IvQuestionItem {
+  @ObjectLink
+  item: QuestionItemModel
+
+  @Builder
+  SplitBuilder() {
+    Text('|')
+      .width(vp2vp(30))
+      .textAlign(TextAlign.Center)
+      .fontColor('#C3C3C5')
+      .fontSize(vp2vp(12))
+  }
+
+  @Builder
+  TextBuilder(text: string) {
+    Text(text)
+      .fontColor('#C3C3C5')
+      .fontSize(vp2vp(13))
+  }
+
+  build() {
+    Column() {
+      Row() {
+        IvTag({ difficulty: this.item.difficulty })
+        Text(this.item.stem)
+          .fontSize(vp2vp(16))
+          .layoutWeight(1)
+          .textOverflow({ overflow: TextOverflow.Ellipsis })
+          .maxLines(1)
+      }.width('100%')
+
+      Row() {
+        this.TextBuilder(`点赞 ${this.item.likeCount}`)
+        this.SplitBuilder()
+        this.TextBuilder(`浏览 ${this.item.views}`)
+        this.SplitBuilder()
+        if (this.item.readFlag === 1) {
+          this.TextBuilder(`已看过`)
+        }
+      }
+      .width('100%')
+      .margin({ top: vp2vp(10) })
+    }
+    .height(vp2vp(80))
+    .justifyContent(FlexAlign.Center)
+    .width('100%')
+    .onClick(() => {
+      Auth.pushUrl({
+        url: 'pages/QuestionDetail',
+        params: this.item
+      })
+    })
+  }
+}
+```
