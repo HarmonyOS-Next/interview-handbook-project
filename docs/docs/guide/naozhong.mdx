@@ -507,39 +507,7 @@ export class ClockStore {
   }
 ```
 
-
-### 10. 业务逻辑-停止和开启闹钟任务
-
-```typescript title="ClockItemComp.ets"
-  clockStore = new ClockStore()
-
-  async toggle(isOn: boolean) {
-    reminderAgentManager.cancelReminder(this.item.reminderId)
-
-    this.item.enabled = isOn
-    if (this.item.enabled) {
-      const request: reminderAgentManager.ReminderRequestAlarm = {
-        reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_ALARM,
-        hour: this.item.hour,
-        minute: this.item.minute,
-        title: '闹钟',
-        ringDuration: 60
-      }
-      const reminderId = await reminderAgentManager.publishReminder(request)
-      this.item.reminderId = reminderId
-    }
-    this.clockStore.addClock(this.item)
-    promptAction.showToast({ message: isOn ? '已开启' : '已关闭' })
-  }
-```
-
-```typescript title="ClockItemComp.ets"
-      // 开关
-      Toggle({ type: ToggleType.Switch, isOn: this.item.enabled })
-        .onChange(isOn => this.toggle(isOn))
-```
-
-### 11. 业务逻辑-通知唤起应用和关闭延时
+### 10. 业务逻辑-通知唤起应用和关闭延时
 
 - 抽取创建后台代理工具类
 - 加入唤起配置，加入延时和关闭配置
@@ -602,3 +570,36 @@ export class AlarmManager {
       this.item.reminderId = reminderId
     }
 ```
+
+
+### 11. 业务逻辑-停止和开启闹钟任务
+
+```typescript title="ClockItemComp.ets"
+  clockStore = new ClockStore()
+
+  async toggle(isOn: boolean) {
+    reminderAgentManager.cancelReminder(this.item.reminderId)
+
+    this.item.enabled = isOn
+    if (this.item.enabled) {
+      const request: reminderAgentManager.ReminderRequestAlarm = {
+        reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_ALARM,
+        hour: this.item.hour,
+        minute: this.item.minute,
+        title: '闹钟',
+        ringDuration: 60
+      }
+      const reminderId = await reminderAgentManager.publishReminder(request)
+      this.item.reminderId = reminderId
+    }
+    this.clockStore.addClock(this.item)
+    promptAction.showToast({ message: isOn ? '已开启' : '已关闭' })
+  }
+```
+
+```typescript title="ClockItemComp.ets"
+      // 开关
+      Toggle({ type: ToggleType.Switch, isOn: this.item.enabled })
+        .onChange(isOn => this.toggle(isOn))
+```
+
