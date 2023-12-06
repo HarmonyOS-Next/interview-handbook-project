@@ -513,29 +513,7 @@ export class ClockStore {
 - 加入唤起配置，加入延时和关闭配置
 - 进行复用
 
-
-1）抽取创建后台代理工具类
-
-```typescript title="utils/alarmManager.ets"
-
-import reminderAgentManager from '@ohos.reminderAgentManager'
-export class AlarmManager {
-
-  static createAlarmTask (hour: number, minute: number ) {
-    const request: reminderAgentManager.ReminderRequestAlarm = {
-      reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_ALARM,
-      hour,
-      minute,
-      title: '闹钟',
-      ringDuration: 60,
-    }
-    return reminderAgentManager.publishReminder(request)
-  }
-}
-
-```
-
-2）加入唤起配置，加入延时和关闭配置
+1）加入唤起配置，加入延时和关闭配置
 
 ```typescript title="utils/alarmManager.ets"
       // 跳转
@@ -550,6 +528,44 @@ export class AlarmManager {
       ],
       snoozeTimes: 1,
       timeInterval: 10 * 60
+```
+
+
+2）抽取创建后台代理工具类
+
+```typescript title="utils/alarmManager.ets"
+
+import reminderAgentManager from '@ohos.reminderAgentManager'
+export class AlarmManager {
+
+  // 添加代理提醒
+  static async addReminder (hour: number, minute: number) {
+    // 1. 添加后台代理提醒-闹钟
+    const reminderRequest: reminderAgentManager.ReminderRequestAlarm = {
+      reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_ALARM,
+      hour,
+      minute,
+      ringDuration: 60,
+      title: '闹铃',
+      // 跳转
+      wantAgent: {
+        pkgName: 'com.itcast.hmday05',
+        abilityName: 'EntryAbility'
+      },
+      // 延时和关闭
+      actionButton: [
+        { title: '关闭', type: reminderAgentManager.ActionButtonType.ACTION_BUTTON_TYPE_CLOSE },
+        { title: '延时提醒', type: reminderAgentManager.ActionButtonType.ACTION_BUTTON_TYPE_SNOOZE }
+      ],
+      snoozeTimes: 2,
+      timeInterval: 10 * 60
+    }
+
+    const reminderId = await reminderAgentManager.publishReminder(reminderRequest)
+    return reminderId
+  }
+}
+
 ```
 
 
