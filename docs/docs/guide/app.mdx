@@ -663,6 +663,7 @@ struct Index{
         .width(252)
         .aspectRatio(1)
         .onReady(() => {
+          // 参数：图片、绘制原点x坐标、绘制原点y坐标、图片绘制宽度、图片绘制高度
           this.context.drawImage(this.panImg, 0 ,0 , 252, 252)
 
           this.context.translate(126, 126)
@@ -709,8 +710,6 @@ struct Index {
                 additionalText: "物流提醒"
               }
             },
-            // 跳转应用
-            wantAgent: want
           }
           notificationManager.publish(request)
         })
@@ -725,6 +724,12 @@ struct Index {
   }
 }
 ```
+
+::: tip
+- 运行上面通知如果遇到闪崩现象，告知 Invalid Parameter 的话，请擦除模拟器数据。
+
+::; 
+
 
 2）通知点击唤起应用
 
