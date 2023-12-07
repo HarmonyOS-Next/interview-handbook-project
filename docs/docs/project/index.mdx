@@ -328,7 +328,7 @@ export class Request {
     .then(res => {
       if (res.result) {
         // 响应日志：
-+        Logger.info(`REQUEST→${url}→${method}`, res.result.toString().substring(0, 250))
++        Logger.info(`RESPONSE→${url}→${method}`, res.result.toString().substring(0, 250))
         // 1. 处理响应
         const response = JSON.parse(res.result as string) as {
           code: number
@@ -351,7 +351,7 @@ export class Request {
     .catch(err => {
       promptAction.showToast({ message: '网络错误' })
       // 错误日志：
-+      Logger.error(`REQUEST→${url}→${method}`, JSON.stringify(err).substring(0, 250))
++      Logger.error(`RESPONSE→${url}→${method}`, JSON.stringify(err).substring(0, 250))
       return Promise.reject(err)
     })
     .finally(() => {
