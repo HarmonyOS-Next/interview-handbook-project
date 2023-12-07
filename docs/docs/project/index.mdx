@@ -469,6 +469,37 @@ export const vp2vp = (originSize: number) => {
 }
 ```
 
+- 修改 Tabs 相关尺寸
+
+```typescript
+ @Builder
+  TabBarBuilder(item: ToolBarItem, index: number) {
+    Column({ space: vp2vp(4) }) {
+      Image(this.activeIndex === index ? item.activeIcon : item.defaultIcon)
+        .width(vp2vp(24))
+      Text(item.label)
+        .fontSize(vp2vp(12))
+        .fontColor(this.activeIndex === index ? '#000' : '#aaa')
+    }
+  }
+
+  build() {
+    Tabs({
+      index: this.activeIndex,
+    }) {
+      ForEach(this.toolBars, (item: ToolBarItem, index: number) => {
+        TabContent() {
+          Text(index.toString())
+        }
+        .tabBar(this.TabBarBuilder(item, index))
+      })
+    }
+    .barPosition(this.isLandscape ? BarPosition.Start : BarPosition.End)
+    .vertical(this.isLandscape)
+    .barHeight(this.isLandscape ? vp2vp(400) : vp2vp(50))
+    .onChange(index => this.activeIndex = index)
+  }
+```
 
 
 ### 3. 配置文件
