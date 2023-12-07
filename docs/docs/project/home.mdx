@@ -485,3 +485,192 @@ export struct IvQuestionItem {
   }
 }
 ```
+
+### 5. 加载更多
+
+
+1）加载和完成状态
+
+```typescript
+  @State
+  finished: boolean = false
+  @State
+  loading: boolean = false
+```
+
+2）判断是否可以加载更多
+
+```diff title="common/components/IvQuestionList.ets"
+  getQuestionList() {
++    if (this.loading || this.finished)  return
+```
+
+```typescript title="common/components/IvQuestionList.ets"
+        if ( this.params.page < res.data.pageTotal ) {
+          this.params.page ++
+        } else {
+          this.finished = true
+        }
+        this.loading = false
+```
+
+3）监听滚动到最下方
+
+```diff title="common/components/IvQuestionList.ets"
+    .onReachEnd(() => {
+      this.getQuestionList()
+    })
+```
+
+4）加上加载UI结构
+
+```typescript title="common/components/IvQuestionList.ets"
+@Builder
+  LoadingBuilder () {
+    if (this.finished) {
+      Row() {
+        Text('没有更多了~')
+          .fontColor($r('app.color.gray'))
+          .fontSize(vp2vp(14))
+      }
+      .width('100%')
+      .height(vp2vp(50))
+      .justifyContent(FlexAlign.Center)
+    } else {
+      if (this.loading) {
+        Row() {
+          LoadingProgress()
+            .width(vp2vp(24))
+            .margin({ right: vp2vp(5) })
+          Text('加载中...')
+            .fontColor($r('app.color.gray'))
+            .fontSize(vp2vp(14))
+        }
+        .width('100%')
+        .height(vp2vp(50))
+        .justifyContent(FlexAlign.Center)
+      }
+    }
+  }
+```
+
+
+### 6. LazyForEach 性能优化
+
+
+1）实现数据源
+
+```typescript title="models/BasicDataSource.ets"
+export class BasicDataSource implements IDataSource {
+  private listeners: DataChangeListener[] = [];
+
+  public totalCount(): number {
+    return 0;
+  }
+
+  public getData(index: number): any {
+
+  }
+
+  registerDataChangeListener(listener: DataChangeListener): void {
+    if (this.listeners.indexOf(listener) < 0) {
+      console.info('add listener');
+      this.listeners.push(listener);
+    }
+  }
+
+  unregisterDataChangeListener(listener: DataChangeListener): void {
+    const pos = this.listeners.indexOf(listener);
+    if (pos >= 0) {
+      console.info('remove listener');
+      this.listeners.splice(pos, 1);
+    }
+  }
+
+  notifyDataReload(): void {
+    this.listeners.forEach(listener => {
+      listener.onDataReloaded();
+    })
+  }
+
+  notifyDataAdd(index: number): void {
+    this.listeners.forEach(listener => {
+      listener.onDataAdd(index);
+    })
+  }
+
+  notifyDataChange(index: number): void {
+    this.listeners.forEach(listener => {
+      listener.onDataChange(index);
+    })
+  }
+
+  notifyDataDelete(index: number): void {
+    this.listeners.forEach(listener => {
+      listener.onDataDelete(index);
+    })
+  }
+}
+```
+
+2）继承数据源进行扩展
+
+```typescript title="common/components/IvQuestionList.ets"
+
+class QuestionListDataSource extends BasicDataSource {
+
+  private questionList: QuestionItemModel[] = []
+
+  totalCount () {
+    return this.questionList.length
+  }
+
+  getData(index: number): QuestionItemModel  {
+    return this.questionList[index]
+  }
+
+  public addData(index: number, data: QuestionItemModel): void {
+    this.questionList.splice(index, 0, data);
+    this.notifyDataAdd(index);
+  }
+
+  public pushData(data: QuestionItemModel): void {
+    this.questionList.push(data);
+    this.notifyDataAdd(this.questionList.length - 1);
+  }
+
+}
+```
+
+
+3）改用数据源渲染列表
+
+```typescript title="common/components/IvQuestionList.ets"
+  questionListDataSource = new QuestionListDataSource()
+```
+
+```diff title="common/components/IvQuestionList.ets"
+  initQuestionList () {
++    if (this.activeIndex === this.selfIndex && this.questionListDataSource.totalCount() === 0) {
+      this.getQuestionList()
+    }
+  }
+```
+
+```diff title="common/components/IvQuestionList.ets"
+    }>('question/list', this.params)
+      .then(res => {
+
++        res.data.rows.forEach(item => {
++          this.questionListDataSource.pushData(item)
++        })
+```
+
+```diff title="common/components/IvQuestionList.ets"
++      LazyForEach(this.questionListDataSource, (item: QuestionItemModel) => {
+        ListItem() {
+          IvQuestionItem({ item })
+        }
+      },
+```
+
