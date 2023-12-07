@@ -8,6 +8,167 @@ title: HM - 面试宝典APP-我的模块
 ## 个人中心
 
 
+### 1. 我的页面
+
+- 时间转换函数
+
+```typescript title="common/utils/Basic.ets"
+export const formatTime = (time: number, hasUnit: boolean = true) => {
+  if (time < 3600) {
+    return String(Math.floor(time / 60)) + (hasUnit ? ' 分钟' : '')
+  } else {
+    return String(Math.round(time / 3600 * 10) / 10) + (hasUnit ? ' 小时' : '')
+  }
+}
+```
+
+- 我的静态页面
+
+```typescript title="views/Index/Mine.ets"
+import { IvClock } from '../../common/components/IvClock'
+import { formatTime, vp2vp } from '../../common/utils/Basic'
+
+@Preview
+@Component
+export struct Mine {
+  @Builder
+  NavBuilder(icon: Resource, title: string,) {
+    Column({ space: vp2vp(8) }) {
+      Image(icon)
+        .width(vp2vp(30))
+        .height(vp2vp(30))
+        .objectFit(ImageFit.Fill)
+      Text(title)
+        .fontColor($r('app.color.gray'))
+        .fontSize(vp2vp(13))
+    }
+  }
+
+  @Builder
+  CellBuilder(title: string, cb?: () => void) {
+    Row() {
+      Text(title)
+        .fontSize(vp2vp(15))
+        .fontColor($r('app.color.black'))
+      Image($r('app.media.icon_my_arrow'))
+        .fillColor('#C3C3C5')
+        .width(vp2vp(18))
+        .height(vp2vp(18))
+    }
+    .width('100%')
+    .height(vp2vp(40))
+    .justifyContent(FlexAlign.SpaceBetween)
+    .padding({ left: vp2vp(15), right: vp2vp(15) })
+    .onClick(()=>{
+      cb && cb()
+    })
+  }
+
+  build() {
+    Column({ space: vp2vp(15) }) {
+      // 头部
+      Row() {
+        Image('/common/images/avatar.png')
+          .alt('/common/images/avatar.png')
+          .width(vp2vp(55))
+          .aspectRatio(1)
+          .borderRadius(vp2vp(30))
+          .border({ width: 0.5, color: '#e4e4e4' })
+        Column({ space: vp2vp(5) }) {
+          Text('黑马程序员')
+            .fontSize(vp2vp(18))
+            .fontWeight(FontWeight.Bold)
+          Row() {
+            Text('编辑资料')
+              .fontSize(vp2vp(12))
+              .fontColor($r('app.color.gray'))
+            Image($r('app.media.icon_edit'))
+              .width(vp2vp(12))
+              .aspectRatio(1)
+              .fillColor($r('app.color.gray'))
+          }
+        }
+        .padding({ left: vp2vp(12) })
+        .alignItems(HorizontalAlign.Start)
+        .layoutWeight(1)
+
+        IvClock({ clockCount: 0 })
+      }
+      .height(vp2vp(80))
+
+      // 导航
+      GridRow({ columns: 4 }) {
+        GridCol() {
+          this.NavBuilder($r('app.media.icon_my_history'), '历史记录')
+        }
+
+        GridCol() {
+          this.NavBuilder($r('app.media.icon_my_favo'), '我的收藏')
+        }
+
+        GridCol() {
+          this.NavBuilder($r('app.media.icon_my_zan'), '我的点赞')
+        }
+
+        GridCol() {
+          Column() {
+            this.NavBuilder($r('app.media.icon_my_time'), '累计学时')
+            Row() {
+              Text(formatTime(1000))
+                .fontColor('#C3C3C5')
+                .fontSize(vp2vp(11))
+              Image($r('app.media.icon_my_arrow'))
+                .fillColor('#C3C3C5')
+                .width(vp2vp(13))
+                .height(vp2vp(13))
+            }
+            .margin({ top: vp2vp(3) })
+          }
+        }
+      }
+      .backgroundColor('#fff')
+      .padding({ top: vp2vp(15), bottom: vp2vp(15) })
+      .borderRadius(vp2vp(8))
+
+      Row() {
+        Text()
+          .width(vp2vp(3))
+          .height(vp2vp(12))
+          .backgroundColor($r('app.color.green'))
+        Text('前端常用词')
+          .fontSize(vp2vp(15))
+          .fontColor($r('app.color.black'))
+          .layoutWeight(1)
+          .padding({ left: vp2vp(12) })
+        Image($r('app.media.icon_my_new'))
+          .width(vp2vp(53))
+          .height(vp2vp(22))
+          .margin({ right: vp2vp(10) })
+      }
+      .backgroundColor('#fff')
+      .padding({ top: vp2vp(15), bottom: vp2vp(15) })
+      .borderRadius(vp2vp(8))
+
+      Column() {
+        this.CellBuilder('推荐分享')
+        this.CellBuilder('意见反馈')
+        this.CellBuilder('关于我们')
+        this.CellBuilder('退出登录')
+      }
+      .backgroundColor('#fff')
+      .padding({ top: vp2vp(10), bottom: vp2vp(10) })
+      .borderRadius(vp2vp(8))
+
+    }
+    .padding(vp2vp(15))
+    .width('100%')
+    .height('100%')
+    .backgroundColor($r('app.color.gray_bg'))
+  }
+}
+```
+
+
 ## 打卡日历
 
 
