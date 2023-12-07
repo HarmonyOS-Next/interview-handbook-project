@@ -709,6 +709,7 @@ export struct IvClock {
   build() {
     Stack({ alignContent: Alignment.End }) {
       Image(this.clockCount > 0 ? $r('app.media.clocked') : $r('app.media.unclock'))
+        .objectFit(ImageFit.Fill)
       if (this.clockCount > 0) {
         Column() {
           Text('已连续打卡')
