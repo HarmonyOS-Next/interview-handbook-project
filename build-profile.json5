@@ -5,13 +5,13 @@
         "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.cer",
-          "storePassword": "00000019CD5D7EFE6D1A4E69FABA992B8B2FCC65B6E81D7BB4E6F29C9630F271B162E18294A1F800BA",
-          "keyAlias": "debugKey",
-          "keyPassword": "00000019E532572A4917615B58A1CFA47F5D3787FAADC0FD7C9B1A700ACEC19F88FD6DC9AD0A329290",
-          "profile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p7b",
+          "storePassword": "000000186275A7A44790662FC6F47C136F0D9BE022B9BB63F1114F586780B99955684B05E0634E20",
+          "certpath": "/Users/zhousg/Downloads/interview-handbook-pro.cer",
+          "keyAlias": "interview-handbook",
+          "keyPassword": "00000018346B2C91EAE8E856656F86B2BC983243FF560AFF9726D2748BAEAF68BA8D7909511523F5",
+          "profile": "/Users/zhousg/Downloads/interview-handbook-proRelease.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p12"
+          "storeFile": "/Users/zhousg/interview-handbook.p12"
         }
       },
       {
@@ -19,9 +19,9 @@
         "type": "HarmonyOS",
         "material": {
           "certpath": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.cer",
-          "storePassword": "0000001A3338AE37C6657C3F9EECD352B4B18B370179A51027FA9AC697239DE73DBF27F32369C43E2842",
+          "storePassword": "0000001A4D25D706EC65485FA8D3D163AE824F94D5CFC7B828A700365D662E36379B42DE1FC3C115A14C",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001A868FDC9038AAE21B3D3D4BEFD138BFA8557A792BCDA76DAA1781D64AB2C9390E157EDEA69D56",
+          "keyPassword": "0000001A630593A7671F825B4F10C229888EABFCCD87F712676992CB86D3E5470D6962C3E04716242D79",
           "profile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "/Users/zhousg/.ohos/config/auto_debug_InterviewHandbook_com.itcast.interviewhandbook_2850086000490906495.p12"

@@ -49,6 +49,7 @@ struct LoginPage {
           params
         })
       } else {
+        router.clear()
         router.back({
           url: 'pages/Index'
         })

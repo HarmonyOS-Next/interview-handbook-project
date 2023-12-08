@@ -152,13 +152,14 @@ export default class EntryAbility extends UIAbility {
 
 ```typescript title="models/UserModel.ts"
 export class UserModel {
-  id: string;
-  username: string;
-  avatar: string;
-  refreshToken: string;
-  token: string;
-  totalTime: number;
-  nickName: string;
+  id: string
+  username: string
+  avatar: string
+  refreshToken: string
+  token: string
+  totalTime?: number
+  nickName?: string
+  clockinNumbers?: number
 }
 ```
 
@@ -204,13 +205,10 @@ export class Auth {
 }
 ```
 
-2）在 entryAbility 初始化持久化用户
+2）在 Index 初始化持久化用户
 
-```typescript title="entryAbility.ts"
-  onCreate(want, launchParam) {
-    Logger.info('Ability onCreate')
-    Auth.initLocalUser()
-  }
+```typescript title="pages/Index.ets"
+  Auth.initLocalUser()
 ```
 
 ### 4. 请求工具类-请求处理
@@ -368,9 +366,9 @@ export class Request {
 > 一个界面适配多类终端
 
 手机-竖屏
-<img src="./images/09.png" width="200"/>
+    <img src="./images/09.png" width="200" />
 pad-横屏
-<img src="./images/08.png" width="540" />
+    <img src="./images/08.png" width="540" />
 
 - 媒体查询 tablet 且横屏
 -  tabs 的横竖模式
@@ -657,7 +655,7 @@ import { Mine } from '../views/Index/Mine'
 
 ### 5. 通用展示型组件
 
-<img src="./images/10.png" width="240" />
+    <img src="./images/10.png" width="240" />
 
 - 搜索框组件
 - 打卡组件
