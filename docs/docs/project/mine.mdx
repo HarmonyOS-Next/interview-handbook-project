@@ -180,7 +180,7 @@ export struct Mine {
 ```typescript {3,10,11,23-32,38} title="views/Index/Mine.ets"
       // 头部
       Row() {
-        Image(this.user.avatar)
+        Image(this.user.avatar || '/common/images/avatar.png')
           .alt('/common/images/avatar.png')
           .width(vp2vp(55))
           .aspectRatio(1)
@@ -259,12 +259,6 @@ export const formatTime = (time: number = 0, hasUnit: boolean = true) => {
               Text(formatTime(this.user.totalTime))
                 .fontColor('#C3C3C5')
                 .fontSize(vp2vp(11))
-```
-
-5）首页的打卡组件
-
-```typescript title="views/Index/Home.ets"
-IvClock({ clockCount: this.user.clockinNumbers || 0  })
 ```
 
 ### 3. 登录-页面结构
@@ -539,7 +533,7 @@ if (ok.index === 1) {
 ```diff tilte="views/Index/Home.ets"
       Row({ space: vp2vp(10) }) {
         IvSearch()
-+        IvClock({ clockCount: this.user.clockinNumbers })
++        IvClock({ clockCount: this.user.clockinNumbers || 0 })
       }
 ```
 
@@ -1086,6 +1080,8 @@ struct ProfilePage {
 ### 2. 修改昵称
 
 
+1）实现更新
+
 ```typescript
   updateNickName() {
     Request.put('userInfo/profile', {
@@ -1097,6 +1093,124 @@ struct ProfilePage {
   }
 ```
 
+2）自定义弹窗
+
+```typescript title="common/components/IvLoadingDialog.ets"
+import { vp2vp } from '../utils/Basic'
+
+@CustomDialog
+export struct IvLoadingDialog {
+  message: string = ''
+  controller: CustomDialogController
+
+  build() {
+    Column() {
+      LoadingProgress().width(vp2vp(48)).height(vp2vp(48)).color('#fff')
+      if (this.message) {
+        Text(this.message)
+          .fontSize(vp2vp(14))
+          .fontColor('#fff')
+      }
+    }
+    .width(vp2vp(120))
+    .aspectRatio(1)
+    .backgroundColor('rgba(0,0,0,0.5)')
+    .borderRadius(vp2vp(16))
+    .justifyContent(FlexAlign.Center)
+  }
+}
+```
+
+```typescript title="pages/ProfilePage.ets"
+  dialog: CustomDialogController = new CustomDialogController({
+    builder: IvLoadingDialog({ message: '更新中...' }),
+    customStyle: true,
+
+  })
+
+  updateNickName() {
+  this.dialog.open()
+  Request.post('userInfo/profile', {
+    nickName: this.user.nickName
+  }).then(res => {
+    Auth.setUser(this.user)
+    this.dialog.close()
+  })
+}
+```
+
+
+
+
+
 
 ### 3. 修改头像
+
+```typescript
+getUserInfo() {
+    requestGet<{ avatar: string }>('userInfo').then(res => {
+      this.user.avatar = res.data.avatar
+      AppStorage.Set('user', JSON.stringify(this.user))
+      this.loading = false
+      promptAction.showToast({ message: '更新头像成功' })
+    })
+  }
+
+  uploadAvatar() {
+    try {
+      this.loading = true
+      // 2. 拷贝到应用沙箱中
+      const context = getContext(this)
+      const type = 'jpg'
+      const filename = Date.now() + '.' + type
+      const newFilePath = context.cacheDir + '/' + filename
+      fs.open(this.URI, fs.OpenMode.READ_ONLY).then(file => {
+        fs.copyFile(file.fd, newFilePath).then(() => {
+          logger.info('copy success', newFilePath)
+          // 3. 上传
+          const config = {
+            url: 'https://api-harmony-teach.itheima.net/hm/userInfo/avatar',
+            method: 'POST',
+            header: {
+              'Accept': '*/*',
+              'Authorization': `Bearer ${this.user.token}`,
+              'Content-Type': 'multipart/form-data'
+            },
+            files: [{ name: 'file', uri: `internal://cache/` + filename, type, filename }],
+            data: []
+          }
+          request.uploadFile(context, config, (err, data) => {
+            if (err) return promptAction.showToast({ message: '更新头像失败' })
+            data.on('progress', (size) => {
+              logger.info(size.toString())
+            })
+            data.on('complete', (states) => {
+              this.getUserInfo()
+            })
+          })
+        }).catch(err => {
+          logger.error('copy', JSON.stringify(err))
+        })
+      }).catch(err => {
+        logger.error('open', JSON.stringify(err))
+      })
+    } catch (err) {
+      logger.error(JSON.stringify(err))
+    }
+  }
+
+  pickerAvatar() {
+
+    const photoSelectOptions = new picker.PhotoSelectOptions()
+    photoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.IMAGE_TYPE
+    photoSelectOptions.maxSelectNumber = 1
+
+    const photoViewPicker = new picker.PhotoViewPicker()
+    photoViewPicker.select(photoSelectOptions).then(result => {
+      // 1. 得到文件路径
+      this.URI = result.photoUris[0]
+      this.uploadAvatar()
+    })
+  }
+```
 
