@@ -1105,7 +1105,10 @@ export struct IvLoadingDialog {
 
   build() {
     Column() {
-      LoadingProgress().width(vp2vp(48)).height(vp2vp(48)).color('#fff')
+      LoadingProgress()
+        .width(vp2vp(48))
+        .aspectRatio(1)
+        .color('#fff')
       if (this.message) {
         Text(this.message)
           .fontSize(vp2vp(14))
@@ -1120,6 +1123,8 @@ export struct IvLoadingDialog {
   }
 }
 ```
+
+3）初始化加载框
 
 ```typescript title="pages/ProfilePage.ets"
   dialog: CustomDialogController = new CustomDialogController({
@@ -1139,78 +1144,78 @@ export struct IvLoadingDialog {
 }
 ```
 
-
-
-
-
-
 ### 3. 修改头像
 
-```typescript
-getUserInfo() {
-    requestGet<{ avatar: string }>('userInfo').then(res => {
-      this.user.avatar = res.data.avatar
-      AppStorage.Set('user', JSON.stringify(this.user))
-      this.loading = false
-      promptAction.showToast({ message: '更新头像成功' })
+
+1）选择文件
+
+```typescript title="pages/ProfilePage.ets"
+URI: string = null
+
+pickerAvatar() {
+  const photoSelectOptions = new picker.PhotoSelectOptions()
+  photoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.IMAGE_TYPE
+  photoSelectOptions.maxSelectNumber = 1
+
+  const photoViewPicker = new picker.PhotoViewPicker()
+  photoViewPicker.select(photoSelectOptions).then(result => {
+    // 1. 得到文件路径
+    this.URI = result.photoUris[0]
+    this.uploadAvatar()
+  })
+}
+```
+
+
+2）上传图片
+
+```typescript title="pages/ProfilePage.ets"
+uploadAvatar() {
+  this.dialog.open()
+
+  const context = getContext(this)
+  const fileType = 'jpg'
+  const fileName = Date.now() + '.' + fileType
+  const copyFilePath = context.cacheDir + '/' + fileName
+
+  const file = fs.openSync(this.URI, fs.OpenMode.READ_ONLY)
+  fs.copyFileSync(file.fd, copyFilePath)
+
+  const config: request.UploadConfig = {
+    url: BaseURL + 'userInfo/avatar',
+    method: 'POST',
+    header: {
+      'Accept': '*/*',
+      'Authorization': `Bearer ${this.user.token}`,
+      'Content-Type': 'multipart/form-data'
+    },
+    files: [
+      { name: 'file', uri: `internal://cache/` + fileName, type: fileType, filename: fileName }
+    ],
+    data: []
+  }
+
+  request.uploadFile(context, config, (err, data) => {
+    if (err) return Logger.error('UPLOAD', err.message)
+    data.on('progress', (size) => {
+      Logger.info(size.toString())
     })
-  }
-
-  uploadAvatar() {
-    try {
-      this.loading = true
-      // 2. 拷贝到应用沙箱中
-      const context = getContext(this)
-      const type = 'jpg'
-      const filename = Date.now() + '.' + type
-      const newFilePath = context.cacheDir + '/' + filename
-      fs.open(this.URI, fs.OpenMode.READ_ONLY).then(file => {
-        fs.copyFile(file.fd, newFilePath).then(() => {
-          logger.info('copy success', newFilePath)
-          // 3. 上传
-          const config = {
-            url: 'https://api-harmony-teach.itheima.net/hm/userInfo/avatar',
-            method: 'POST',
-            header: {
-              'Accept': '*/*',
-              'Authorization': `Bearer ${this.user.token}`,
-              'Content-Type': 'multipart/form-data'
-            },
-            files: [{ name: 'file', uri: `internal://cache/` + filename, type, filename }],
-            data: []
-          }
-          request.uploadFile(context, config, (err, data) => {
-            if (err) return promptAction.showToast({ message: '更新头像失败' })
-            data.on('progress', (size) => {
-              logger.info(size.toString())
-            })
-            data.on('complete', (states) => {
-              this.getUserInfo()
-            })
-          })
-        }).catch(err => {
-          logger.error('copy', JSON.stringify(err))
-        })
-      }).catch(err => {
-        logger.error('open', JSON.stringify(err))
-      })
-    } catch (err) {
-      logger.error(JSON.stringify(err))
-    }
-  }
-
-  pickerAvatar() {
-
-    const photoSelectOptions = new picker.PhotoSelectOptions()
-    photoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.IMAGE_TYPE
-    photoSelectOptions.maxSelectNumber = 1
-
-    const photoViewPicker = new picker.PhotoViewPicker()
-    photoViewPicker.select(photoSelectOptions).then(result => {
-      // 1. 得到文件路径
-      this.URI = result.photoUris[0]
-      this.uploadAvatar()
+    data.on('complete', () => {
+      this.getUserInfo()
     })
-  }
+  })
+}
+```
+
+3）更新数据
+
+```typescript title="pages/ProfilePage.ets"
+getUserInfo () {
+  Request.get<{ avatar: string }>('userInfo').then(res => {
+    this.user.avatar = res.data.avatar
+    Auth.setUser(this.user)
+    this.dialog.close()
+  })
+}
 ```
 
