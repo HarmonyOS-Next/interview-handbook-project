@@ -28,13 +28,24 @@ title: HM - 面试宝典APP-应用分发
 
 2. 使用技术
 
-• 基于鸿蒙系统级组件进行封装和扩展，抽象通用级组件 `Library` 包含 `Search、Skeleton、MiniCalendar` 等  
-• 基于鸿蒙 `@ohos.net.http` 封装通用型请求 `Request` 类，支持泛型、响应数据拦截  
-• 基于鸿蒙 `mediaquery` 实现设备查询，完成多端适配  
-• 基于 `IDataSource` 实现多列表 `LazyForEach` 性能优化  
-• 使用 `@ohos.events.emitter` 完成多页面进程内通信  
-• 基于鸿蒙生命周期与 ArkTS 后台运行API，实现阅读时间数据埋点  
-• 鸿蒙原生能力应用，文件管理、网络管理、WebView、窗口管理  
+- 基于 `API9` 使用 `ArtTS` 与 `ArtUI` 实现页面构建和状态管理
+- 基于 `PersistentStorage` 和 `AppStorage` 实现用户信息存储和访问权限控制
+- 基于 `display` 和 `deviceInfo` 实现适配手机侧函数 `vp2vp` 做到视觉统一
+- 基于 `IDataSource` 和 `LazyForEach` 实现列表懒加载优化列表性能
+- 基于 `emitter` 实现 `UIAbility` 进程内通信实现通知更新首页信息
+- 基于 `mediaquery` 实现设备和横竖屏查询实现多设备布局适配
+- 基于 `http` 封装请求工具类，实现接口响应数据泛型支持和参数处理与响应拦截
+- 基于鸿蒙系统组件，抽象封装通用组件 `Search、Skeleton、MiniCalendar、LoadingDialog、Tag`等
+- 基于 `UIAbility` 和 `Page` 生命周期实现阅读实现埋点
+- 基于 `fs` 读取和复制到应用沙箱环境实现文件上传，且完成数据回显功能
+- 基于 `Web` 组件实现 webview 能力，实现用户协议和隐私协议功能
+- 基于 `router` 都页面栈进行控制，完成页面栈维护和清理
+- 基于 `notificationManager` 实现用户学习时间通知提醒
+- 基于动画模块，实现页面转场动画的自定义以及下拉刷新自定义组件动画效果 
+- 使用鸿蒙第三方库 `dayjs` 实现时间相关处理业务逻辑
+- 封装本地库，抽离 `MiniCalendar` 组件进行共享维护和迭代
+
+整个项目中利用鸿蒙原生能力应用，文件管理、网络管理、WebView、窗口管理完成项目需求。
 
 3. 技术亮点
 
