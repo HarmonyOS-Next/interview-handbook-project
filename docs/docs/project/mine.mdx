@@ -1105,7 +1105,7 @@ struct ProfilePage {
 
 ```typescript
   updateNickName() {
-    Request.put('userInfo/profile', {
+    Request.post('userInfo/profile', {
       nickName: this.user.nickName
     }).then(res => {
       promptAction.showToast({ message: '更新昵称成功' })
