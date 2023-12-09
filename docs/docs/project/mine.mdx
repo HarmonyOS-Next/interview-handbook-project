@@ -134,15 +134,31 @@ export struct Mine {
       .padding({ top: vp2vp(15), bottom: vp2vp(15) })
       .borderRadius(vp2vp(8))
 
-      Column() {
-        this.CellBuilder('推荐分享')
-        this.CellBuilder('意见反馈')
-        this.CellBuilder('关于我们')
-        this.CellBuilder('退出登录')
+      List() {
+        ListItem() {
+          this.CellBuilder('推荐分享')
+        }
+
+        ListItem() {
+          this.CellBuilder('意见反馈')
+        }
+
+        ListItem() {
+          this.CellBuilder('关于我们')
+        }
+
+        if (this.user.token) {
+          ListItem() {
+            this.CellBuilder('退出登录', () => {
+              // 退出登录
+            })
+          }
+        }
       }
-      .backgroundColor('#fff')
       .padding({ top: vp2vp(10), bottom: vp2vp(10) })
       .borderRadius(vp2vp(8))
+      .backgroundColor('#fff')
+      .divider({ strokeWidth: 0.5, color: $r('app.color.gray_bg') })
 
     }
     .padding(vp2vp(15))
