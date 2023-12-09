@@ -677,7 +677,7 @@ struct ClockPage {
 
 
 
-1）方式1：使用 ohmp 命令行，参考：[链接](https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/ide-command-line-ohpm-0000001490235312-V3)
+1）方式1：使用 ohpm 命令行，参考：[链接](https://developer.harmonyos.com/cn/docs/documentation/doc-guides-V3/ide-command-line-ohpm-0000001490235312-V3)
 
 2）方式2：
 
@@ -704,12 +704,10 @@ struct ClockPage {
 
 2）修改日历文件，名称 `MainPage.ets` 改成 `MiniCalendar.ets`
 
-```typescript  title="miniCalendar/src/main/ets/components/mainpage/MiniCalendar.ets"
-import dayjs from 'dayjs'
+```typescript title="miniCalendar/src/main/ets/utils/index.ets"
+// 设计稿宽度
 import display from '@ohos.display'
 import deviceInfo from '@ohos.deviceInfo'
-
-// 设计稿宽度
 const designWidth = 375
 // 物理像素
 const devicePhysics = display.getDefaultDisplaySync().width
@@ -717,11 +715,16 @@ const devicePhysics = display.getDefaultDisplaySync().width
 export const vp2vp = (originSize: number) => {
   // useSize =  deviceWidth / designWidth * measureSize
   // 只有 手机 才需要
-  // if (deviceInfo.deviceType !== 'tablet') {
-  //   return px2vp(devicePhysics) / designWidth * originSize
-  // }
+  if (deviceInfo.deviceType !== 'tablet') {
+    return px2vp(devicePhysics) / designWidth * originSize
+  }
   return originSize
 }
+```
+
+```typescript  title="miniCalendar/src/main/ets/components/MiniCalendar.ets"
+import dayjs from 'dayjs'
+import { vp2vp } from '../utils'
 
 const img = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEQAAABECAYAAAA4E5OyAAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAF5SURBVHgB7drLUcMwFIXhGzvOMKwoJXSAO0gJ0BkdECoQJaQT2II1MTo8NiZsmLm6R+R8mzjJIuN/Yo0tyUxERERERERE/rmVOUopXa3Xm4dyeFN+ap/z6904ji9GrDNHfT/s7CMGzLsSJyGSEXMNMs+2PPktexTXIMfjdF9eDouPqaO4jiHwNY6kcrhdfHXI+W1kG1Pcg0BLUaoEgVaiVAsCLUSpGgTYo1QPAsxRQoIAa5SwIMAYJTQIsEUJDwJMUSiCAEsUmiDAEIUqCERHoQsCkVFcH///CieME7cTUwddN9yaI8og31Yn/r993z+bI8oguGSGYZPKjNuPS2aaLh7NEeWg+luMnC/L1XR9PoNqdAygujGLjgE0t+4MMYDi4Y4lBoQ//jPFgNAJIrYYEDaFyBgDQiaZWWNA9WUI5hhQdaGKPQZUW8psIQZUWexuJQa47yBqKQa47yBqKQbU3kFEHQNq7CDaf76bn9hjiIiIiIiIiMhZeAeOPE1Nm7TnTQAAAABJRU5ErkJggg=='
 
@@ -906,7 +909,8 @@ export struct MiniCalendar {
 3）导出组件
 
 ```typescript title="index.ets"
-export { MiniCalendar } from './src/main/ets/components/mainpage/MiniCalendar'
+export { MiniCalendar } from './src/main/ets/components/MiniCalendar'
+export { vp2vp } from './src/main/ets/utils'
 ```
 
 4）使用组件
@@ -927,7 +931,8 @@ import { MiniCalendar } from '@ohos/miniCalendar'
               selectedDays: $selectedDays,
               onChangeMonth: (date: string) => {
                 promptAction.showToast({ message: date })
-              }
+              },
+              selectedText: '已签到'
             })
 ```
 
