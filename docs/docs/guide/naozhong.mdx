@@ -575,16 +575,8 @@ export class AlarmManager {
       // 1. 开启提醒
       const hour = this.state.now.getHours()
       const minute = this.state.now.getMinutes()
-+      const reminderId = await AlarmManager.createAlarmTask(hour, minute)
++      const reminderId = await AlarmManager.addReminder(hour, minute)
       // 2. 记录数据
-```
-
-
-```diff title="components/ClockItemComp.ets"
-    if (this.item.enabled) {
-+      const reminderId = await AlarmManager.createAlarmTask(this.item.hour, this.item.minute)
-      this.item.reminderId = reminderId
-    }
 ```
 
 
@@ -598,14 +590,7 @@ export class AlarmManager {
 
     this.item.enabled = isOn
     if (this.item.enabled) {
-      const request: reminderAgentManager.ReminderRequestAlarm = {
-        reminderType: reminderAgentManager.ReminderType.REMINDER_TYPE_ALARM,
-        hour: this.item.hour,
-        minute: this.item.minute,
-        title: '闹钟',
-        ringDuration: 60
-      }
-      const reminderId = await reminderAgentManager.publishReminder(request)
+      const reminderId = await AlarmManager.createAlarmTask(this.item.hour, this.item.minute)
       this.item.reminderId = reminderId
     }
     this.clockStore.addClock(this.item)
