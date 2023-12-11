@@ -121,7 +121,7 @@ export struct CanvasComp {
     const hour = date.getHours()
     const minute = date.getMinutes()
     const second = date.getSeconds()
-    this.drawPointer(this.hourImg, hour % 12 * 360)
+    this.drawPointer(this.hourImg, hour % 12 / 12 * 360)
     this.drawPointer(this.minuteImg, minute / 60 * 360)
     this.drawPointer(this.secondImg, second / 60 * 360)
   }
