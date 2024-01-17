@@ -1,0 +1,40 @@
+{
+  "color": [
+    {
+      "name": "common_gray_01",
+      "value": "#979797"
+    },
+    {
+      "name": "common_gray_02",
+      "value": "#848484"
+    },
+    {
+      "name": "common_gray_03",
+      "value": "#666666"
+    },
+    {
+      "name": "common_gray_bg",
+      "value": "#f3f4f5"
+    },
+    {
+      "name": "common_gray_border",
+      "value": "#e8e7ee"
+    },
+    {
+      "name": "common_main_color",
+      "value": "#FA6D1D"
+    },
+    {
+      "name": "common_green",
+      "value": "#27AE60"
+    },
+    {
+      "name": "common_blue",
+      "value": "#3266EE"
+    },
+    {
+      "name": "common_blue_bg",
+      "value": "#EDF2FF"
+    }
+  ]
+}

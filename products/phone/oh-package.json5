@@ -1,0 +1,16 @@
+{
+  "name": "phone",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "@itcast/basic": "file:../../commons/basic",
+    "@itcast/home": "file:../../features/home",
+    "@itcast/project": "file:../../features/project",
+    "@itcast/interview": "file:../../features/interview",
+    "@itcast/mine": "file:../../features/mine"
+  }
+}
+

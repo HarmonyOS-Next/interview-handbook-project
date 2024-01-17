@@ -1,0 +1,40 @@
+{
+  "string": [
+    {
+      "name": "hd_search_placeholder",
+      "value": "search question"
+    },
+    {
+      "name": "hd_clock_continue",
+      "value": "continue clock"
+    },
+    {
+      "name": "hd_clock_day",
+      "value": " day"
+    },
+    {
+      "name": "hd_tag_simple",
+      "value": "simple"
+    },
+    {
+      "name": "hd_tag_general",
+      "value": "general"
+    },
+    {
+      "name": "hd_tag_difficult",
+      "value": "difficult"
+    },
+    {
+      "name": "hd_list_loading",
+      "value": "loading..."
+    },
+    {
+      "name": "hd_list_finished",
+      "value": "no more data ~"
+    },
+    {
+      "name": "hd_clock_in",
+      "value": "clock"
+    }
+  ]
+}

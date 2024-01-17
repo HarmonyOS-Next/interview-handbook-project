@@ -1,0 +1,20 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "PhoneAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "PhoneAbility_label",
+      "value": "面试通"
+    },
+    {
+      "name": "index_home",
+      "value": "首页"
+    }
+  ]
+}

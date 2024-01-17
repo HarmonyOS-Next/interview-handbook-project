@@ -1,0 +1,92 @@
+{
+  "float": [
+    {
+      "name": "common_border_width",
+      "value": "0.5vp"
+    },
+    {
+      "name": "common_gutter",
+      "value": "16vp"
+    },
+    {
+      "name": "common_font14",
+      "value": "14fp"
+    },
+    {
+      "name": "common_font12",
+      "value": "12fp"
+    },
+    {
+      "name": "common_font10",
+      "value": "10fp"
+    },
+    {
+      "name": "common_font8",
+      "value": "8fp"
+    },
+    {
+      "name": "common_space4",
+      "value": "4vp"
+    },
+    {
+      "name": "common_space10",
+      "value": "10vp"
+    },
+    {
+      "name": "common_space16",
+      "value": "16vp"
+    },
+    {
+      "name": "hd_search_icon_size",
+      "value": "16vp"
+    },
+    {
+      "name": "hd_search_height",
+      "value": "32vp"
+    },
+    {
+      "name": "hd_search_radius",
+      "value": "16vp"
+    },
+    {
+      "name": "hd_clock_font",
+      "value": "18fp"
+    },
+    {
+      "name": "hd_clock_text_width",
+      "value": "50vp"
+    },
+    {
+      "name": "hd_clock_width",
+      "value": "74vp"
+    },
+    {
+      "name": "hd_clock_height",
+      "value": "28vp"
+    },
+    {
+      "name": "hd_tag_width",
+      "value": "34vp"
+    },
+    {
+      "name": "hd_tag_height",
+      "value": "18vp"
+    },
+    {
+      "name": "hd_tag_radius",
+      "value": "2vp"
+    },
+    {
+      "name": "hd_list_load_height",
+      "value": "80vp"
+    },
+    {
+      "name": "hd_list_load_font",
+      "value": "14fp"
+    },
+    {
+      "name": "hd_list_load_icon",
+      "value": "24vp"
+    }
+  ]
+}
