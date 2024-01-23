@@ -1,7 +1,8 @@
 import { HdList, HdListController } from '@itcast/basic/Index'
-import { QuestionItemModel, questionListData } from '../models/QuestionItemModel'
+import { QuestionItemModel } from '../models/QuestionItemModel'
 import { QuestionItemComp } from './QuestionItemComp'
 import promptAction from '@ohos.promptAction'
+import { QuestionService } from '../services/QuestionService'
 
 @Component
 export struct QuestionListComp {
@@ -16,6 +17,8 @@ export struct QuestionListComp {
   @Watch('reLoad')
   sort: number = -1
   @State
+  page: number = 1
+  @State
   list: QuestionItemModel[] = []
   // self index
   selfIndex: number = -1
@@ -23,23 +26,40 @@ export struct QuestionListComp {
   controller = new HdListController()
 
   onLoad() {
-    setTimeout(() => {
-      const data = questionListData.sort(() => Math.random() > 0.5 ? -1 : 1)
-      this.list = [...this.list, ...data.map(item => new QuestionItemModel(item))]
+    QuestionService.findQuestionList({
+      questionBankType: 10,
+      type: this.typeId,
+      page: this.page,
+      sort: this.sort
+    }).then(res => {
+      this.list.push(...res.data.rows)
       this.controller.loaded()
-      if (this.list.length >= 50) {
+      if (this.page < res.data.pageTotal) {
+        this.page++
+      } else {
         this.controller.finished()
       }
-    }, 500)
+    })
+
   }
 
   onRefresh() {
-    setTimeout(() => {
-      const data = questionListData.sort(() => Math.random() > 0.5 ? -1 : 1)
-      this.list = [...data.map(item => new QuestionItemModel(item))]
+    this.page = 1
+    QuestionService.findQuestionList({
+      questionBankType: 10,
+      type: this.typeId,
+      page: this.page,
+      sort: this.sort
+    }).then(res => {
+      this.list = res.data.rows
       this.controller.refreshed()
       promptAction.showToast({ message: '已更新' })
-    }, 500)
+      if (this.page < res.data.pageTotal) {
+        this.page++
+      } else {
+        this.controller.finished()
+      }
+    })
   }
 
   reLoad() {

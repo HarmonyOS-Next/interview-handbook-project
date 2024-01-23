@@ -1,10 +1,20 @@
 import { BasicConstant, HdTag } from '@itcast/basic'
-import { ProjectItemData, ProjectItemModel } from '../models/ProjectItemModel'
+import { ProjectItemData, ProjectItemModel, ProjectTag } from '../models/ProjectItemModel'
 import router from '@ohos.router'
+import { ProjectService } from '../services/ProjectService'
 
 @Component
 export struct ProjectComp {
-  list: ProjectItemModel[] = ProjectItemData
+  @State
+  list: ProjectItemModel[] = []
+  @StorageProp('topHeight')
+  topHeight: number = 0
+
+  aboutToAppear(): void {
+    ProjectService.findProjectList().then(res => {
+      this.list = [...res.data, ...ProjectItemData]
+    })
+  }
 
   @Builder
   ProjectItemBuilder(item: ProjectItemModel) {
@@ -19,9 +29,9 @@ export struct ProjectComp {
           .fontSize($r('app.float.common_font12'))
           .fontColor($r('app.color.common_gray_02'))
         Blank()
-        Row() {
-          ForEach(item.tags, (tag: string) => {
-            HdTag({ text: tag })
+        Row({ space: 4 }) {
+          ForEach(item.tags, (tag: ProjectTag) => {
+            HdTag({ text: tag.tagName })
           })
         }
       }
@@ -50,6 +60,7 @@ export struct ProjectComp {
           width: { bottom: $r('app.float.common_border_width') },
           color: $r('app.color.common_gray_border')
         })
+        .margin({ top: this.topHeight })
 
       List() {
         ForEach(this.list, (item: ProjectItemModel) => {

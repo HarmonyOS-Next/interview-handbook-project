@@ -6,6 +6,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@itcast/basic": "file:../../commons/basic"
+    "@itcast/basic": "file:../../commons/basic",
+    "@ohmos/calendar": "file:../../commons/calendar",
   }
 }

@@ -4,6 +4,8 @@ import { InterviewItem, InterviewItemModel } from '../models/InterviewItemModel'
 
 @Component
 export struct InterviewDetailComp {
+  @StorageProp('topHeight')
+  topHeight: number = 0
   @State
   show: boolean = false
   //
@@ -50,6 +52,7 @@ export struct InterviewDetailComp {
       .padding({ left: 16, right: 16 })
       .height(56)
       .width('100%')
+      .margin({ top: this.topHeight })
 
       Scroll(this.scroller) {
         Column({ space: 16 }) {

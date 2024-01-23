@@ -5,6 +5,9 @@ import { HomeQuestionCardComp } from '../components/HomeQuestionCardComp'
 
 @Component
 export struct HomeComp {
+  @StorageProp('topHeight')
+  topHeight: number = 0
+  
   @Builder
   SwiperItemBuilder(src: ResourceStr) {
     Flex() {
@@ -63,6 +66,7 @@ export struct HomeComp {
       }
       .backgroundColor($r('app.color.common_gray_bg'))
       .alignItems(HorizontalAlign.Start)
+      .padding({ top: this.topHeight })
     }
     .width('100%')
     .scrollBar(BarState.Off)

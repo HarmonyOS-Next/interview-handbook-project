@@ -50,9 +50,10 @@ export struct InterviewItemComp {
         .maxLines(2)
         .textOverflow({ overflow: TextOverflow.Ellipsis })
         .lineHeight(20)
+        .width('100%')
 
       Row({ space: BasicConstant.SPACE_SM }) {
-        ForEach(this.item.tags, (tag: string) => {
+        ForEach(['大厂', '面经'], (tag: string) => {
           HdTag({ text: tag })
         })
       }

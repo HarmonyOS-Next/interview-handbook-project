@@ -18,6 +18,8 @@ export struct InterviewComp {
   left: number = 16
   @State
   sort: number | undefined = 30
+  @StorageProp('topHeight')
+  topHeight: number = 0
 
   setLineLeft(area: Area) {
     const width = area.width as number
@@ -84,6 +86,7 @@ export struct InterviewComp {
       }
       .padding({ left: 16, right: 16 })
       .height(64)
+      .margin({ top: this.topHeight })
 
       // 热门企业
       Scroll() {
@@ -107,7 +110,8 @@ export struct InterviewComp {
       // 标签页
       Row() {
         Row() {
-          this.tabBuilder({ name: '推荐', value: 30,
+          this.tabBuilder({
+            name: '推荐', value: 30,
             onAreaChange: (area) => {
               this.setLineLeft(area)
             }
@@ -133,7 +137,7 @@ export struct InterviewComp {
       }
 
       // 文章列表
-      InterviewListComp()
+      InterviewListComp({ sort: this.sort })
     }
     .width('100%')
     .height('100%')

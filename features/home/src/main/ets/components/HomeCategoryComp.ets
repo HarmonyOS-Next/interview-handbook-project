@@ -1,7 +1,7 @@
-import { questionTypeData, QuestionTypeModel } from '../models/QuestionTypeModel'
+import { QuestionTypeModel } from '../models/QuestionTypeModel'
 import { QuestionListComp } from './QuestionListComp'
 import { FilterParams, QuestionFilterComp } from './QuestionFilterComp'
-
+import { QuestionService } from '../services/QuestionService'
 
 
 @Component
@@ -9,12 +9,11 @@ export struct HomeCategoryComp {
   @State
   params: FilterParams = new FilterParams()
   @State
-  questionTypeList: QuestionTypeModel[] = questionTypeData
+  questionTypeList: QuestionTypeModel[] = []
   @State
   barWidth: number = 0
   @State
   show: boolean = false
-
 
   // dialog: CustomDialogController = new CustomDialogController({
   //   builder: QuestionFilterComp({
@@ -31,9 +30,15 @@ export struct HomeCategoryComp {
   //   }
   // })
 
+  aboutToAppear(): void {
+    QuestionService.findQuestionTypeList().then(res => {
+      this.questionTypeList = res.data
+    })
+  }
+
   @Builder
-  SheetBuilder () {
-    Column(){
+  SheetBuilder() {
+    Column() {
       QuestionFilterComp({
         questionTypeList: this.questionTypeList,
         params: this.params,
@@ -44,7 +49,6 @@ export struct HomeCategoryComp {
       })
     }
   }
-
 
   @Builder
   TabItemBuilder(q: QuestionTypeModel, index: number) {
@@ -93,7 +97,7 @@ export struct HomeCategoryComp {
           .tabBar(this.TabItemBuilder(item, index))
         })
       }
-      .divider({ strokeWidth: $r('app.float.common_border_width'), color:  $r('app.color.common_gray_border')})
+      .divider({ strokeWidth: $r('app.float.common_border_width'), color: $r('app.color.common_gray_border') })
       .barMode(BarMode.Scrollable)
       .barHeight(44)
       .barBackgroundColor(Color.White)
@@ -116,7 +120,13 @@ export struct HomeCategoryComp {
       .onClick(() => {
         this.show = !this.show
       })
-      .bindSheet(this.show, this.SheetBuilder(), { height: 420 , dragBar: false, maskColor: '#66000000'})
+      .bindSheet(this.show, this.SheetBuilder(), {
+        height: 420,
+        dragBar: false,
+        maskColor: '#66000000',
+        showClose: false,
+      })
+
       // .onClick(() => {
       //   this.dialog.open()
       // })

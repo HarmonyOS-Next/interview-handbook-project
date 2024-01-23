@@ -1,0 +1,28 @@
+{
+  "color": [
+    {
+      "name": "hm_calendar_color",
+      "value": "#ffaa00"
+    },
+    {
+      "name": "hm_calendar_title",
+      "value": "#6E7B8A"
+    },
+    {
+      "name": "hm_calendar_invalid",
+      "value": "#E1E4E7"
+    },
+    {
+      "name": "hm_calendar_valid",
+      "value": "#7C86A2"
+    },
+    {
+      "name": "hm_calendar_arrow",
+      "value": "#c6c6c6"
+    },
+    {
+      "name": "hm_calendar_bg",
+      "value": "#ededed"
+    }
+  ]
+}

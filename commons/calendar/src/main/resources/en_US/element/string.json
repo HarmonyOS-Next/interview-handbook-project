@@ -1,0 +1,40 @@
+{
+  "string": [
+    {
+      "name": "page_show",
+      "value": "page from package"
+    },
+    {
+      "name": "hm_calendar_monday",
+      "value": "Mon"
+    },
+    {
+      "name": "hm_calendar_tuesday",
+      "value": "Tue"
+    },
+    {
+      "name": "hm_calendar_wednesday",
+      "value": "Wed"
+    },
+    {
+      "name": "hm_calendar_thursday",
+      "value": "Thu"
+    },
+    {
+      "name": "hm_calendar_friday",
+      "value": "Fri"
+    },
+    {
+      "name": "hm_calendar_saturday",
+      "value": "Sat"
+    },
+    {
+      "name": "hm_calendar_sunday",
+      "value": "Sun"
+    },
+    {
+      "name": "hm_calendar_clocked",
+      "value": "Clocked"
+    }
+  ]
+}

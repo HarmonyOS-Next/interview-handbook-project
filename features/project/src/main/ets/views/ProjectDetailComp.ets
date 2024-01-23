@@ -5,6 +5,8 @@ import router from '@ohos.router'
 
 @Component
 export struct ProjectDetailComp {
+  @StorageProp('topHeight')
+  topHeight: number = 0
   // 0 默认 21 降序 20 升序
   @State
   sort: number = 0
@@ -22,7 +24,7 @@ export struct ProjectDetailComp {
       Stack({ alignContent: Alignment.Top }) {
         Image($r('app.media.project_bg'))
           .width('100%')
-          .height(236)
+          .height(236 + this.topHeight)
           .opacity(0.2)
         Column() {
           Row() {
@@ -62,9 +64,9 @@ export struct ProjectDetailComp {
           .alignItems(VerticalAlign.Top)
           .width('100%')
         }
-        .padding({ left: $r('app.float.common_space16'), right: $r('app.float.common_space16') })
+        .padding({ left: $r('app.float.common_space16'), right: $r('app.float.common_space16'), top: this.topHeight })
       }
-      .height(210)
+      .height(210 + this.topHeight)
 
       Column() {
         Row({ space: BasicConstant.SPACE_MD }) {
@@ -100,7 +102,7 @@ export struct ProjectDetailComp {
 
         Column() {
           QuestionListComp({
-            typeId: 1,
+            typeId: this.projectItem.id,
             sort: this.sort
           })
         }

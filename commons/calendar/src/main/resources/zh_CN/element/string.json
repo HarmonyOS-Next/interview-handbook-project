@@ -1,0 +1,40 @@
+{
+  "string": [
+    {
+      "name": "page_show",
+      "value": "page from package"
+    },
+    {
+      "name": "hm_calendar_monday",
+      "value": "一"
+    },
+    {
+      "name": "hm_calendar_tuesday",
+      "value": "二"
+    },
+    {
+      "name": "hm_calendar_wednesday",
+      "value": "三"
+    },
+    {
+      "name": "hm_calendar_thursday",
+      "value": "四"
+    },
+    {
+      "name": "hm_calendar_friday",
+      "value": "五"
+    },
+    {
+      "name": "hm_calendar_saturday",
+      "value": "六"
+    },
+    {
+      "name": "hm_calendar_sunday",
+      "value": "日"
+    },
+    {
+      "name": "hm_calendar_clocked",
+      "value": "已打卡"
+    }
+  ]
+}

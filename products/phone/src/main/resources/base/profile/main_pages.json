@@ -2,6 +2,10 @@
   "src": [
     "pages/Index",
     "pages/ProjectDetailPage",
-    "pages/InterviewDetailPage"
+    "pages/InterviewDetailPage",
+    "pages/QuestionDetailPage",
+    "pages/LoginPage",
+    "pages/ClockedPage",
+    "pages/StudyTimePage"
   ]
 }

@@ -9,8 +9,8 @@ import { TabBarModel } from '../../models/TabBarModel'
 
 @Component
 export struct TabBarComp {
-  @State
-  activeIndex: number = 0
+  @Link
+  activeIndex: number
   @State
   isLandscape: boolean = false
   listenerScreen = mediaquery.matchMediaSync('(orientation: landscape) and (device-type: tablet)')
@@ -51,7 +51,9 @@ export struct TabBarComp {
     .vertical(this.isLandscape)
     .barPosition(this.isLandscape ? BarPosition.Start : BarPosition.End)
     .barHeight(this.isLandscape ? $r('app.float.tab_bar_item_height_lg') : $r('app.float.tab_bar_item_height_sm'))
-    .onChange(index => this.activeIndex = index)
+    .onChange(index => {
+      this.activeIndex = index
+    })
     .scrollable(false)
   }
 }

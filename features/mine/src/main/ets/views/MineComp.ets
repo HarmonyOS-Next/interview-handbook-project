@@ -1,4 +1,5 @@
 import { HdClockIn } from '@itcast/basic/Index'
+import { router } from '@kit.ArkUI'
 
 interface Nav {
   icon: ResourceStr
@@ -16,6 +17,9 @@ interface Tool {
 
 @Component
 export struct MineComp {
+  @StorageProp('topHeight')
+  topHeight: number = 0
+
   @Builder
   navBuilder(nav: Nav) {
     GridCol() {
@@ -99,9 +103,15 @@ export struct MineComp {
         .alignItems(HorizontalAlign.Start)
 
         HdClockIn({ clockCount: 0 })
+          .onClick(() => {
+            router.pushUrl({
+              url: 'pages/ClockedPage'
+            })
+          })
       }
       .width('100%')
       .height(100)
+      .margin({ top: this.topHeight })
 
       GridRow({ columns: 4 }) {
         this.navBuilder({ icon: $r('app.media.ic_mine_history'), name: '历史记录' })
@@ -127,6 +137,9 @@ export struct MineComp {
     }
     .padding($r('app.float.common_gutter'))
     .backgroundColor($r('app.color.common_gray_bg'))
+    .linearGradient({
+      colors: [['#FFB071', 0], ['#f3f4f5', 0.3], ['#f3f4f5', 1]]
+    })
     .width('100%')
     .height('100%')
   }

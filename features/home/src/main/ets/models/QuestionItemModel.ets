@@ -108,8 +108,11 @@ export const questionListData: QuestionItem[] = [
   }
 ]
 
-export class GetQuestionListParams {
+export class QuestionListParams {
   type: number = 0
   page: number = 1
   questionBankType: number = 9
+  sort?: number = 0
+  keyword?: string = ''
+  difficult?: number = 0
 }

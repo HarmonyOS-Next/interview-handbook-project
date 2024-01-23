@@ -1,7 +1,7 @@
 {
-  "hvigorVersion": "file:../dependencies/hvigor-3.2.1-s.tgz",
+  "hvigorVersion": "4.0.0",
   "dependencies": {
-    "@ohos/hvigor-ohos-plugin": "file:../dependencies/hvigor-ohos-plugin-3.2.1-s.tgz",
+    "@ohos/hvigor-ohos-plugin": "4.0.0"
   },
   "execution": {
     // "analyze": "default",                    /* Define the build analyze mode. Value: [ "default" | "verbose" | false ]. Default: "default" */

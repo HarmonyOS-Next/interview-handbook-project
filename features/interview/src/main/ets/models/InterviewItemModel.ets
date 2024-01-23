@@ -11,6 +11,12 @@ export interface InterviewItem {
   likeFlag: 0 | 1 | null
 }
 
+export class InterviewListParams {
+  page: number = 1
+  questionBankType: number = 9
+  sort: number = 30
+}
+
 export class InterviewItemModel implements InterviewItem {
   id: string = ''
   stem: string = ''

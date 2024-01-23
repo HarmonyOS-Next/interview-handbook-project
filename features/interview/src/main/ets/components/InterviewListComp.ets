@@ -1,33 +1,68 @@
 import { InterviewItemComp } from './InterviewItemComp'
-import { InterviewItemModel, interviewListData } from '../models/InterviewItemModel'
+import { InterviewItemModel } from '../models/InterviewItemModel'
 import { HdList, HdListController } from '@itcast/basic/Index'
 import promptAction from '@ohos.promptAction'
+import { InterviewService } from '../services/InterviewService'
 
 @Component
 export struct InterviewListComp {
   @State
   list: InterviewItemModel[] = []
   controller = new HdListController()
+  @State
+  page: number = 1
+  @Prop
+  @Watch('onUpdate')
+  sort: number = 30
+  timer: number = -1
+
+  onUpdate() {
+    if (this.timer) clearTimeout(this.timer)
+    this.timer = setTimeout(() => {
+      this.controller.reload()
+      this.onRefresh()
+    }, 500)
+  }
+
+  onRefresh() {
+    this.page = 1
+    InterviewService.findInterviewList({
+      questionBankType: 9,
+      page: this.page,
+      sort: this.sort
+    }).then(res => {
+      this.list = res.data.rows
+      this.controller.refreshed()
+      if (this.page >= res.data.pageTotal) {
+        this.controller.finished()
+      } else {
+        this.page++
+      }
+      promptAction.showToast({ message: '已更新' })
+    })
+  }
 
   build() {
     HdList({
       lw: 1,
       controller: this.controller,
       onRefresh: () => {
-        setTimeout(() => {
-          this.list = interviewListData.sort(item => Math.random() - 0.5 > 0 ? 1 : -1)
-          this.controller.refreshed()
-          promptAction.showToast({ message: '已更新' })
-        }, 500)
+        this.onRefresh()
       },
       onLoad: () => {
-        setTimeout(() => {
-          this.list = [...this.list, ...interviewListData]
+        InterviewService.findInterviewList({
+          questionBankType: 9,
+          page: this.page,
+          sort: this.sort
+        }).then(res => {
+          this.list.push(...res.data.rows)
           this.controller.loaded()
-          if (this.list.length > 10) {
+          if (this.page >= res.data.pageTotal) {
             this.controller.finished()
+          } else {
+            this.page++
           }
-        }, 500)
+        })
       }
     }) {
       ForEach(this.list, (item: InterviewItemModel) => {

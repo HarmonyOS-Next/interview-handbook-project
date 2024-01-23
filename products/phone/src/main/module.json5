@@ -3,6 +3,11 @@
     "name": "phone",
     "type": "entry",
     "description": "$string:module_desc",
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.INTERNET"
+      }
+    ],
     "mainElement": "PhoneAbility",
     "deviceTypes": [
       "phone",

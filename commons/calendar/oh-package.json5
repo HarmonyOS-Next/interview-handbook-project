@@ -1,0 +1,22 @@
+{
+  "name": "@ohmos/calendar",
+  "version": "2.0.1",
+  "description": "a mini calendar support harmony next.",
+  "keywords": [
+    "calendar",
+    "next",
+    "4.0",
+    "mini"
+  ],
+  "main": "Index.ets",
+  "author": {
+    "name": 'zhousg',
+    "email": "zhousg1007@qq.com"
+  },
+  "license": "Apache-2.0",
+  "repository": "https://github.com/HarmonyOS-Next/mini-calendar",
+  "homepage": "https://github.com/HarmonyOS-Next/mini-calendar",
+  "dependencies": {
+    "dayjs": "1.11.7"
+  }
+}

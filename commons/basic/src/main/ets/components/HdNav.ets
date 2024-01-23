@@ -1,0 +1,56 @@
+import { router } from '@kit.ArkUI'
+
+@Component
+export struct HdNav {
+  @StorageProp('topHeight')
+  topHeight: number = 0
+  @Prop
+  title: string = ''
+  @Prop
+  leftIcon: ResourceStr = $r('sys.media.ohos_ic_public_arrow_left')
+  @Prop
+  rightIcon: ResourceStr = $r('sys.media.ohos_ic_public_more')
+  @Prop
+  showRightIcon: boolean = true
+  @BuilderParam
+  titleBuilder: () => void
+  @BuilderParam
+  menuBuilder: () => void
+
+  build() {
+    Row({ space: 16 }) {
+      Image(this.leftIcon)
+        .size({ width: 24, height: 24 })
+        .onClick(() => router.back())
+      Row() {
+        if (this.title) {
+          Text(this.title)
+            .fontWeight(600)
+            .layoutWeight(1)
+            .textAlign(TextAlign.Center)
+            .fontSize(18)
+            .maxLines(1)
+            .textOverflow({ overflow: TextOverflow.Ellipsis })
+        } else if (this.titleBuilder) {
+          this.titleBuilder()
+        }
+      }
+      .height(56)
+      .layoutWeight(1)
+
+      if (this.showRightIcon) {
+        Image(this.rightIcon)
+          .size({ width: 24, height: 20 })
+          .objectFit(ImageFit.Contain)
+          .bindMenu(this.menuBuilder && this.menuBuilder())
+      } else {
+        Blank()
+          .width(24)
+      }
+    }
+
+    .padding({ left: 16, right: 16, top: this.topHeight })
+    .height(56 + this.topHeight)
+    .width('100%')
+  }
+}
