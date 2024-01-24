@@ -117,7 +117,16 @@ export struct MineComp {
         this.navBuilder({ icon: $r('app.media.ic_mine_history'), name: '历史记录' })
         this.navBuilder({ icon: $r('app.media.ic_mine_collect'), name: '我的收藏' })
         this.navBuilder({ icon: $r('app.media.ic_mine_like'), name: '我的点赞' })
-        this.navBuilder({ icon: $r('app.media.ic_mine_study'), name: '累计学时', other: '4 小时' })
+        this.navBuilder({
+          icon: $r('app.media.ic_mine_study'),
+          name: '累计学时',
+          other: '4 小时',
+          onClick: () => {
+            router.pushUrl({
+              url: 'pages/StudyTimePage'
+            })
+          }
+        })
       }
       .backgroundColor(Color.White)
       .padding(16)

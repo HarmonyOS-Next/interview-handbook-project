@@ -50,6 +50,21 @@ export struct ClockedComp {
       }
       .padding({ left: 16, right: 16 })
 
+      Button() {
+        Row() {
+          Text('分享成就 ')
+            .fontColor(Color.White)
+            .fontSize(14)
+          Image($r('sys.media.ohos_ic_public_share'))
+            .width(16)
+            .aspectRatio(1)
+            .fillColor(Color.White)
+        }
+      }
+      .padding({ top: 6, bottom: 6, left: 12, right: 12 })
+      .backgroundColor('#ffaa00')
+      .margin({ top: 50 })
+      .shadow({ radius: 5, color: '#dddddd', offsetX: 5, offsetY: 5 })
     }
     .width('100%')
     .height('100%')
