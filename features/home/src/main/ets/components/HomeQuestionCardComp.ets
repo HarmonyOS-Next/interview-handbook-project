@@ -6,7 +6,7 @@ export struct HomeQuestionCardComp {
 
   build() {
     Row() {
-      Column(){
+      Column() {
         Text(this.title)
           .fontSize(14)
           .padding({ top: 8, bottom: 8 })
@@ -19,6 +19,7 @@ export struct HomeQuestionCardComp {
       .layoutWeight(1)
       .alignSelf(ItemAlign.Start)
       .padding({ right: 8 })
+
       Image(IMAGES[this.linearColor])
         .width(50)
         .alignSelf(ItemAlign.End)
@@ -47,7 +48,7 @@ const LINEAR_COLOR = [
   [['#fe954a', 0], ['#f9b388', 1]],
 ]
 
-const IMAGES = [
+const IMAGES: ResourceStr[] = [
   $r('app.media.card01'),
   $r('app.media.card02'),
   $r('app.media.card03'),

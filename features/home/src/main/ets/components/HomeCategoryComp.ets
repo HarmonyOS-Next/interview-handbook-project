@@ -120,11 +120,12 @@ export struct HomeCategoryComp {
       .onClick(() => {
         this.show = !this.show
       })
-      .bindSheet(this.show, this.SheetBuilder(), {
-        height: 420,
+      .bindSheet($$this.show, this.SheetBuilder(), {
         dragBar: false,
         maskColor: '#66000000',
         showClose: false,
+        detents: [SheetSize.FIT_CONTENT],
+        backgroundColor: Color.White
       })
 
       // .onClick(() => {

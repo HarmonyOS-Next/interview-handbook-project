@@ -6,9 +6,9 @@
         "type": "HarmonyOS",
         "material": {
           "certpath": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.cer",
-          "storePassword": "0000001B3B0B2E04160026D43349CB2ECBBAB3131155B011EC3D5E23A826714EB176846704F9752350DFDC",
+          "storePassword": "0000001BF4BBB4B1BE21A10DBA48DA851CF955D0623518889D77D0BF04CDE4A1689CBCE846F2396239B8D8",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BDBEA2E904B4AE2D651F066B32E54D956786815643D7C1826E62C6D79FD60A238C9CB4E69744DEC",
+          "keyPassword": "0000001B22C23C540314CB5DFD8376394C869170895C48015D93587D026356FD3C51B7CAFB73679745C686",
           "profile": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.p12"
@@ -20,7 +20,7 @@
         "name": "default",
         "signingConfig": "default",
         "compileSdkVersion": "4.1.0(11)",
-        "compatibleSdkVersion": "4.0.0(10)",
+        "compatibleSdkVersion": "4.1.0(11)",
         "runtimeOS": "HarmonyOS"
       }
     ],

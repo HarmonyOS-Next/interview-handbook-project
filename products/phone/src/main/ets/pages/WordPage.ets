@@ -1,16 +1,16 @@
 import { windowManager } from '@itcast/basic/Index'
-import { StudyTimeComp } from '@itcast/mine'
+import { WordComp } from '@itcast/mine'
 
 @Entry
 @Component
-struct StudyTimePage {
+struct WordPage {
   onPageShow(): void {
     windowManager.settingStatusBarDark()
   }
 
   build() {
     Column() {
-      StudyTimeComp()
+      WordComp()
     }
   }
 }

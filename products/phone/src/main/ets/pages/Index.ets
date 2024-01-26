@@ -17,7 +17,9 @@ struct Index {
 
   aboutToAppear(): void {
     setTimeout(() => {
-      this.show = !this.show
+      animateTo({ duration: 1000 }, () => {
+        this.show = !this.show
+      })
     }, 2000)
   }
 
@@ -32,18 +34,19 @@ struct Index {
 
   build() {
     if (this.show) {
-
       Flex() {
         TabBarComp({ activeIndex: this.activeIndex })
       }
-      .transition(TransitionEffect.OPACITY.animation({ duration: 1000 }))
+      .geometryTransition("boot")
+      .transition(TransitionEffect.OPACITY)
     } else {
       Column()
         .width('100%')
         .height('100%')
         .backgroundImage($r('app.media.boot'))
         .backgroundImageSize(ImageSize.Cover)
-
+        .geometryTransition("boot")
+        .transition(TransitionEffect.OPACITY)
     }
   }
 }

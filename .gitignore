@@ -10,3 +10,4 @@
 /.clang-tidy
 **/.test
 .DS_Store
+/dependencies

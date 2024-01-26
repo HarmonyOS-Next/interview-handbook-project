@@ -2,12 +2,13 @@ import { BasicConstant, HdClockIn, HdSearch } from '@itcast/basic'
 import { HomeCategoryComp } from '../components/HomeCategoryComp'
 import { HomeDayQuestionComp } from '../components/HomeDayQuestionComp'
 import { HomeQuestionCardComp } from '../components/HomeQuestionCardComp'
+import { router } from '@kit.ArkUI'
 
 @Component
 export struct HomeComp {
   @StorageProp('topHeight')
   topHeight: number = 0
-  
+
   @Builder
   SwiperItemBuilder(src: ResourceStr) {
     Flex() {
@@ -24,6 +25,11 @@ export struct HomeComp {
         Row({ space: BasicConstant.SPACE_LG }) {
           HdSearch()
           HdClockIn({ clockCount: 10 })
+            .onClick(() => {
+              router.pushUrl({
+                url: 'pages/ClockedPage'
+              })
+            })
         }
         .padding($r('app.float.common_gutter'))
 

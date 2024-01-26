@@ -73,9 +73,9 @@ export struct HmCalendar {
     for (let index = 1; index <= currDays; index++) {
       const selectedDay = selectedDays.find(item => currDate.date(index).isSame(item.date, 'date'))
       const selectedFlag = !!selectedDay
-      const selectedText = selectedDay?.text || this.text
-      const selectedTextColor = selectedDay?.textColor || this.color
-      const selectedBackgroundColor = selectedDay?.backgroundColor || this.color
+      const selectedText: ResourceStr = selectedDay?.text || this.text
+      const selectedTextColor: ResourceColor = selectedDay?.textColor || this.color
+      const selectedBackgroundColor: ResourceColor = selectedDay?.backgroundColor || this.color
 
       items.push({
         date: index,

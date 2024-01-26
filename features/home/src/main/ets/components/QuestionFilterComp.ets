@@ -1,5 +1,4 @@
 import { QuestionTypeModel } from '../models/QuestionTypeModel'
-import curves from '@ohos.curves'
 
 @Component
 struct FilterButton {
@@ -83,15 +82,17 @@ export struct QuestionFilterComp {
     Column() {
       Row() {
         Text('重置')
-          .fontSize(14)
+          .fontWeight(500)
           .onClick(() => {
             this.params = new FilterParams()
           })
         Text('筛选题目')
+          .fontWeight(500)
+          .fontSize(18)
           .layoutWeight(1)
           .textAlign(TextAlign.Center)
         Text('完成')
-          .fontSize(14)
+          .fontWeight(500)
           .fontColor($r('app.color.common_main_color'))
           .onClick(() => {
             this.onSubmit(this.params)
@@ -133,11 +134,10 @@ export struct QuestionFilterComp {
 
     }
     .backgroundColor(Color.White)
-    .padding({ left: $r('app.float.common_space16'), right: $r('app.float.common_space16') })
+    .padding({ left: 16, right: 16, top: 8, bottom: 34 })
     .width('100%')
-    .height(420)
-    .borderRadius({ topLeft: 16, topRight: 16 })
     .alignItems(HorizontalAlign.Start)
+
     // .transition(TransitionEffect.move(TransitionEdge.BOTTOM)
     //   .animation({ duration: 300, curve: curves.springMotion(0.6, 0.8) }))
   }
