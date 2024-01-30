@@ -45,16 +45,23 @@ export struct QuestionListComp {
 
   onRefresh() {
     this.page = 1
-    QuestionService.findQuestionList({
-      questionBankType: 10,
-      type: this.typeId,
-      page: this.page,
-      sort: this.sort
-    }).then(res => {
-      this.list = res.data.rows
+    Promise.all([
+      new Promise<void>((resolve, reject) => {
+        setTimeout(() => {
+          resolve()
+        }, 1000)
+      }),
+      QuestionService.findQuestionList({
+        questionBankType: 10,
+        type: this.typeId,
+        page: this.page,
+        sort: this.sort
+      })
+    ]).then(arr => {
+      this.list = arr[1].data.rows
       this.controller.refreshed()
       promptAction.showToast({ message: '已更新' })
-      if (this.page < res.data.pageTotal) {
+      if (this.page < arr[1].data.pageTotal) {
         this.page++
       } else {
         this.controller.finished()

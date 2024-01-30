@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Word</title>
+    <link rel="stylesheet"
+          href="./github.min.css">
+    <script src="./highlight.min.js"></script>
+    <style>
+        code {
+          font-size: 16px;
+          line-height: 1.6
+        }
+
+
+    </style>
+</head>
+<body>
+<pre><code></code></pre>
+<script>
+function writeCode(str) {
+  const el = document.querySelector('code');
+  el.innerHTML = hljs.highlightAuto(str).value;
+}
+
+
+</script>
+</body>
+</html>

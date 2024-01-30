@@ -2,6 +2,7 @@ import { http } from '@kit.NetworkKit';
 import { authStore } from './auth';
 import { promptAction, router } from '@kit.ArkUI';
 import { BusinessError } from '@ohos.base';
+import { logger } from './logger';
 
 interface HdRequestOptions {
   baseURL?: string
@@ -51,6 +52,7 @@ class HdHttp {
       if (res.result) {
         const result = res.result as HdResponse<T>
         if (result.code === 10000) {
+          logger.info(fullUrl, JSON.stringify(res.result))
           return result
         }
         if (result.code === 401) {
@@ -62,6 +64,7 @@ class HdHttp {
       }
       return Promise.reject(res.result)
     }).catch((err: BusinessError) => {
+      logger.error(fullUrl, err.code?.toString(), err.message)
       promptAction.showToast({ message: err.message || '网络错误' })
       return Promise.reject(err)
     }).finally(() => {

@@ -73,6 +73,9 @@ export struct MineComp {
     .height(50)
     .width('100%')
     .padding({ left: 16, right: 10 })
+    .onClick(() => {
+      tool.onClick && tool.onClick()
+    })
   }
 
   build() {
@@ -133,8 +136,20 @@ export struct MineComp {
       .borderRadius(8)
 
       Column() {
-        this.toolsBuilder({ icon: $r('app.media.ic_mine_notes'), name: '前端常用词' })
-        this.toolsBuilder({ icon: $r('app.media.ic_mine_ai'), name: '面通AI' })
+        this.toolsBuilder({
+          icon: $r('app.media.ic_mine_notes'), name: '开发常用词', onClick: () => {
+            router.pushUrl({
+              url: 'pages/WordPage'
+            })
+          }
+        })
+        this.toolsBuilder({
+          icon: $r('app.media.ic_mine_ai'), name: '面通AI', onClick: () => {
+            router.pushUrl({
+              url: 'pages/TestPage'
+            })
+          }
+        })
         this.toolsBuilder({ icon: $r('app.media.ic_mine_invite'), name: '推荐分享' })
         this.toolsBuilder({ icon: $r('app.media.ic_mine_file'), name: '意见反馈' })
         this.toolsBuilder({ icon: $r('app.media.ic_mine_info'), name: '关于我们' })

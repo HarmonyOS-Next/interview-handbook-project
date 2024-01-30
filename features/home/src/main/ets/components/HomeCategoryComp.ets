@@ -118,14 +118,13 @@ export struct HomeCategoryComp {
         colors: [['rgba(255,255,255,0.2)', 0], [Color.White, 0.3]]
       })
       .onClick(() => {
-        this.show = !this.show
+        this.show = true
       })
       .bindSheet($$this.show, this.SheetBuilder(), {
-        dragBar: false,
-        maskColor: '#66000000',
         showClose: false,
+        dragBar: false,
         detents: [SheetSize.FIT_CONTENT],
-        backgroundColor: Color.White
+        backgroundColor: Color.White,
       })
 
       // .onClick(() => {

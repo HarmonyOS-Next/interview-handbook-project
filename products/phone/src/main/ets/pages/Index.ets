@@ -1,5 +1,7 @@
 import { TabBarComp } from '../views/Index/TabBarComp';
 import { windowManager } from '@itcast/basic';
+import { abilityAccessCtrl, common } from '@kit.AbilityKit';
+
 
 @Entry
 @Component
@@ -16,6 +18,13 @@ struct Index {
   }
 
   aboutToAppear(): void {
+    let atManager = abilityAccessCtrl.createAtManager();
+    let context: Context = getContext(this) as common.UIAbilityContext;
+    atManager.requestPermissionsFromUser(context, [
+      "ohos.permission.LOCATION",
+      "ohos.permission.APPROXIMATELY_LOCATION",
+      "ohos.permission.ACCESS_BLUETOOTH",
+    ])
     setTimeout(() => {
       animateTo({ duration: 1000 }, () => {
         this.show = !this.show
@@ -30,6 +39,7 @@ struct Index {
 
   onPageHide(): void {
     this.onChangeIndex()
+    windowManager.settingStatusBarDark()
   }
 
   build() {
@@ -50,3 +60,22 @@ struct Index {
     }
   }
 }
+
+
+// 1. 接口 (人：名字 年龄 体重)
+interface Person {
+  name: string
+  age: number
+  weight: number
+}
+
+// 2. 定义对象
+let person: Person = {
+  name: '杨幂',
+  age: 37,
+  weight: 90
+}
+
+// 3. 访问对象数据
+console.log('名字', person.name)
+console.log('年龄', person.age)

@@ -14,4 +14,6 @@ export { hdHttp } from './src/main/ets/utils/request'
 
 export { authStore } from './src/main/ets/utils/auth'
 
+export { logger } from './src/main/ets/utils/logger'
+
 export { windowManager } from './src/main/ets/utils/windowManager'
