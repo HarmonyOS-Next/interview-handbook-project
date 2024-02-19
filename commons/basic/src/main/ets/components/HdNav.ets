@@ -7,6 +7,8 @@ export struct HdNav {
   @Prop
   title: string = ''
   @Prop
+  hasBorder: boolean = false
+  @Prop
   leftIcon: ResourceStr = $r('sys.media.ohos_ic_public_arrow_left')
   @Prop
   rightIcon: ResourceStr = $r('sys.media.ohos_ic_public_more')
@@ -52,5 +54,9 @@ export struct HdNav {
     .padding({ left: 16, right: 16, top: this.topHeight })
     .height(56 + this.topHeight)
     .width('100%')
+    .border({
+      width: { bottom: this.hasBorder ? $r('app.float.common_border_width') : 0 },
+      color: $r('app.color.common_gray_bg')
+    })
   }
 }

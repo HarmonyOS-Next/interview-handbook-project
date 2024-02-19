@@ -3,7 +3,6 @@ import { webview } from '@kit.ArkWeb'
 import { util } from '@kit.ArkTS'
 import { promptAction } from '@kit.ArkUI'
 import { media } from '@kit.MediaKit'
-import { connection } from '@kit.NetworkKit'
 import { WordSoundDialog } from '../components/WordSoundDialog'
 
 export interface WordItem {
@@ -30,7 +29,6 @@ export struct WordComp {
   currentWordEn: string = ''
   currentWordZh: string = ''
   scroller = new Scroller()
-  res: media.AVPlayer = Object()
 
   aboutToAppear() {
     this.initWords()
@@ -100,10 +98,7 @@ export struct WordComp {
   dialog = new CustomDialogController({
     builder: WordSoundDialog({ wordEn: this.currentWordEn, wordZh: this.currentWordZh }),
     customStyle: true,
-    alignment: DialogAlignment.Center,
-    cancel: () => {
-      this.res?.stop()
-    }
+    alignment: DialogAlignment.Center
   })
 
   build() {
@@ -154,43 +149,10 @@ export struct WordComp {
                 .alignSelf(ItemAlign.Start)
                 .fillColor($r('app.color.common_gray_03'))
                 .onClick(() => {
-                  // 判断网络
-                  if (connection.getDefaultNetSync().netId < 100) return promptAction.showToast({
-                    message: '网络不可用'
-                  })
                   // 开启弹框
                   this.currentWordEn = wordItem.en
                   this.currentWordZh = wordItem.zh
                   this.dialog.open()
-                  // 创建播放器
-                  media.createAVPlayer().then(res => {
-                    this.res = res
-                    res.url = `https://dict.youdao.com/dictvoice?type=1&audio=${wordItem.en}`
-                    res.on('stateChange', (state) => {
-                      if (state === 'idle') {
-                        res.release()
-                      }
-                      if (state === 'initialized') {
-                        res.prepare()
-                      }
-                      if (state === 'prepared') {
-                        res.loop = true
-                        res.play()
-                      }
-                      // if (state === 'playing') {
-                      //   res.pause()
-                      // }
-                      // if (state === 'paused') {
-                      //   res.play()
-                      // }
-                      if (state === 'completed') {
-                        res.stop()
-                      }
-                      if (state === 'stopped') {
-                        res.reset()
-                      }
-                    })
-                  })
                 })
               Column({ space: 10 }) {
                 Text(wordItem.en)
