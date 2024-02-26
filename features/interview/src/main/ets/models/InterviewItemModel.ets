@@ -7,8 +7,14 @@ export interface InterviewItem {
   creatorName: string
   creatorAvatar: ResourceStr
   createdAt: string
-  tags: string[]
+  stage: string[]
   likeFlag: 0 | 1 | null
+  relatedQuestions: InterviewRelatedQuestion[] | null
+}
+
+export interface InterviewRelatedQuestion {
+  id: string
+  stem: string
 }
 
 export class InterviewListParams {
@@ -26,8 +32,9 @@ export class InterviewItemModel implements InterviewItem {
   creatorName: string = ''
   creatorAvatar: ResourceStr = ''
   createdAt: string = ''
-  tags: string[] = []
+  stage: string[] = []
   likeFlag: 0 | 1 | null = null
+  relatedQuestions: InterviewRelatedQuestion[] | null = null
 
   constructor(model: InterviewItem) {
     this.id = model.id
@@ -38,8 +45,9 @@ export class InterviewItemModel implements InterviewItem {
     this.creatorName = model.creatorName
     this.creatorAvatar = model.creatorAvatar
     this.createdAt = model.createdAt
-    this.tags = model.tags
+    this.stage = model.stage
     this.likeFlag = model.likeFlag
+    this.relatedQuestions = model.relatedQuestions
   }
 }
 
@@ -53,8 +61,9 @@ export const interviewListData: InterviewItem[] = [
     creatorName: '凡人的积累',
     creatorAvatar: $r('app.media.ic_interview_avatar'),
     createdAt: '一周前',
-    tags: ['大厂', '算法'],
-    likeFlag: 1
+    stage: ['大厂', '算法'],
+    likeFlag: 1,
+    relatedQuestions: []
   },
   {
     id: '10002',
@@ -65,8 +74,9 @@ export const interviewListData: InterviewItem[] = [
     creatorName: '响亮的名字',
     creatorAvatar: $r('app.media.ic_interview_avatar'),
     createdAt: '10 小时前',
-    tags: ['大厂', 'Java'],
-    likeFlag: 0
+    stage: ['大厂', 'Java'],
+    likeFlag: 0,
+    relatedQuestions: []
   },
   {
     id: '10003',
@@ -77,7 +87,8 @@ export const interviewListData: InterviewItem[] = [
     creatorName: '不想秃头的夜猫子',
     creatorAvatar: $r('app.media.ic_interview_avatar'),
     createdAt: '23 分钟前',
-    tags: ['国企', '实习'],
-    likeFlag: 1
+    stage: ['国企', '实习'],
+    likeFlag: 1,
+    relatedQuestions: []
   }
 ]

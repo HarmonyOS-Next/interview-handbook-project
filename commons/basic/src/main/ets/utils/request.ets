@@ -56,6 +56,7 @@ class HdHttp {
           return result
         }
         if (result.code === 401) {
+          promptAction.showToast({ message: '登录过期' })
           authStore.delUser()
           router.pushUrl({
             url: 'pages/LoginPage'

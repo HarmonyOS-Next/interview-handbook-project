@@ -1,14 +1,15 @@
+import { QuestionDetailComp } from '@itcast/home'
+
 @Entry
 @Component
 struct QuestionDetailPage {
-  @StorageProp('topHeight')
-  topHeight: number = 0
+  @StorageProp('bottomHeight')
+  bottomHeight: number = 0
 
   build() {
     Column() {
+      QuestionDetailComp()
     }
-    .width('100%')
-    .height('100%')
-    .padding({ top: this.topHeight })
+    .padding({ bottom: this.bottomHeight })
   }
 }

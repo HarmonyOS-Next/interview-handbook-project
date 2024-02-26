@@ -1,13 +1,16 @@
-import { BasicConstant, HdClockIn, HdSearch } from '@itcast/basic'
+import { BasicConstant, HdClockIn, hdHttp, HdSearch, HdUser, windowManager } from '@itcast/basic'
 import { HomeCategoryComp } from '../components/HomeCategoryComp'
 import { HomeDayQuestionComp } from '../components/HomeDayQuestionComp'
 import { HomeQuestionCardComp } from '../components/HomeQuestionCardComp'
-import { router } from '@kit.ArkUI'
+import { promptAction, router } from '@kit.ArkUI'
 
 @Component
 export struct HomeComp {
   @StorageProp('topHeight')
   topHeight: number = 0
+  @StorageLink('user')
+  user: HdUser = {} as HdUser
+  scroller = new Scroller()
 
   @Builder
   SwiperItemBuilder(src: ResourceStr) {
@@ -20,15 +23,26 @@ export struct HomeComp {
   }
 
   build() {
-    Scroll() {
+    Scroll(this.scroller) {
       Column() {
         Row({ space: BasicConstant.SPACE_LG }) {
           HdSearch()
-          HdClockIn({ clockCount: 10 })
+          HdClockIn({ clockCount: this.user.clockinNumbers })
             .onClick(() => {
-              router.pushUrl({
-                url: 'pages/ClockedPage'
-              })
+              if (this.user?.token) {
+                if (this.user.clockinNumbers) {
+                  router.pushUrl({ url: 'pages/ClockedPage' })
+                } else {
+                  // 打卡
+                  hdHttp.post<Record<string, number>>('clockin').then((res) => {
+                    promptAction.showToast({ message: '打卡成功' })
+                    this.user.clockinNumbers = res.data.clockinNumbers
+                    router.pushUrl({ url: 'pages/ClockedPage' })
+                  })
+                }
+              } else {
+                router.pushUrl({ url: 'pages/LoginPage' })
+              }
             })
         }
         .padding($r('app.float.common_gutter'))
@@ -76,5 +90,11 @@ export struct HomeComp {
     }
     .width('100%')
     .scrollBar(BarState.Off)
+    .onScroll(() => {
+      windowManager.scrollStatusBar(this.scroller.currentOffset().yOffset)
+    })
+    .onVisibleAreaChange([0, 1], (isVisible) => {
+      windowManager.scrollStatusBar(isVisible ? this.scroller.currentOffset().yOffset : 0)
+    })
   }
 }

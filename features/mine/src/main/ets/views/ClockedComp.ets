@@ -1,13 +1,58 @@
-import { HdNav } from '@itcast/basic'
-import { HmCalendar } from '@ohmos/calendar'
+import { hdHttp, HdNav } from '@itcast/basic'
+import { HmCalendar, HmCalendarSelectedDay } from '@ohmos/calendar'
 
 interface DayBuilderParams {
   day: number
   text: string
 }
 
+interface RequestParams {
+  year: string,
+  month: string
+}
+
+interface ClockInItem {
+  id: string,
+  createdAt: string
+}
+
+interface ClockInfo {
+  flag: boolean
+  clockinNumbers: number
+  totalClockinNumber: number
+  clockins: ClockInItem[]
+}
+
 @Component
 export struct ClockedComp {
+  @State
+  clockInfo: ClockInfo = {
+    clockinNumbers: 0,
+    totalClockinNumber: 0,
+    flag: false,
+    clockins: []
+  }
+  @State
+  selectedDays: HmCalendarSelectedDay[] = []
+
+  aboutToAppear() {
+    hdHttp.get<ClockInfo>('clockinInfo').then((res) => {
+      this.clockInfo = res.data
+      this.selectedDays = res.data.clockins.map(item => ({ date: item.createdAt } as HmCalendarSelectedDay))
+    })
+  }
+
+  getData(month: string) {
+    const arr: string[] = month.split('-')
+    hdHttp.get<ClockInfo>('clockinInfo', {
+      year: arr[0],
+      month: arr[1]
+    } as RequestParams).then((res) => {
+      this.clockInfo = res.data
+      this.selectedDays = res.data.clockins.map(item => ({ date: item.createdAt } as HmCalendarSelectedDay))
+    })
+  }
+
   @Builder
   dayBuilder(params: DayBuilderParams) {
     Column() {
@@ -32,8 +77,8 @@ export struct ClockedComp {
     Column({ space: 16 }) {
       HdNav({ title: '每日打卡', showRightIcon: false })
       Row() {
-        this.dayBuilder({ day: 40, text: '累计打卡' })
-        this.dayBuilder({ day: 15, text: '连续打卡' })
+        this.dayBuilder({ day: this.clockInfo.totalClockinNumber, text: '累计打卡' })
+        this.dayBuilder({ day: this.clockInfo.clockinNumbers, text: '连续打卡' })
       }
       .padding({ top: 10, bottom: 25, left: 16, right: 16 })
       .width('100%')
@@ -41,7 +86,10 @@ export struct ClockedComp {
 
       Row() {
         HmCalendar({
-          selectedDays: [{ date: '2024-01-23' }]
+          selectedDays: this.selectedDays,
+          onChangeMonth: (month: string) => {
+            this.getData(month)
+          }
         })
           .borderRadius(8)
           .border({ width: 0.5, color: '#ededed' })

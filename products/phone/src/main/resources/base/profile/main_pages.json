@@ -8,7 +8,6 @@
     "pages/ClockedPage",
     "pages/StudyTimePage",
     "pages/WordPage",
-    "pages/TestPage",
     "pages/SettingsPage"
   ]
 }

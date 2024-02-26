@@ -1,6 +1,5 @@
-import { BasicConstant, HdTag } from '@itcast/basic/Index'
+import { authStore, BasicConstant, HdTag } from '@itcast/basic'
 import { InterviewItem, InterviewItemModel } from '../models/InterviewItemModel'
-import router from '@ohos.router'
 
 @Component
 export struct InterviewItemComp {
@@ -74,7 +73,7 @@ export struct InterviewItemComp {
     }
     .padding({ top: 16, bottom: 16 })
     .onClick(() => {
-      router.pushUrl({ url: 'pages/InterviewDetailPage', params: this.item })
+      authStore.checkAuth({ url: 'pages/InterviewDetailPage', params: this.item })
     })
   }
 }

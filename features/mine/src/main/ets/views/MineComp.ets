@@ -1,5 +1,5 @@
-import { HdClockIn } from '@itcast/basic/Index'
-import { router } from '@kit.ArkUI'
+import { authStore, HdClockIn, hdHttp, HdUser } from '@itcast/basic'
+import { promptAction, router } from '@kit.ArkUI'
 
 interface Nav {
   icon: ResourceStr
@@ -19,6 +19,8 @@ interface Tool {
 export struct MineComp {
   @StorageProp('topHeight')
   topHeight: number = 0
+  @StorageProp('user')
+  user: HdUser = {} as HdUser
 
   @Builder
   navBuilder(nav: Nav) {
@@ -86,30 +88,55 @@ export struct MineComp {
           .width(55)
           .aspectRatio(1)
           .borderRadius(55)
-        Column({ space: 4 }) {
-          Text('黑马程序员')
+        if (this.user && this.user.token) {
+          Column({ space: 4 }) {
+            Text(this.user.nickName || this.user.username)
+              .fontSize(18)
+              .fontWeight(500)
+              .maxLines(1)
+              .textOverflow({ overflow: TextOverflow.Ellipsis })
+            Row({ space: 4 }) {
+              Text('编辑信息')
+                .fontSize(12)
+                .fontColor($r('app.color.common_gray_01'))
+              Image($r('app.media.ic_mine_edit'))
+                .width(12)
+                .aspectRatio(1)
+                .fillColor($r('app.color.common_gray_01'))
+            }
+          }
+          .layoutWeight(1)
+          .alignItems(HorizontalAlign.Start)
+        } else {
+          Text('立即登录')
             .fontSize(18)
             .fontWeight(500)
             .maxLines(1)
             .textOverflow({ overflow: TextOverflow.Ellipsis })
-          Row({ space: 4 }) {
-            Text('编辑信息')
-              .fontSize(12)
-              .fontColor($r('app.color.common_gray_01'))
-            Image($r('app.media.ic_mine_edit'))
-              .width(12)
-              .aspectRatio(1)
-              .fillColor($r('app.color.common_gray_01'))
-          }
-        }
-        .layoutWeight(1)
-        .alignItems(HorizontalAlign.Start)
-
-        HdClockIn({ clockCount: 0 })
-          .onClick(() => {
-            router.pushUrl({
-              url: 'pages/ClockedPage'
+            .layoutWeight(1)
+            .onClick(() => {
+              router.pushUrl({
+                url: 'pages/LoginPage'
+              })
             })
+        }
+
+        HdClockIn({ clockCount: this.user.clockinNumbers })
+          .onClick(() => {
+            if (this.user?.token) {
+              if (this.user.clockinNumbers) {
+                router.pushUrl({ url: 'pages/ClockedPage' })
+              } else {
+                // 打卡
+                hdHttp.post<Record<string, number>>('clockin').then((res) => {
+                  promptAction.showToast({ message: '打卡成功' })
+                  this.user.clockinNumbers = res.data.clockinNumbers
+                  router.pushUrl({ url: 'pages/ClockedPage' })
+                })
+              }
+            } else {
+              router.pushUrl({ url: 'pages/LoginPage' })
+            }
           })
       }
       .width('100%')
@@ -125,7 +152,7 @@ export struct MineComp {
           name: '累计学时',
           other: '4 小时',
           onClick: () => {
-            router.pushUrl({
+            authStore.checkAuth({
               url: 'pages/StudyTimePage'
             })
           }
@@ -138,24 +165,18 @@ export struct MineComp {
       Column() {
         this.toolsBuilder({
           icon: $r('app.media.ic_mine_notes'), name: '开发常用词', onClick: () => {
-            router.pushUrl({
+            authStore.checkAuth({
               url: 'pages/WordPage'
             })
           }
         })
-        this.toolsBuilder({
-          icon: $r('app.media.ic_mine_ai'), name: '面通AI', onClick: () => {
-            router.pushUrl({
-              url: 'pages/TestPage'
-            })
-          }
-        })
+        this.toolsBuilder({ icon: $r('app.media.ic_mine_ai'), name: '面通AI' })
         this.toolsBuilder({ icon: $r('app.media.ic_mine_invite'), name: '推荐分享' })
         this.toolsBuilder({ icon: $r('app.media.ic_mine_file'), name: '意见反馈' })
         this.toolsBuilder({ icon: $r('app.media.ic_mine_info'), name: '关于我们' })
         this.toolsBuilder({
           icon: $r('app.media.ic_mine_setting'), name: '设置', onClick: () => {
-            router.pushUrl({
+            authStore.checkAuth({
               url: 'pages/SettingsPage'
             })
           }

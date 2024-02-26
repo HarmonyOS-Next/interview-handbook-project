@@ -9,7 +9,7 @@ export struct HdNav {
   @Prop
   hasBorder: boolean = false
   @Prop
-  leftIcon: ResourceStr = $r('sys.media.ohos_ic_public_arrow_left')
+  leftIcon: ResourceStr = $r('app.media.ic_common_back')
   @Prop
   rightIcon: ResourceStr = $r('sys.media.ohos_ic_public_more')
   @Prop
@@ -42,9 +42,9 @@ export struct HdNav {
 
       if (this.showRightIcon) {
         Image(this.rightIcon)
-          .size({ width: 24, height: 20 })
+          .size({ width: 24, height: 24 })
           .objectFit(ImageFit.Contain)
-          .bindMenu(this.menuBuilder && this.menuBuilder())
+          .bindMenu(this.menuBuilder)
       } else {
         Blank()
           .width(24)

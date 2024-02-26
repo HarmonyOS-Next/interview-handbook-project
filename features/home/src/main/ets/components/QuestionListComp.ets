@@ -1,8 +1,13 @@
-import { HdList, HdListController } from '@itcast/basic/Index'
-import { QuestionItemModel } from '../models/QuestionItemModel'
+import { authStore, HdList, HdListController } from '@itcast/basic/Index'
+import { QuestionItem, QuestionItemModel } from '../models/QuestionItemModel'
 import { QuestionItemComp } from './QuestionItemComp'
 import promptAction from '@ohos.promptAction'
 import { QuestionService } from '../services/QuestionService'
+
+export interface DetailParams {
+  item: QuestionItem,
+  list: QuestionItem[]
+}
 
 @Component
 export struct QuestionListComp {
@@ -91,7 +96,16 @@ export struct QuestionListComp {
     }) {
       ForEach(this.list, (item: QuestionItemModel) => {
         ListItem() {
-          QuestionItemComp({ item })
+          QuestionItemComp({
+            item,
+            onClickItem: () => {
+              const params: DetailParams = { item, list: this.list }
+              authStore.checkAuth({
+                url: 'pages/QuestionDetailPage',
+                params: params
+              })
+            }
+          })
         }
       })
     }

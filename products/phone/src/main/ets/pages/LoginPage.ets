@@ -1,17 +1,11 @@
+import { LoginComp } from '@itcast/mine'
+
 @Entry
 @Component
 struct LoginPage {
-  @State message: string = 'Hello World';
-
   build() {
-    Row() {
-      Column() {
-        Text(this.message)
-          .fontSize(50)
-          .fontWeight(FontWeight.Bold)
-      }
-      .width('100%')
+    Column() {
+      LoginComp()
     }
-    .height('100%')
   }
 }

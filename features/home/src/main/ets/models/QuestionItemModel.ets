@@ -25,6 +25,13 @@ export class QuestionItemModel implements QuestionItem {
   }
 }
 
+export interface QuestionDetail extends QuestionItem {
+  answer: string
+  collectFlag: 0 | 1
+  likeFlag: 0 | 1
+  stage: Array<string>
+}
+
 export const questionListData: QuestionItem[] = [
   {
     id: '100',

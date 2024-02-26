@@ -1,9 +1,11 @@
-import { HdTag } from '@itcast/basic/Index'
+import { HdTag } from '@itcast/basic'
 import { QuestionItem, QuestionItemModel } from '../models/QuestionItemModel'
 
 @Component
 export struct QuestionItemComp {
   item: QuestionItemModel = {} as QuestionItem
+  onClickItem: () => void = () => {
+  }
 
   @Builder
   SplitBuilder() {
@@ -48,5 +50,8 @@ export struct QuestionItemComp {
     .height(80)
     .justifyContent(FlexAlign.Center)
     .width('100%')
+    .onClick(e => {
+      this.onClickItem()
+    })
   }
 }

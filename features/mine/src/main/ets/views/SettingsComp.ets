@@ -1,8 +1,8 @@
-import { HdNav } from '@itcast/basic';
+import { authStore, HdNav } from '@itcast/basic';
 import { bundleManager } from '@kit.AbilityKit';
 import { storageStatistics } from '@kit.CoreFileKit';
 import fs from '@ohos.file.fs';
-import { promptAction } from '@kit.ArkUI';
+import { promptAction, router } from '@kit.ArkUI';
 
 export interface Tool {
   icon?: ResourceStr
@@ -104,6 +104,10 @@ export struct SettingsComp {
           .height(50)
           .fontColor($r('app.color.common_main_color'))
           .opacity(0.6)
+          .onClick(() => {
+            authStore.delUser()
+            router.back()
+          })
       }
       .layoutWeight(1)
       .backgroundColor($r('app.color.common_gray_bg'))
