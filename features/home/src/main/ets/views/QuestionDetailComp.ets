@@ -10,6 +10,16 @@ export interface OptPrams {
   optType: 1 | 2
 }
 
+interface RecordItem {
+  questionId: string
+  startTime: number
+  endTime: number
+}
+
+interface RecordParams {
+  timeList: RecordItem[]
+}
+
 @Component
 export struct QuestionDetailComp {
   @State
@@ -21,6 +31,25 @@ export struct QuestionDetailComp {
   @State
   loadingHtml: boolean = false
   webController = new webview.WebviewController()
+  // 埋点
+  startTime: number = Date.now()
+  records: RecordItem[] = []
+
+  recordPoint(isVisible: boolean) {
+    if (isVisible) {
+      this.startTime = Date.now()
+    } else {
+      this.records.push({
+        questionId: this.item.id,
+        startTime: this.startTime,
+        endTime: Date.now()
+      })
+      hdHttp.post<null>('time/tracking', { timeList: this.records } as RecordParams)
+        .then(res => {
+          this.records = []
+        })
+    }
+  }
 
   aboutToAppear() {
     const params = router.getParams() as DetailParams
@@ -53,6 +82,14 @@ export struct QuestionDetailComp {
   })
 
   async toggleData() {
+    // 埋点
+    this.records.push({
+      questionId: this.item.id,
+      startTime: this.startTime,
+      endTime: Date.now()
+    })
+    this.startTime = Date.now()
+    // 切换
     const newItem = this.list[this.index]
     this.item.id = newItem.id
     if (!newItem.answer) {
@@ -200,5 +237,8 @@ export struct QuestionDetailComp {
     }
     .width('100%')
     .height('100%')
+    .onVisibleAreaChange([0, 1], (isVisible) => {
+      this.recordPoint(isVisible)
+    })
   }
 }

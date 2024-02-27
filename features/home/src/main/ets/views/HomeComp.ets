@@ -24,7 +24,6 @@ export struct HomeComp {
 
   build() {
     Column() {
-
       Scroll(this.scroller) {
         Column() {
           Row({ space: BasicConstant.SPACE_LG }) {
