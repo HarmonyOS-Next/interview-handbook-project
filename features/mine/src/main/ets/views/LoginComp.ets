@@ -1,5 +1,6 @@
 import { authStore, hdHttp, HdResponse, HdUser } from '@itcast/basic'
 import { promptAction, router } from '@kit.ArkUI'
+import { emitter } from '@kit.BasicServicesKit'
 
 interface LoginParams {
   username: string
@@ -35,9 +36,10 @@ export struct LoginComp {
     hdHttp.post<HdUser>('login', {
       username: this.mobile,
       password: this.code
-    } as LoginParams).then((res: HdResponse<HdUser>) => {
-      authStore.setUser(res.data)
+    } as LoginParams).then(async (res: HdResponse<HdUser>) => {
+      await authStore.setUser(res.data)
       promptAction.showToast({ message: '登录成功', duration: 1000 })
+      emitter.emit({ eventId: 100401 })
       const params = router.getParams() as Record<string, string>
       if (params && params.return_path) {
         router.replaceUrl({
@@ -122,7 +124,7 @@ export struct LoginComp {
             this.login()
           })
         }
-        .padding({ left: 30, right: 30, top: 30 })
+        .padding({ left: 20, right: 20, top: 30 })
 
 
         Column() {

@@ -1,4 +1,4 @@
-import { authStore, HdClockIn, hdHttp, HdUser } from '@itcast/basic'
+import { authStore, getTimeText, HdClockIn, hdHttp, HdUser } from '@itcast/basic'
 import { promptAction, router } from '@kit.ArkUI'
 
 interface Nav {
@@ -83,7 +83,7 @@ export struct MineComp {
   build() {
     Column({ space: 16 }) {
       Row({ space: 12 }) {
-        Image($r('app.media.ic_mine_avatar'))
+        Image(this.user.avatar || $r('app.media.ic_mine_avatar'))
           .alt($r('app.media.ic_mine_avatar'))
           .width(55)
           .aspectRatio(1)
@@ -104,6 +104,11 @@ export struct MineComp {
                 .aspectRatio(1)
                 .fillColor($r('app.color.common_gray_01'))
             }
+            .onClick(() => {
+              authStore.checkAuth({
+                url: 'pages/ProfileEditPage'
+              })
+            })
           }
           .layoutWeight(1)
           .alignItems(HorizontalAlign.Start)
@@ -150,7 +155,7 @@ export struct MineComp {
         this.navBuilder({
           icon: $r('app.media.ic_mine_study'),
           name: '累计学时',
-          other: '4 小时',
+          other: getTimeText(this.user.totalTime),
           onClick: () => {
             authStore.checkAuth({
               url: 'pages/StudyTimePage'

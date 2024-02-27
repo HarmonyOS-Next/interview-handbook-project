@@ -17,7 +17,7 @@ export interface HdResponse<T> {
 }
 
 class HdHttp {
-  private baseURL: string
+  baseURL: string
 
   constructor(options: HdRequestOptions) {
     this.baseURL = options.baseURL || ''
@@ -52,15 +52,15 @@ class HdHttp {
       if (res.result) {
         const result = res.result as HdResponse<T>
         if (result.code === 10000) {
-          logger.info(fullUrl, JSON.stringify(res.result))
+          logger.info(fullUrl, JSON.stringify(res.result).substring(0, 200))
           return result
         }
         if (result.code === 401) {
-          promptAction.showToast({ message: '登录过期' })
           authStore.delUser()
           router.pushUrl({
             url: 'pages/LoginPage'
           }, router.RouterMode.Single)
+          throw new Error('登录过期')
         }
       }
       return Promise.reject(res.result)

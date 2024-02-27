@@ -3,12 +3,14 @@ import { bundleManager } from '@kit.AbilityKit';
 import { storageStatistics } from '@kit.CoreFileKit';
 import fs from '@ohos.file.fs';
 import { promptAction, router } from '@kit.ArkUI';
+import { emitter } from '@kit.BasicServicesKit';
 
 export interface Tool {
   icon?: ResourceStr
   name: string
   value?: string
-  onClick?: () => void
+  onClick?: () => void,
+  radius?: 0 | 1 | 2
 }
 
 @Component
@@ -19,13 +21,16 @@ export struct SettingsComp {
   cache: string = ''
 
   aboutToAppear(): void {
+    this.getVersion()
+  }
+
+  getVersion() {
     bundleManager.getBundleInfoForSelf(
       bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_APPLICATION |
       bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_METADATA
     ).then((res) => {
       this.version = 'v' + res.versionName
     })
-    this.calcCache()
   }
 
   calcCache() {
@@ -78,6 +83,12 @@ export struct SettingsComp {
     .width('100%')
     .backgroundColor(Color.White)
     .padding({ left: 16, right: 10 })
+    .borderRadius({
+      topLeft: tool.radius === 1 ? 8 : 0,
+      topRight: tool.radius === 1 ? 8 : 0,
+      bottomLeft: tool.radius === 2 ? 8 : 0,
+      bottomRight: tool.radius === 2 ? 8 : 0
+    })
     .onClick(() => {
       tool.onClick && tool.onClick()
     })
@@ -87,30 +98,43 @@ export struct SettingsComp {
     Column() {
       HdNav({ title: '设置', showRightIcon: false, hasBorder: true })
       Column({ space: 0.5 }) {
-        Blank().height(10)
-        this.toolsBuilder({ name: '编辑资料' })
+        Blank().height(15)
+        this.toolsBuilder({
+          name: '编辑资料', radius: 1, onClick: () => {
+            authStore.checkAuth({
+              url: 'pages/ProfileEditPage'
+            })
+          }
+        })
         this.toolsBuilder({ name: '账号设置' })
-        this.toolsBuilder({ name: '消息设置' })
-        Blank().height(10)
-        this.toolsBuilder({ name: '深色模式', value: '已关闭' })
+        this.toolsBuilder({ name: '消息设置', radius: 2 })
+        Blank().height(15)
+        this.toolsBuilder({ name: '深色模式', value: '已关闭', radius: 1 })
         this.toolsBuilder({
           name: '清除应用缓存', value: this.cache, onClick: () => {
             this.clearCache()
           }
         })
-        this.toolsBuilder({ name: '检查更新', value: this.version })
-        Blank().height(10)
+        this.toolsBuilder({ name: '检查更新', value: this.version, radius: 2 })
+        Blank().height(15)
         Text('退出账号')
           .height(50)
           .fontColor($r('app.color.common_main_color'))
           .opacity(0.6)
-          .onClick(() => {
-            authStore.delUser()
+          .onClick(async () => {
+            await authStore.delUser()
+            emitter.emit({ eventId: 100401 })
             router.back()
           })
       }
       .layoutWeight(1)
+      .padding({ right: 15, left: 15 })
       .backgroundColor($r('app.color.common_gray_bg'))
     }
+    .onVisibleAreaChange([0, 1], (isVisible) => {
+      if (isVisible) {
+        this.calcCache()
+      }
+    })
   }
 }

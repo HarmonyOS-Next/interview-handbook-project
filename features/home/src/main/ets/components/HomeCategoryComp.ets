@@ -2,6 +2,7 @@ import { QuestionTypeModel } from '../models/QuestionTypeModel'
 import { QuestionListComp } from './QuestionListComp'
 import { FilterParams, QuestionFilterComp } from './QuestionFilterComp'
 import { QuestionService } from '../services/QuestionService'
+import { emitter } from '@kit.BasicServicesKit'
 
 
 @Component
@@ -15,24 +16,15 @@ export struct HomeCategoryComp {
   @State
   show: boolean = false
 
-  // dialog: CustomDialogController = new CustomDialogController({
-  //   builder: QuestionFilterComp({
-  //     questionTypeList: this.questionTypeList,
-  //     params: this.params,
-  //     onSubmit: (params) => {
-  //       this.params = params
-  //     }
-  //   }),
-  //   customStyle: true,
-  //   alignment: DialogAlignment.Bottom,
-  //   openAnimation: {
-  //     duration: 0
-  //   }
-  // })
-
   aboutToAppear(): void {
     QuestionService.findQuestionTypeList().then(res => {
       this.questionTypeList = res.data
+    })
+    emitter.on({ eventId: 100401 }, () => {
+      this.questionTypeList = []
+      QuestionService.findQuestionTypeList().then(res => {
+        this.questionTypeList = res.data
+      })
     })
   }
 
@@ -79,30 +71,33 @@ export struct HomeCategoryComp {
 
   build() {
     Stack({ alignContent: Alignment.TopEnd }) {
-      Tabs({ index: this.params.index }) {
-        ForEach(this.questionTypeList, (item: QuestionTypeModel, index: number) => {
-          TabContent() {
-            // 列表组件
-            Column() {
-              QuestionListComp({
-                typeId: item.id,
-                sort: this.params.sort,
-                difficult: this.params.difficult,
-                activeIndex: this.params.index,
-                selfIndex: index
-              })
+      if (this.questionTypeList.length) {
+        Tabs({ index: this.params.index }) {
+          ForEach(this.questionTypeList, (item: QuestionTypeModel, index: number) => {
+            TabContent() {
+              // 列表组件
+              Column() {
+                QuestionListComp({
+                  typeId: item.id,
+                  sort: this.params.sort,
+                  difficult: this.params.difficult,
+                  activeIndex: this.params.index,
+                  selfIndex: index
+                })
+              }
+              .backgroundColor(Color.White)
             }
-            .backgroundColor(Color.White)
-          }
-          .tabBar(this.TabItemBuilder(item, index))
-        })
+            .tabBar(this.TabItemBuilder(item, index))
+          })
+        }
+        .divider({ strokeWidth: $r('app.float.common_border_width'), color: $r('app.color.common_gray_border') })
+        .barMode(BarMode.Scrollable)
+        .barHeight(44)
+        .barBackgroundColor(Color.White)
+        .onTabBarClick(i => this.params.index = i)
+        .layoutWeight(1)
+        .scrollable(false)
       }
-      .divider({ strokeWidth: $r('app.float.common_border_width'), color: $r('app.color.common_gray_border') })
-      .barMode(BarMode.Scrollable)
-      .barHeight(44)
-      .barBackgroundColor(Color.White)
-      .onChange(i => this.params.index = i)
-      .layoutWeight(1)
 
       Row() {
         Image($r("app.media.ic_home_filter"))
@@ -131,5 +126,6 @@ export struct HomeCategoryComp {
       //   this.dialog.open()
       // })
     }
+    .width('100%')
   }
 }
