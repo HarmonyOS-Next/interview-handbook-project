@@ -28,9 +28,9 @@ export struct ProjectDetailComp {
           .opacity(0.2)
         Column() {
           Row() {
-            Image($r('sys.media.ohos_ic_public_arrow_left'))
+            Image($r('app.media.ic_common_back'))
               .size({ width: 24, height: 24 })
-              .fillColor(Color.White)
+              .fillColor($r('app.color.common_gray_01'))
               .onClick(() => router.back())
             Blank()
               .layoutWeight(1)
