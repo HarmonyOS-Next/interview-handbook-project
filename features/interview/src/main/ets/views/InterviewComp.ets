@@ -1,4 +1,4 @@
-import { HdSearch } from '@itcast/basic'
+import { authStore, HdSearch } from '@itcast/basic'
 import { InterviewListComp } from '../components/InterviewListComp'
 
 interface Company {
@@ -83,6 +83,17 @@ export struct InterviewComp {
           .width(54)
           .height(20)
         HdSearch({ ph: '请输入关键词', bg: '#f3f4f5' })
+          .layoutWeight(1)
+          .onClick(() => {
+            interface Params {
+              questionBankType: 9 | 10
+            }
+
+            authStore.checkAuth({
+              url: 'pages/SearchPage',
+              params: ({ questionBankType: 9 }) as Params
+            })
+          })
       }
       .padding({ left: 16, right: 16 })
       .height(64)

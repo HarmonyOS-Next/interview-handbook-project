@@ -133,9 +133,10 @@ export struct MineComp {
                 router.pushUrl({ url: 'pages/ClockedPage' })
               } else {
                 // 打卡
-                hdHttp.post<Record<string, number>>('clockin').then((res) => {
+                hdHttp.post<Record<string, number>>('clockin').then(async (res) => {
                   promptAction.showToast({ message: '打卡成功' })
                   this.user.clockinNumbers = res.data.clockinNumbers
+                  await authStore.setUser(this.user)
                   router.pushUrl({ url: 'pages/ClockedPage' })
                 })
               }

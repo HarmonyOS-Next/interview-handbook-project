@@ -9,6 +9,7 @@
     "pages/StudyTimePage",
     "pages/WordPage",
     "pages/SettingsPage",
-    "pages/ProfileEditPage"
+    "pages/ProfileEditPage",
+    "pages/SearchPage"
   ]
 }

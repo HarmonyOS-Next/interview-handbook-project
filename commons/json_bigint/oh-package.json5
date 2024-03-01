@@ -1,0 +1,19 @@
+{
+  "name": "@ohmos/json-bigint",
+  "version": "1.0.0",
+  "description": "JSON.parse/stringify with bigints support for HarmonyOS Next.",
+  "keywords": [
+    "JSON",
+    "parse",
+    "stringify",
+    "next"
+  ],
+  "main": "Index.ets",
+  "author": {
+    "name": 'zhousg',
+    "email": "zhousg1007@qq.com"
+  },
+  "license": "Apache-2.0",
+  "repository": "https://github.com/HarmonyOS-Next/json-bigint",
+  "homepage": "https://github.com/HarmonyOS-Next/json-bigint",
+}

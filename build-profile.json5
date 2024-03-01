@@ -69,6 +69,10 @@
     {
       "name": "calendar",
       "srcPath": "./commons/calendar"
+    },
+    {
+      "name": "json_bigint",
+      "srcPath": "./commons/json_bigint"
     }
   ]
 }

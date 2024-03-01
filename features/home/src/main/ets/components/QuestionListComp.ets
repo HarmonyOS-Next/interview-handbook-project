@@ -14,6 +14,8 @@ export struct QuestionListComp {
   @Prop
   typeId: number
   @Prop
+  keyword: string = ''
+  @Prop
   activeIndex: number = -1
   @Prop
   @Watch('reLoad')
@@ -35,7 +37,8 @@ export struct QuestionListComp {
       questionBankType: 10,
       type: this.typeId,
       page: this.page,
-      sort: this.sort
+      sort: this.sort,
+      keyword: this.keyword
     }).then(res => {
       this.list.push(...res.data.rows)
       this.controller.loaded()
@@ -60,7 +63,8 @@ export struct QuestionListComp {
         questionBankType: 10,
         type: this.typeId,
         page: this.page,
-        sort: this.sort
+        sort: this.sort,
+        keyword: this.keyword
       })
     ]).then(arr => {
       this.list = arr[1].data.rows

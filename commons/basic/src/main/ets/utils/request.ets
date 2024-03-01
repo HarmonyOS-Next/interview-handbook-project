@@ -37,7 +37,9 @@ class HdHttp {
     let fullUrl = this.baseURL + path
 
     if (method === http.RequestMethod.GET && extraData) {
-      const strArr = Object.keys(extraData).map(key => `${key}=${(extraData as HdParams)[key]}`)
+      const strArr = Object.keys(extraData)
+        .filter(key => (extraData as HdParams)[key] !== undefined)
+        .map(key => `${key}=${(extraData as HdParams)[key]}`)
       fullUrl += `?${strArr.join('&')}`
     } else {
       options.extraData = extraData

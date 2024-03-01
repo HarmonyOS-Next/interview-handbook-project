@@ -1,4 +1,4 @@
-import { BasicConstant, HdSearch } from '@itcast/basic'
+import { authStore, BasicConstant, HdSearch } from '@itcast/basic'
 import { QuestionListComp } from '@itcast/home'
 import { ProjectItem, ProjectItemModel } from '../models/ProjectItemModel'
 import router from '@ohos.router'
@@ -33,8 +33,19 @@ export struct ProjectDetailComp {
               .fillColor($r('app.color.common_gray_01'))
               .onClick(() => router.back())
             Blank()
-              .layoutWeight(1)
             HdSearch({ bg: 'rgba(246, 247, 249, 0.5)', color: '#333333' })
+              .width(120)
+              .onClick(() => {
+                interface Params {
+                  type: number
+                  questionBankType: 9 | 10
+                }
+
+                authStore.checkAuth({
+                  url: 'pages/SearchPage',
+                  params: ({ questionBankType: 10, type: this.projectItem.id }) as Params
+                })
+              })
           }
           .height(56)
           .width('100%')

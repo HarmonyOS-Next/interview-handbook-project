@@ -1,4 +1,4 @@
-import { BasicConstant, HdClockIn, hdHttp, HdSearch, HdUser, windowManager } from '@itcast/basic'
+import { authStore, BasicConstant, HdClockIn, hdHttp, HdSearch, HdUser, windowManager } from '@itcast/basic'
 import { HomeCategoryComp } from '../components/HomeCategoryComp'
 import { HomeDayQuestionComp } from '../components/HomeDayQuestionComp'
 import { HomeQuestionCardComp } from '../components/HomeQuestionCardComp'
@@ -8,9 +8,11 @@ import { promptAction, router } from '@kit.ArkUI'
 export struct HomeComp {
   @StorageProp('topHeight')
   topHeight: number = 0
-  @StorageLink('user')
+  @StorageProp('user')
   user: HdUser = {} as HdUser
   scroller = new Scroller()
+  @State
+  isVisible: boolean = false
 
   @Builder
   SwiperItemBuilder(src: ResourceStr) {
@@ -28,6 +30,17 @@ export struct HomeComp {
         Column() {
           Row({ space: BasicConstant.SPACE_LG }) {
             HdSearch()
+              .layoutWeight(1)
+              .onClick(() => {
+                interface Params {
+                  questionBankType: 9 | 10
+                }
+
+                authStore.checkAuth({
+                  url: 'pages/SearchPage',
+                  params: ({ questionBankType: 10 }) as Params
+                })
+              })
             HdClockIn({ clockCount: this.user.clockinNumbers })
               .onClick(() => {
                 if (this.user?.token) {
@@ -35,9 +48,10 @@ export struct HomeComp {
                     router.pushUrl({ url: 'pages/ClockedPage' })
                   } else {
                     // 打卡
-                    hdHttp.post<Record<string, number>>('clockin').then((res) => {
+                    hdHttp.post<Record<string, number>>('clockin').then(async (res) => {
                       promptAction.showToast({ message: '打卡成功' })
                       this.user.clockinNumbers = res.data.clockinNumbers
+                      await authStore.setUser(this.user)
                       router.pushUrl({ url: 'pages/ClockedPage' })
                     })
                   }
@@ -92,9 +106,12 @@ export struct HomeComp {
       .width('100%')
       .scrollBar(BarState.Off)
       .onScroll(() => {
-        windowManager.scrollStatusBar(this.scroller.currentOffset().yOffset)
+        if (this.isVisible) {
+          windowManager.scrollStatusBar(this.scroller.currentOffset().yOffset)
+        }
       })
       .onVisibleAreaChange([0, 1], (isVisible) => {
+        this.isVisible = isVisible
         windowManager.scrollStatusBar(isVisible ? this.scroller.currentOffset().yOffset : 0)
       })
     }

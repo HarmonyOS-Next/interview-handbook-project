@@ -21,6 +21,7 @@ export class InterviewListParams {
   page: number = 1
   questionBankType: number = 9
   sort: number = 30
+  keyword: string = ''
 }
 
 export class InterviewItemModel implements InterviewItem {

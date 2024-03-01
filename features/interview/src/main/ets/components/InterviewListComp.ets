@@ -11,6 +11,8 @@ export struct InterviewListComp {
   controller = new HdListController()
   @State
   page: number = 1
+  @State
+  keyword: string = ''
   @Prop
   @Watch('onUpdate')
   sort: number = 30
@@ -29,7 +31,8 @@ export struct InterviewListComp {
     InterviewService.findInterviewList({
       questionBankType: 9,
       page: this.page,
-      sort: this.sort
+      sort: this.sort,
+      keyword: this.keyword
     }).then(res => {
       this.list = res.data.rows
       this.controller.refreshed()
@@ -53,7 +56,8 @@ export struct InterviewListComp {
         InterviewService.findInterviewList({
           questionBankType: 9,
           page: this.page,
-          sort: this.sort
+          sort: this.sort,
+          keyword: this.keyword
         }).then(res => {
           this.list.push(...res.data.rows)
           this.controller.loaded()
