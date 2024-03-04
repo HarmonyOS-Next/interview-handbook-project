@@ -24,6 +24,7 @@ export struct HdNav {
       Image(this.leftIcon)
         .size({ width: 24, height: 24 })
         .onClick(() => router.back())
+        .fillColor($r('app.color.black'))
       Row() {
         if (this.title) {
           Text(this.title)

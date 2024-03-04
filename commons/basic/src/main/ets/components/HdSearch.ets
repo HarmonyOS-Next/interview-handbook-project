@@ -7,7 +7,7 @@ export struct HdSearch {
   @State
   readonlyMode: boolean = true
   ph: string = ''
-  bg: string = ''
+  bg: ResourceStr = ''
   color: string = ''
   onSubmit: () => void = () => {
   }

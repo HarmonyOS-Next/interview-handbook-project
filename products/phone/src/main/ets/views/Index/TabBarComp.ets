@@ -30,7 +30,7 @@ export struct TabBarComp {
         .width($r('app.float.tab_bar_item_icon_size'))
       Text(item.label)
         .fontSize($r('app.float.tab_bar_item_font_size'))
-        .fontColor(this.activeIndex === index ? Color.Black : Color.Gray)
+        .fontColor(this.activeIndex === index ? $r('app.color.black') : $r('app.color.common_gray_01'))
         .animation({ duration: 300 })
     }
   }
@@ -47,6 +47,7 @@ export struct TabBarComp {
           else MineComp()
         }
         .tabBar(this.TabBarBuilder(item, index))
+        .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.BOTTOM])
       })
     }
     .divider({ strokeWidth: $r('app.float.common_border_width'), color: $r('app.color.common_gray_border') })

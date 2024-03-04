@@ -2,7 +2,6 @@ import { HdNav, logger } from '@itcast/basic'
 import { webview } from '@kit.ArkWeb'
 import { util } from '@kit.ArkTS'
 import { promptAction } from '@kit.ArkUI'
-import { media } from '@kit.MediaKit'
 import { WordSoundDialog } from '../components/WordSoundDialog'
 
 export interface WordItem {
@@ -197,7 +196,7 @@ export struct WordComp {
     .height('100%')
     .bindSheet($$this.showCodeSheet, this.codeSheetBuilder, {
       detents: [SheetSize.FIT_CONTENT],
-      backgroundColor: Color.White,
+      backgroundColor: $r('app.color.white'),
       title: { title: '详细代码' }
     })
   }

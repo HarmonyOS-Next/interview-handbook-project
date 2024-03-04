@@ -26,7 +26,7 @@ export struct HdClockIn {
           .textAlign(TextAlign.Center)
           .fontSize($r('app.float.hd_clock_font'))
           .fontWeight(500)
-          .fontColor(Color.Black)
+          .fontColor($r('app.color.black'))
           .margin({ bottom: $r('app.float.common_space4') })
       }
     }

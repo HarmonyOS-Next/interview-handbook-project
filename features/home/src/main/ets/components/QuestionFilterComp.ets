@@ -17,11 +17,12 @@ struct FilterButton {
       Row({ space: 6 }) {
         Text(this.text)
           .fontSize(12)
-          .fontColor(this.isActive ? $r('app.color.common_main_color') : Color.Black)
+          .fontColor(this.isActive ? $r('app.color.common_main_color') : $r('app.color.black'))
         if (this.isNew) {
           Image($r('app.media.ic_home_new'))
             .width(32)
             .height(14)
+            .objectFit(ImageFit.Contain)
             .alignSelf(ItemAlign.Start)
             .position({ x: this.positionX, y: -5 })
         }
@@ -133,7 +134,6 @@ export struct QuestionFilterComp {
       }
 
     }
-    .backgroundColor(Color.White)
     .padding({ left: 16, right: 16, top: 8, bottom: 34 })
     .width('100%')
     .alignItems(HorizontalAlign.Start)

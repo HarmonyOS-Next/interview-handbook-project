@@ -35,6 +35,18 @@
     {
       "name": "common_blue_bg",
       "value": "#EDF2FF"
+    },
+    {
+      "name": "black",
+      "value": "#131313"
+    },
+    {
+      "name": "white",
+      "value": "#ffffff"
+    },
+    {
+      "name": "home_gray",
+      "value": "#EDECF2"
     }
   ]
 }

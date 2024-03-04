@@ -1,23 +1,15 @@
-import { ProjectDetailComp } from '@itcast/project/Index'
-import { window } from '@kit.ArkUI'
+import { themeManager } from '@itcast/basic'
+import { ProjectDetailComp } from '@itcast/project'
 
 @Entry
 @Component
 struct ProjectPage {
   onPageShow(): void {
-    window.getLastWindow(getContext(this)).then((windowStage: window.Window) => {
-      windowStage.setWindowSystemBarProperties({
-        statusBarContentColor: '#ffffff',
-      })
-    })
+    themeManager.settingStatusBarWhite()
   }
 
   onPageHide(): void {
-    window.getLastWindow(getContext(this)).then((windowStage: window.Window) => {
-      windowStage.setWindowSystemBarProperties({
-        statusBarContentColor: '#000000',
-      })
-    })
+    themeManager.settingStatusBarBlack()
   }
 
   build() {

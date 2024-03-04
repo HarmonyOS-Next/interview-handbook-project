@@ -34,7 +34,7 @@ export struct HomeDayQuestionComp {
         .height(60)
         .width(44)
         .translate({ y: -10 })
-        .backgroundColor(Color.White)
+        .backgroundColor($r('app.color.white'))
         .borderRadius(8)
         .margin({ left: 12 })
         .shadow(ShadowStyle.OUTER_DEFAULT_LG)
@@ -66,7 +66,7 @@ export struct HomeDayQuestionComp {
       }
       .width('100%')
       .height(60)
-      .backgroundColor('#EDECF2')
+      .backgroundColor($r('app.color.home_gray'))
       .borderRadius(8)
     }
     .padding(16)

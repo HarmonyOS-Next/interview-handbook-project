@@ -22,4 +22,4 @@ export { logger } from './src/main/ets/utils/logger'
 
 export { getTimeText, getPercentText } from './src/main/ets/utils/base'
 
-export { windowManager } from './src/main/ets/utils/windowManager'
+export { themeManager } from './src/main/ets/utils/themeManager'

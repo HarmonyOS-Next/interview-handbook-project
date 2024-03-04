@@ -100,7 +100,7 @@ export struct ProfileEditComp {
               .layoutWeight(1)
               .padding(0)
               .height(60)
-              .backgroundColor(Color.White)
+              .backgroundColor($r('app.color.white'))
               .borderRadius(0)
               .onChange((value) => this.user.nickName = value)
               .onSubmit(() => {

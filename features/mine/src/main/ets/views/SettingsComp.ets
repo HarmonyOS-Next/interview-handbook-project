@@ -1,9 +1,9 @@
 import { authStore, HdNav } from '@itcast/basic';
-import { bundleManager } from '@kit.AbilityKit';
-import { storageStatistics } from '@kit.CoreFileKit';
+import { bundleManager, ConfigurationConstant } from '@kit.AbilityKit';
 import fs from '@ohos.file.fs';
 import { promptAction, router } from '@kit.ArkUI';
 import { emitter } from '@kit.BasicServicesKit';
+import { ThemeDialog } from '../components/ThemeDialog';
 
 export interface Tool {
   icon?: ResourceStr
@@ -15,6 +15,8 @@ export interface Tool {
 
 @Component
 export struct SettingsComp {
+  @StorageProp('colorMode')
+  colorMode: ConfigurationConstant.ColorMode = ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET
   @State
   version: string = ''
   @State
@@ -33,14 +35,36 @@ export struct SettingsComp {
     })
   }
 
-  calcCache() {
-    storageStatistics.getCurrentBundleStats().then(res => {
-      this.cache = (res.cacheSize / (1024 * 1024)).toFixed(2) + 'MB'
-    })
+  calcDir(dir: string) {
+    let size = 0
+    const calcSize = (rootDir: string) => {
+      const listDir = fs.listFileSync(rootDir)
+      listDir.forEach(item => {
+        const filePath = rootDir + '/' + item
+        const stat = fs.statSync(filePath)
+        if (stat.isDirectory()) {
+          calcSize(filePath)
+        }
+        if (stat.isFile()) {
+          size += stat.size
+        }
+      })
+    }
+    calcSize(dir)
+    return size
   }
 
-  clearCache() {
-    const dir = getContext().cacheDir
+  calcCache() {
+    // storageStatistics.getCurrentBundleStats().then(res => {
+    //   this.cache = (res.cacheSize / (1024 * 1024)).toFixed(2) + 'MB'
+    // })
+    const ctx = getContext()
+    const size1 = this.calcDir(ctx.cacheDir)
+    const size2 = this.calcDir(ctx.tempDir)
+    this.cache = ((size1 + size2) / (1024 * 1024)).toFixed(2) + 'MB'
+  }
+
+  clearDir(dir: string) {
     const listDir = fs.listFileSync(dir)
     listDir.forEach(item => {
       const filePath = dir + '/' + item
@@ -53,8 +77,18 @@ export struct SettingsComp {
       }
     })
     promptAction.showToast({ message: '清理完毕' })
+  }
+
+  clearCache() {
+    const ctx = getContext()
+    this.clearDir(ctx.cacheDir)
+    this.clearDir(ctx.tempDir)
     this.calcCache()
   }
+
+  dialog = new CustomDialogController({
+    builder: ThemeDialog()
+  })
 
   @Builder
   toolsBuilder(tool: Tool) {
@@ -81,7 +115,7 @@ export struct SettingsComp {
     }
     .height(50)
     .width('100%')
-    .backgroundColor(Color.White)
+    .backgroundColor($r('app.color.white'))
     .padding({ left: 16, right: 10 })
     .borderRadius({
       topLeft: tool.radius === 1 ? 8 : 0,
@@ -109,7 +143,14 @@ export struct SettingsComp {
         this.toolsBuilder({ name: '账号设置' })
         this.toolsBuilder({ name: '消息设置', radius: 2 })
         Blank().height(15)
-        this.toolsBuilder({ name: '深色模式', value: '已关闭', radius: 1 })
+        this.toolsBuilder({
+          name: '深色模式',
+          value: this.colorMode === ConfigurationConstant.ColorMode.COLOR_MODE_DARK ? '已开启' : '已关闭',
+          radius: 1,
+          onClick: () => {
+            this.dialog.open()
+          }
+        })
         this.toolsBuilder({
           name: '清除应用缓存', value: this.cache, onClick: () => {
             this.clearCache()

@@ -21,6 +21,8 @@ export struct MineComp {
   topHeight: number = 0
   @StorageProp('user')
   user: HdUser = {} as HdUser
+  @StorageProp('colorMode')
+  colorMode: number = -1
 
   @Builder
   navBuilder(nav: Nav) {
@@ -164,7 +166,7 @@ export struct MineComp {
           }
         })
       }
-      .backgroundColor(Color.White)
+      .backgroundColor($r('app.color.white'))
       .padding(16)
       .borderRadius(8)
 
@@ -188,14 +190,14 @@ export struct MineComp {
           }
         })
       }
-      .backgroundColor(Color.White)
+      .backgroundColor($r('app.color.white'))
       .borderRadius(8)
 
     }
     .padding($r('app.float.common_gutter'))
     .backgroundColor($r('app.color.common_gray_bg'))
     .linearGradient({
-      colors: [['#FFB071', 0], ['#f3f4f5', 0.3], ['#f3f4f5', 1]]
+      colors: [[this.colorMode === 1 ? '#FFB071' : '#ff8533', 0], [$r('app.color.common_gray_bg'), 0.3], [$r('app.color.common_gray_bg'), 1]]
     })
     .width('100%')
     .height('100%')

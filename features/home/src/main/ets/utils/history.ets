@@ -5,11 +5,13 @@ class HistoryStore {
   store = preferences.getPreferencesSync(getContext(), { name: this.KEY })
 
   setItem(keyword: string) {
-    this.store.put(keyword, keyword)
+    this.store.putSync(keyword, keyword)
+    this.store.flush()
   }
 
   delItem(keyword: string) {
     this.store.deleteSync(keyword)
+    this.store.flush()
   }
 
   clear() {

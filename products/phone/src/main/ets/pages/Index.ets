@@ -1,5 +1,5 @@
 import { TabBarComp } from '../views/Index/TabBarComp';
-import { authStore, windowManager } from '@itcast/basic';
+import { authStore, themeManager } from '@itcast/basic';
 
 
 @Entry
@@ -12,8 +12,8 @@ struct Index {
   activeIndex: number = 0
 
   onChangeIndex() {
-    if (this.activeIndex === 3) windowManager.settingStatusBarLight()
-    else windowManager.settingStatusBarDark()
+    if (this.activeIndex === 3) themeManager.settingStatusBarWhite()
+    else themeManager.settingStatusBarBlack()
   }
 
   aboutToAppear(): void {
@@ -34,13 +34,13 @@ struct Index {
   }
 
   onPageShow(): void {
-    windowManager.enableFullScreen()
+    themeManager.enableFullScreen()
     this.onChangeIndex()
   }
 
   onPageHide(): void {
     this.onChangeIndex()
-    windowManager.settingStatusBarDark()
+    themeManager.settingStatusBarBlack()
   }
 
   build() {
@@ -50,6 +50,7 @@ struct Index {
       }
       .geometryTransition("boot")
       .transition(TransitionEffect.OPACITY)
+      .backgroundColor($r('app.color.white'))
     } else {
       Column()
         .width('100%')

@@ -183,6 +183,7 @@ export struct QuestionDetailComp {
       Row() {
         ForEach(this.item.stage, (tag: string) => {
           HdTag({ text: tag })
+            .margin({ right: 5 })
         })
         Blank()
         Image($r("app.media.ic_home_more"))

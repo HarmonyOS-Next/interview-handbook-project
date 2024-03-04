@@ -87,7 +87,7 @@ export struct ProjectComp {
           .backgroundColor($r('app.color.common_gray_01'))
         Text('其他项目正在赶来的路上…')
           .padding($r('app.float.common_space10'))
-          .backgroundColor(Color.White)
+          .backgroundColor($r('app.color.white'))
           .fontColor($r('app.color.common_gray_01'))
           .fontSize($r('app.float.common_font12'))
       }

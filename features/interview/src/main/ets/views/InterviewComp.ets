@@ -54,7 +54,7 @@ export struct InterviewComp {
       .borderRadius(8)
 
     }
-    .backgroundColor(Color.White)
+    .backgroundColor($r('app.color.white'))
     .borderRadius(8)
     .height(140)
     .width(100)
@@ -65,7 +65,7 @@ export struct InterviewComp {
     Text(tab.name)
       .fontSize(14)
       .padding(10)
-      .fontColor(this.sort === tab.value ? '#000' : '#979797')
+      .fontColor(this.sort === tab.value ? $r('app.color.black') : $r('app.color.common_gray_01'))
       .animation({
         duration: 300
       })
@@ -82,7 +82,7 @@ export struct InterviewComp {
         Image($r('app.media.ic_interview_text'))
           .width(54)
           .height(20)
-        HdSearch({ ph: '请输入关键词', bg: '#f3f4f5' })
+        HdSearch({ ph: '请输入关键词', bg: $r('app.color.common_gray_bg') })
           .layoutWeight(1)
           .onClick(() => {
             interface Params {

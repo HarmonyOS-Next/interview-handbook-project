@@ -1,0 +1,52 @@
+{
+  "color": [
+    {
+      "name": "common_gray_01",
+      "value": "#979797"
+    },
+    {
+      "name": "common_gray_02",
+      "value": "#848484"
+    },
+    {
+      "name": "common_gray_03",
+      "value": "#666666"
+    },
+    {
+      "name": "common_gray_bg",
+      "value": "#232323"
+    },
+    {
+      "name": "common_gray_border",
+      "value": "#323232"
+    },
+    {
+      "name": "common_main_color",
+      "value": "#FA6D1D"
+    },
+    {
+      "name": "common_green",
+      "value": "#41B883"
+    },
+    {
+      "name": "common_blue",
+      "value": "#3266EE"
+    },
+    {
+      "name": "common_blue_bg",
+      "value": "#EDF2FF"
+    },
+    {
+      "name": "black",
+      "value": "#ffffff"
+    },
+    {
+      "name": "white",
+      "value": "#131313"
+    },
+    {
+      "name": "home_gray",
+      "value": "#b3b3cc"
+    }
+  ]
+}

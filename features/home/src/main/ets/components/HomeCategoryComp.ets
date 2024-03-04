@@ -3,10 +3,13 @@ import { QuestionListComp } from './QuestionListComp'
 import { FilterParams, QuestionFilterComp } from './QuestionFilterComp'
 import { QuestionService } from '../services/QuestionService'
 import { emitter } from '@kit.BasicServicesKit'
+import { ConfigurationConstant } from '@kit.AbilityKit'
 
 
 @Component
 export struct HomeCategoryComp {
+  @StorageProp('colorMode')
+  colorMode: ConfigurationConstant.ColorMode = ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET
   @State
   params: FilterParams = new FilterParams()
   @State
@@ -49,11 +52,11 @@ export struct HomeCategoryComp {
         Text(q.name)
           .fontSize(15)
           .height(43)
-          .fontColor(this.params.index === index ? Color.Black : Color.Gray)
+          .fontColor(this.params.index === index ? $r('app.color.black') : $r('app.color.common_gray_01'))
         Text()
           .width(this.params.index === index ? 20 : 0)
           .height(2)
-          .backgroundColor(Color.Black)
+          .backgroundColor($r('app.color.black'))
           .animation({ duration: this.params.index === index ? 300 : 0 })
       }
       .padding({ left: index === 0 ? 16 : 0, })
@@ -85,7 +88,7 @@ export struct HomeCategoryComp {
                   selfIndex: index
                 })
               }
-              .backgroundColor(Color.White)
+              .backgroundColor($r('app.color.white'))
             }
             .tabBar(this.TabItemBuilder(item, index))
           })
@@ -93,7 +96,7 @@ export struct HomeCategoryComp {
         .divider({ strokeWidth: $r('app.float.common_border_width'), color: $r('app.color.common_gray_border') })
         .barMode(BarMode.Scrollable)
         .barHeight(44)
-        .barBackgroundColor(Color.White)
+        .barBackgroundColor($r('app.color.white'))
         .onTabBarClick(i => this.params.index = i)
         .layoutWeight(1)
         .scrollable(false)
@@ -110,16 +113,18 @@ export struct HomeCategoryComp {
       .justifyContent(FlexAlign.Center)
       .linearGradient({
         angle: 90,
-        colors: [['rgba(255,255,255,0.2)', 0], [Color.White, 0.3]]
+        colors: [
+          [this.colorMode === ConfigurationConstant.ColorMode.COLOR_MODE_DARK ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)', 0],
+          [$r('app.color.white'), 0.3]
+        ]
       })
       .onClick(() => {
         this.show = true
       })
       .bindSheet($$this.show, this.SheetBuilder(), {
         showClose: false,
-        dragBar: false,
         detents: [SheetSize.FIT_CONTENT],
-        backgroundColor: Color.White,
+        backgroundColor: $r('app.color.white'),
       })
 
       // .onClick(() => {

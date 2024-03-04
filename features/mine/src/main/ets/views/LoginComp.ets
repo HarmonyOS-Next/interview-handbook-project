@@ -60,10 +60,10 @@ export struct LoginComp {
           Image($r('app.media.icon'))
             .width(120)
             .aspectRatio(1)
-          Text('面试宝典')
+          Text('面试通')
             .fontSize(28)
             .margin({ bottom: 15 })
-          Text('搞定企业面试真题，就用面试宝典')
+          Text('搞定企业面试真题，就用面试通')
             .fontSize(14)
             .fontColor($r('app.color.common_gray_01'))
         }
@@ -103,12 +103,12 @@ export struct LoginComp {
             Row() {
               if (this.loading) {
                 LoadingProgress()
-                  .color('#ffffff')
+                  .color($r('app.color.white'))
                   .width(24)
                   .height(24)
                   .margin({ right: 10 })
               }
-              Text('立即登录').fontColor('#ffffff')
+              Text('立即登录').fontColor($r('app.color.white'))
             }
           }
           .width('100%')
@@ -150,6 +150,6 @@ function customStyle() {
   .caretColor('#fa711d')
   .height(44)
   .borderRadius(0)
-  .backgroundColor('#ffffff')
+  .backgroundColor($r('app.color.white'))
   .border({ width: { bottom: $r('app.float.common_border_width') }, color: $r('app.color.common_gray_border') })
 }

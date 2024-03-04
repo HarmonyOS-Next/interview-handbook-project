@@ -87,14 +87,14 @@ export struct ProjectDetailComp {
           Row() {
             Text('浏览量')
               .fontSize($r('app.float.common_font14'))
-              .fontColor(this.sort > 0 ? $r('app.color.common_main_color') : Color.Black)
+              .fontColor(this.sort > 0 ? $r('app.color.common_main_color') : $r('app.color.black'))
             Column() {
               Image($r('sys.media.ohos_ic_public_arrow_up'))
                 .size({ width: 16, height: 6 })
-                .fillColor(this.sort === 20 ? $r('app.color.common_main_color') : Color.Black)
+                .fillColor(this.sort === 20 ? $r('app.color.common_main_color') : $r('app.color.black'))
               Image($r('sys.media.ohos_ic_public_arrow_down'))
                 .size({ width: 16, height: 6 })
-                .fillColor(this.sort === 21 ? $r('app.color.common_main_color') : Color.Black)
+                .fillColor(this.sort === 21 ? $r('app.color.common_main_color') : $r('app.color.black'))
             }
             .alignItems(HorizontalAlign.Start)
           }
@@ -120,7 +120,7 @@ export struct ProjectDetailComp {
         .layoutWeight(1)
       }
       .layoutWeight(1)
-      .backgroundColor(Color.White)
+      .backgroundColor($r('app.color.white'))
       .width('100%')
       .borderRadius({ topLeft: 16, topRight: 16 })
     }

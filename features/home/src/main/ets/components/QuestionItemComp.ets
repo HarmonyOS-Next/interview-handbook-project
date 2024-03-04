@@ -12,14 +12,14 @@ export struct QuestionItemComp {
     Text('|')
       .width(30)
       .textAlign(TextAlign.Center)
-      .fontColor('#C3C3C5')
+      .fontColor($r('app.color.common_gray_01'))
       .fontSize(13)
   }
 
   @Builder
   TextBuilder(text: string) {
     Text(text)
-      .fontColor('#C3C3C5')
+      .fontColor($r('app.color.common_gray_01'))
       .fontSize(13)
   }
 
