@@ -4,6 +4,7 @@ import { FilterParams, QuestionFilterComp } from './QuestionFilterComp'
 import { QuestionService } from '../services/QuestionService'
 import { emitter } from '@kit.BasicServicesKit'
 import { ConfigurationConstant } from '@kit.AbilityKit'
+import { HdSkeleton } from '@itcast/basic/Index'
 
 
 @Component
@@ -100,6 +101,14 @@ export struct HomeCategoryComp {
         .onTabBarClick(i => this.params.index = i)
         .layoutWeight(1)
         .scrollable(false)
+      } else {
+        Column({ space: 30 }) {
+          HdSkeleton().width('100%')
+          HdSkeleton({ rows: 2 }).width('100%')
+          HdSkeleton({ rows: 2 }).width('100%')
+          HdSkeleton({ rows: 2 }).width('100%')
+        }
+        .padding(15)
       }
 
       Row() {
@@ -132,5 +141,6 @@ export struct HomeCategoryComp {
       // })
     }
     .width('100%')
+    .backgroundColor($r('app.color.white'))
   }
 }

@@ -140,7 +140,7 @@ export struct InterviewComp {
         Text()
           .width(16)
           .height(2)
-          .backgroundColor('#000000')
+          .backgroundColor($r('app.color.black'))
           .position({ x: this.left, y: 38 })
           .animation({
             duration: 300

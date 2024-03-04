@@ -8,6 +8,8 @@ export { HdNav } from './src/main/ets/components/HdNav'
 
 export { HdWeb } from './src/main/ets/components/HdWeb'
 
+export { HdSkeleton, HdSkeletonType } from './src/main/ets/components/HdSkeleton'
+
 export { HdLoadingDialog } from './src/main/ets/components/HdLoadingDialog'
 
 export { HdList, HdListController } from './src/main/ets/components/HdList'
