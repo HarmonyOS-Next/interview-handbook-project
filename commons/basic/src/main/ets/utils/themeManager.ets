@@ -41,9 +41,10 @@ class ThemeManager {
       }
     })
     // 默认浅色模式
-    PersistentStorage.persistProp('colorMode', ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET)
-    const defColorMode = AppStorage.get<ConfigurationConstant.ColorMode>('colorMode')
-    app.setColorMode(defColorMode)
+    const initColorMode = AppStorage.get<ConfigurationConstant.ColorMode>('initColorMode')
+    PersistentStorage.persistProp('colorMode', initColorMode)
+    const currentColorMode = AppStorage.get<ConfigurationConstant.ColorMode>('colorMode')
+    app.setColorMode(currentColorMode)
   }
 
   settingStatusBarWhite() {
@@ -62,7 +63,6 @@ class ThemeManager {
 
   enableFullScreen() {
     this.getWindowStage().then((windowStage: window.Window) => {
-      this.windowStage = windowStage
       windowStage.setWindowLayoutFullScreen(true)
       const topArea = windowStage.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM)
       AppStorage.setOrCreate('topHeight', px2vp(topArea.topRect.height))

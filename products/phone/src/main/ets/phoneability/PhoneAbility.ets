@@ -7,6 +7,7 @@ import window from '@ohos.window';
 export default class PhoneAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onCreate');
+    AppStorage.setOrCreate('initColorMode', this.context.config.colorMode)
   }
 
   onDestroy(): void {
