@@ -9,11 +9,11 @@ interview questions, interview experience and other content services.
 
 ## Screen Shots
 
-|                                    |                                    |
-|------------------------------------|------------------------------------|
-| <img src="./01.png" width="375" /> | <img src="./02.png" width="375" /> |
-| <img src="./03.png" width="375" /> | <img src="./04.png" width="375" /> |
-| <img src="./05.png" width="375" /> | <img src="./06.png" width="375" /> |
-| <img src="./07.png" width="375" /> | <img src="./08.png" width="375" /> |
-| <img src="./09.png" width="375" /> | <img src="./10.png" width="375" /> |
+|                                     |                                     |
+|-------------------------------------|-------------------------------------|
+| <img src="./01.jpeg" width="375" /> | <img src="./02.jpeg" width="375" /> |
+| <img src="./03.jpeg" width="375" /> | <img src="./04.jpeg" width="375" /> |
+| <img src="./05.jpeg" width="375" /> | <img src="./06.jpeg" width="375" /> |
+| <img src="./07.jpeg" width="375" /> | <img src="./08.jpeg" width="375" /> |
+| <img src="./09.jpeg" width="375" /> | <img src="./10.jpeg" width="375" /> |
 
