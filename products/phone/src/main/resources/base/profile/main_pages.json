@@ -10,6 +10,7 @@
     "pages/WordPage",
     "pages/SettingsPage",
     "pages/ProfileEditPage",
-    "pages/SearchPage"
+    "pages/SearchPage",
+    "pages/BootPage"
   ]
 }
