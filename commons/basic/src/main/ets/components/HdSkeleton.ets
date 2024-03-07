@@ -15,6 +15,10 @@ export struct HdSkeleton {
   rows: number = 0
   // 类型
   type: HdSkeletonType = HdSkeletonType.BASE
+  // 头像尺寸
+  avatarSize: number = 40
+  // 图片尺寸
+  imageSize: number = 100
 
   build() {
     Row({ space: 15 }) {
@@ -22,11 +26,11 @@ export struct HdSkeleton {
         this.default()
       } else {
         if (this.type === HdSkeletonType.AVATAR) {
-          HdSkeletonAvatar()
+          HdSkeletonAvatar({ widthValue: this.avatarSize })
             .alignSelf(ItemAlign.Start)
         }
         if (this.type === HdSkeletonType.IMAGE) {
-          HdSkeletonImage()
+          HdSkeletonImage({ widthValue: this.imageSize })
             .alignSelf(ItemAlign.Start)
         }
         Column() {

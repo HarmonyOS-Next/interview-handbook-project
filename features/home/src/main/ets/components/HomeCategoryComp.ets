@@ -132,13 +132,10 @@ export struct HomeCategoryComp {
       })
       .bindSheet($$this.show, this.SheetBuilder(), {
         showClose: false,
+        dragBar: false,
         detents: [SheetSize.FIT_CONTENT],
         backgroundColor: $r('app.color.white'),
       })
-
-      // .onClick(() => {
-      //   this.dialog.open()
-      // })
     }
     .width('100%')
     .backgroundColor($r('app.color.white'))

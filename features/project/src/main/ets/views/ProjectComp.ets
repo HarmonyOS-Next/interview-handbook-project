@@ -1,4 +1,4 @@
-import { BasicConstant, HdTag } from '@itcast/basic'
+import { BasicConstant, HdSkeleton, HdSkeletonType, HdTag } from '@itcast/basic'
 import { ProjectItemData, ProjectItemModel, ProjectTag } from '../models/ProjectItemModel'
 import router from '@ohos.router'
 import { ProjectService } from '../services/ProjectService'
@@ -63,11 +63,20 @@ export struct ProjectComp {
         .margin({ top: this.topHeight })
 
       List() {
-        ForEach(this.list, (item: ProjectItemModel) => {
-          ListItem() {
-            this.ProjectItemBuilder(item)
-          }
-        })
+        if (this.list.length) {
+          ForEach(this.list, (item: ProjectItemModel) => {
+            ListItem() {
+              this.ProjectItemBuilder(item)
+            }
+          })
+        } else {
+          ForEach(new Array(3).fill(0), () => {
+            ListItem() {
+              HdSkeleton({ rows: 3, type: HdSkeletonType.IMAGE })
+                .margin({ top: 10, bottom: 10 })
+            }
+          })
+        }
       }
       .divider({
         strokeWidth: $r('app.float.common_border_width'),
