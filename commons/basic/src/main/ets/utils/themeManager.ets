@@ -17,10 +17,6 @@ class ThemeManager {
     }
   }
 
-  constructor() {
-    this.initThemeSetting()
-  }
-
   initThemeSetting() {
     const app = getContext().getApplicationContext()
     app.on('environment', {

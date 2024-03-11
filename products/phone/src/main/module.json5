@@ -8,17 +8,8 @@
         "name": "ohos.permission.INTERNET"
       },
       {
-        "name": "ohos.permission.ACCESS_BLUETOOTH"
+        "name": "ohos.permission.KEEP_BACKGROUND_RUNNING"
       },
-      {
-        "name": "ohos.permission.LOCATION"
-      },
-      {
-        "name": "ohos.permission.APPROXIMATELY_LOCATION"
-      },
-      {
-        "name": "ohos.permission.GET_NETWORK_INFO"
-      }
     ],
     "mainElement": "PhoneAbility",
     "deviceTypes": [
@@ -47,6 +38,21 @@
             "actions": [
               "action.system.home"
             ]
+          }
+        ]
+      }
+    ],
+    "extensionAbilities": [
+      {
+        "name": "PhoneFormAbility",
+        "srcEntry": "./ets/phoneformability/PhoneFormAbility.ets",
+        "label": "$string:PhoneFormAbility_label",
+        "description": "$string:PhoneFormAbility_desc",
+        "type": "form",
+        "metadata": [
+          {
+            "name": "ohos.extension.form",
+            "resource": "$profile:form_config"
           }
         ]
       }

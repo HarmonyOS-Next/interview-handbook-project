@@ -12,24 +12,32 @@ export interface HdUser {
   clockinNumbers?: number
 }
 
+export const AUTH_STORE_KEY = 'authStore'
+
 class AuthStore {
-  KEY = 'authStore'
-  store = preferences.getPreferencesSync(getContext(), { name: this.KEY })
+  store: preferences.Preferences | null = null
+
+  getStore() {
+    if (!this.store) {
+      this.store = preferences.getPreferencesSync(getContext(), { name: AUTH_STORE_KEY })
+    }
+    return this.store
+  }
 
   async setUser(user: HdUser) {
     AppStorage.setOrCreate('user', user)
-    await this.store.put(this.KEY, JSON.stringify(user))
-    await this.store.flush()
+    await this.getStore().put(AUTH_STORE_KEY, JSON.stringify(user))
+    await this.getStore().flush()
   }
 
   async delUser() {
     AppStorage.setOrCreate('user', {})
-    await this.store.put(this.KEY, '{}')
-    await this.store.flush()
+    await this.getStore().put(AUTH_STORE_KEY, '{}')
+    await this.getStore().flush()
   }
 
   initUser() {
-    const json = this.store.getSync(this.KEY, '{}') as string
+    const json = this.getStore().getSync(AUTH_STORE_KEY, '{}') as string
     AppStorage.setOrCreate('user', JSON.parse(json))
   }
 

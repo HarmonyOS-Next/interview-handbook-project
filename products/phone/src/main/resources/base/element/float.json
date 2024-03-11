@@ -15,6 +15,10 @@
     {
       "name": "tab_bar_item_height_lg",
       "value": "400vp"
+    },
+    {
+      "name": "font_size",
+      "value": "14fp"
     }
   ]
 }

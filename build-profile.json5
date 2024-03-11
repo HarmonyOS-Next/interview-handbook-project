@@ -6,9 +6,9 @@
         "type": "HarmonyOS",
         "material": {
           "certpath": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.cer",
-          "storePassword": "0000001BF4BBB4B1BE21A10DBA48DA851CF955D0623518889D77D0BF04CDE4A1689CBCE846F2396239B8D8",
+          "storePassword": "0000001B0F678F0F6752D595738BE3B2EBDDEEE0CC0EEAD2DE4F0625FD01334C6CB5F337AB3D59452D5940",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B22C23C540314CB5DFD8376394C869170895C48015D93587D026356FD3C51B7CAFB73679745C686",
+          "keyPassword": "0000001BEAB65CF0ECC79945BF0A492E6305C119DE1A53574E326276DB3933D1F830F8526AADA69CE94708",
           "profile": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.p12"

@@ -18,7 +18,7 @@ export { BasicConstant } from './src/main/ets/constants/BasicConstant'
 
 export { hdHttp, HdResponse } from './src/main/ets/utils/request'
 
-export { authStore, HdUser } from './src/main/ets/utils/auth'
+export { authStore, HdUser, AUTH_STORE_KEY } from './src/main/ets/utils/auth'
 
 export { logger } from './src/main/ets/utils/logger'
 

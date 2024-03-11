@@ -5,8 +5,11 @@ import { BootView } from '@itcast/home'
 @Component
 struct BootPage {
   aboutToAppear(): void {
+    themeManager.initThemeSetting()
     themeManager.enableFullScreen()
     authStore.initUser()
+
+    getContext().getApplicationContext().getRunningProcessInformation()
   }
 
   build() {

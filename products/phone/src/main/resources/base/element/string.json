@@ -15,6 +15,22 @@
     {
       "name": "index_home",
       "value": "首页"
+    },
+    {
+      "name": "PhoneFormAbility_desc",
+      "value": "form_description"
+    },
+    {
+      "name": "PhoneFormAbility_label",
+      "value": "form_label"
+    },
+    {
+      "name": "widget_desc",
+      "value": "搞定企业面试真题"
+    },
+    {
+      "name": "widget_display_name",
+      "value": "widget"
     }
   ]
 }
