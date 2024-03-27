@@ -81,7 +81,7 @@ export struct HmCalendar {
         date: index,
         month: currDate.month() + 1,
         year: currDate.year(),
-        day: index,
+        day: currDate.date(index).day(),
         inMonth: true,
         selectedFlag,
         selectedText,

@@ -1,5 +1,5 @@
 {
-  "name": "home",
+  "name": "@itcast/home",
   "version": "1.0.0",
   "description": "Please describe the basic information.",
   "main": "Index.ets",
@@ -8,6 +8,5 @@
   "dependencies": {
     "@itcast/basic": "file:../../commons/basic",
     "@itcast/interview": "file:../../features/interview",
-    "@ohmos/calendar": "file:../../commons/calendar",
   }
 }

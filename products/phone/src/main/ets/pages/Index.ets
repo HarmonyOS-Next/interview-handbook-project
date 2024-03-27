@@ -1,9 +1,8 @@
 import { TabBarComp } from '../views/Index/TabBarComp';
 import { themeManager } from '@itcast/basic';
-import { common } from '@kit.AbilityKit';
 import { emitter } from '@kit.BasicServicesKit';
+import { common } from '@kit.AbilityKit';
 import { promptAction } from '@kit.ArkUI';
-
 
 @Entry
 @Component
@@ -46,6 +45,8 @@ struct Index {
       const ctx = getContext() as common.UIAbilityContext
       ctx.terminateSelf()
     }
+
+
     return true
   }
 

@@ -1,35 +1,35 @@
 {
   "app": {
-    "signingConfigs": [
-      {
-        "name": "default",
-        "type": "HarmonyOS",
-        "material": {
-          "certpath": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.cer",
-          "storePassword": "0000001B0F678F0F6752D595738BE3B2EBDDEEE0CC0EEAD2DE4F0625FD01334C6CB5F337AB3D59452D5940",
-          "keyAlias": "debugKey",
-          "keyPassword": "0000001BEAB65CF0ECC79945BF0A492E6305C119DE1A53574E326276DB3933D1F830F8526AADA69CE94708",
-          "profile": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.p7b",
-          "signAlg": "SHA256withECDSA",
-          "storeFile": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.p12"
-        }
-      }
-    ],
     "products": [
       {
         "name": "default",
         "signingConfig": "default",
-        "compileSdkVersion": "4.1.0(11)",
+        "compileSdkVersion": "5.0.0(12)",
         "compatibleSdkVersion": "4.1.0(11)",
         "runtimeOS": "HarmonyOS"
       }
     ],
     "buildModeSet": [
       {
-        "name": "debug",
+        "name": "debug"
       },
       {
         "name": "release"
+      }
+    ],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.cer",
+          "storePassword": "0000001A806C4F4CA54001B70D523AD99217549CEA784C0B1521DA6F0F6493BA5EF2035F57A6A60897D1",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001A0EC267B8978A3562847E2242AFBBEC06E3EE526B15C2BAE625ACFF972C61F16A5AB358429B53",
+          "profile": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "/Users/zhousg/.ohos/config/default_pass_interview_NYepeKE744Cf57byKZFj3G4BvqSZ3t_TPMh9K4bibN8=.p12"
+        }
       }
     ]
   },

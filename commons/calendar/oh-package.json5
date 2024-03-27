@@ -1,12 +1,9 @@
 {
   "name": "@ohmos/calendar",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "a mini calendar support harmony next.",
   "keywords": [
-    "calendar",
-    "next",
-    "4.0",
-    "mini"
+    "calendar"
   ],
   "main": "Index.ets",
   "author": {

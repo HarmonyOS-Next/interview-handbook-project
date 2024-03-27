@@ -1,5 +1,9 @@
 # Changelog
 
+## Release 2.0.2
+
+- fix: month dot layout
+
 ## Release 2.0.1
 
 - fix: export type and enum

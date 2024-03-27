@@ -6,6 +6,7 @@
   "author": "",
   "license": "",
   "dependencies": {
+    "@ohmos/calendar": "file:./commons/calendar"
   },
   "devDependencies": {
     "@ohos/hypium": "1.0.15",

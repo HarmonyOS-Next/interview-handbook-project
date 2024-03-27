@@ -23,6 +23,8 @@ export struct MineComp {
   user: HdUser = {} as HdUser
   @StorageProp('colorMode')
   colorMode: number = -1
+  @State
+  isPreview: boolean = false
 
   @Builder
   navBuilder(nav: Nav) {
@@ -82,6 +84,15 @@ export struct MineComp {
     })
   }
 
+  @Builder
+  AvatarPreviewBuilder() {
+    Image(this.user.avatar)
+      .objectFit(ImageFit.Contain)
+      .onClick(() => {
+        this.isPreview = false
+      })
+  }
+
   build() {
     Column({ space: 16 }) {
       Row({ space: 12 }) {
@@ -90,6 +101,15 @@ export struct MineComp {
           .width(55)
           .aspectRatio(1)
           .borderRadius(55)
+          .bindContentCover($$this.isPreview, this.AvatarPreviewBuilder, {
+            modalTransition: ModalTransition.ALPHA,
+            backgroundColor: '#000000'
+          })
+          .onClick(() => {
+            if (this.user.avatar) {
+              this.isPreview = true
+            }
+          })
         if (this.user && this.user.token) {
           Column({ space: 4 }) {
             Text(this.user.nickName || this.user.username)
